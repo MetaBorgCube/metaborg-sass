@@ -1,0 +1,14 @@
+module Selector
+
+imports
+  Common
+  
+context-free start-symbols
+  
+  Selector
+  
+context-free syntax
+
+// From: https://www.w3schools.com/cssref/css_selectors.asp
+
+  Selector.Any = <{ID " "}*>

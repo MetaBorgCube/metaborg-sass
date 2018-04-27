@@ -1,0 +1,25 @@
+module Declaration
+
+imports 
+  Common
+  Expression
+  Selector
+
+context-free start-symbols
+  Declaration
+  BlockDeclaration
+
+context-free syntax
+
+  BlockDeclaration.Decl = <
+  <Selector> {
+    <Declaration*>
+  }>
+  
+  Declaration.BlockDeclaration = BlockDeclaration
+  /* 
+   * TODO: Property declarations need not be followed by a ; per se, 
+   * however this is not true when there are multiple consecutive
+   * property declarations. 
+   */
+  Declaration.PropertyDeclaration = <<ID> : <Exp> ;>

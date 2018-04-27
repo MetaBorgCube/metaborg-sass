@@ -1,0 +1,52 @@
+module Expression
+
+imports
+  Common
+
+context-free start-symbols
+  Exp
+  
+context-free syntax
+
+  // Literals
+  Exp.Integer   = INT
+  Exp.Float     = FLOAT
+  Exp.String    = String
+  Exp.HexColour = HEXCOLOUR
+  Exp.Identifier = ID
+  Exp.Length    = Length
+  Exp.True      = <true>
+  Exp.False     = <false>
+  Exp.Null      = <null>
+  Exp.Variable  = <$<ID>>
+
+  Exp = <(<Exp>)> {bracket}
+
+  // Arithmetic Operators
+  Exp.Addition        = <<Exp> + <Exp>>
+  Exp.Subtraction     = <<Exp> - <Exp>>
+  Exp.Multiplication  = <<Exp> * <Exp>>
+  Exp.Division        = <<Exp> / <Exp>>
+  Exp.Modulus         = <<Exp> % <Exp>>
+  
+  // Logical Operators
+  Exp.And             = <<Exp> and <Exp>>
+  Exp.Or              = <<Exp> or <Exp>>
+  Exp.Not             = <not <Exp>>
+  
+  // Comparison
+  Exp.Equality        = <<Exp> == <Exp>>
+  Exp.Inequality      = <<Exp> != <Exp>>
+  Exp.GreaterThan     = [[Exp] > [Exp]]
+  Exp.GreaterThanEq   = [[Exp] >= [Exp]]
+  Exp.LessThan        = [[Exp] < [Exp]]
+  Exp.LessThanEq      = [[Exp] <= [Exp]]
+  
+  
+  // Length
+  Length.Unit       = <<Exp> <ID>>
+  Length.Percentage = <<Exp> <PERCENTAGE>>
+  
+  // String
+  String.Quoted     = STRING
+  

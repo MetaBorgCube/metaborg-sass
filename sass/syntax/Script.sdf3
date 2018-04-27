@@ -1,0 +1,18 @@
+module Script
+
+imports 
+  Common
+  Declaration
+
+context-free start-symbols
+  Script
+
+context-free syntax
+  Script.Script = <
+  
+  <ScriptItem*>
+  
+  >
+  
+  ScriptItem.BlockDeclaration = BlockDeclaration
+  
