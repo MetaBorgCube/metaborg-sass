@@ -11,12 +11,12 @@ context-free start-symbols
 
 context-free syntax
 
-  BlockDeclaration.Decl = <
+  BlockDeclaration.BlockDeclaration = <
   <Selector> {
     <Declaration*>
   }>
   
-  Declaration.BlockDeclaration = BlockDeclaration
+  Declaration = BlockDeclaration
   /* 
    * TODO: Property declarations need not be followed by a ; per se, 
    * however this is not true when there are multiple consecutive

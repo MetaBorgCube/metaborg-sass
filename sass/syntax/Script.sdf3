@@ -12,5 +12,5 @@ context-free syntax
   <ScriptItem*>
   >
   
-  ScriptItem.BlockDeclaration = BlockDeclaration
+  ScriptItem = BlockDeclaration
   

@@ -1,4 +1,4 @@
-module test
+module syntax-list-test
 
 language sass
 
