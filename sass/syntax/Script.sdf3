@@ -9,9 +9,7 @@ context-free start-symbols
 
 context-free syntax
   Script.Script = <
-  
   <ScriptItem*>
-  
   >
   
   ScriptItem.BlockDeclaration = BlockDeclaration

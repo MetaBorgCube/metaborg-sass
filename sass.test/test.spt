@@ -1,9 +1,0 @@
-module test
-
-language sass
-
-start symbol Exp
-
-test parse [[
-5
-]] parse succeeds 

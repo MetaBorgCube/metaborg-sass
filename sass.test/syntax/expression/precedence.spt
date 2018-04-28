@@ -1,0 +1,25 @@
+module test
+
+language sass
+
+start symbol Exp
+
+test division over addition [[
+10 / 2 + 4
+]] parse to Add(Div(Number(Int("10")), Number(Int("2"))), Number(Int("4")))
+
+test Ineq over compare [[
+5 > 4 != 6 < 4
+]] parse to Ineq(Gt(Number(Int("5")), Number(Int("4"))), Lt(Number(Int("6")), Number(Int("4"))))
+
+test Eq over and [[
+true and false == true or false
+]] parse to Eq(And(True(), False()), Or(True(), False()))
+
+test brackets [[
+true and (false == true) or false
+]] parse to Or(And(True(), Eq(False(), True())), False())
+
+test not [[
+not true
+]] parse to Not(True())
