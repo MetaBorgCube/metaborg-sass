@@ -1,0 +1,14 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test id [[
+#main
+]] parse to IdSelector("main")
+
+
+test id with hyphen [[
+#my-main
+]] parse to IdSelector("my-main")

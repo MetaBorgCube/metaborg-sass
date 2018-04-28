@@ -11,5 +11,7 @@ context-free syntax
 
 // From: https://www.w3schools.com/cssref/css_selectors.asp
 
-  Selector.IdSelector     = <#<ID>>
-  Selector.ClassSelector  = <.<ID>> 
+  Selector.IdSelector       = <#<ID>>
+  Selector.ClassSelector    = <.<ID>> 
+  Selector.ElementSelector  = ID
+  Selector.All              = "*"

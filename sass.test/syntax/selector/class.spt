@@ -1,0 +1,13 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test class [[
+.main
+]] parse to ClassSelector("main")
+
+test class with hyphen [[
+.my-main
+]] parse to ClassSelector("my-main")
