@@ -22,4 +22,4 @@ context-free syntax
    * however this is not true when there are multiple consecutive
    * property declarations. 
    */
-  Declaration.PropertyDeclaration = <<ID> : <Exp> ;>
+  Declaration.PropertyDeclaration = <<PROPERTY> : <Exp> ;>
