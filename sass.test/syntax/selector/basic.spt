@@ -1,0 +1,13 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Declaration
+
+test just some selector [[
+this >is my select:or {
+  property: 0;
+}
+]] parse to BlockDeclaration(Arbitrary("this >is my select:or"), [
+  PropertyDeclaration("property", Int("0"))
+])

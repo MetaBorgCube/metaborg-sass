@@ -8,6 +8,8 @@ lexical syntax
   HEXCOLOUR      = "#" HEXGroup HEXGroup? 
   HEXGroup       = [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
   PROPERTY       = [\-\@]? [a-zA-Z0-9\-\_]+
+  IdSelector     = "#" ID
+  ClassSelector  = "." ID
   LengthUnit     = ID
   LengthUnit     = "%"
   
@@ -17,20 +19,18 @@ lexical syntax
   StringChar     = BackSlashChar 
   BackSlashChar  = "\\" 
   LAYOUT         = [\ \t\n\r] 
-  CommentChar    = [\*] 
-  LAYOUT         = "/*" InsideComment* "*/" 
-  InsideComment  = ~[\*] 
-  InsideComment  = CommentChar 
   LAYOUT         = "//" ~[\n\r]* NewLineEOF 
   NewLineEOF     = [\n\r] 
   NewLineEOF     = EOF 
   EOF            =  
 
+  ID = "null"   {reject}
+  ID = "true"   {reject}
+  ID = "false"  {reject}
+
 lexical restrictions
 
   // Ensure greedy matching for lexicals
-  
-  CommentChar   -/- [\/]
   INT           -/- [0-9]
   ID            -/- [a-zA-Z0-9\_\-]
   HEXCOLOUR     -/- [a-zA-Z0-9]
@@ -39,6 +39,7 @@ lexical restrictions
   // EOF may not be followed by any char
   
   EOF           -/- ~[]
+
   
   // Backslash chars in strings may not be followed by " 
   

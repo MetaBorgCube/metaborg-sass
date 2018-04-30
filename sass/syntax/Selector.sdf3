@@ -3,15 +3,19 @@ module Selector
 imports
   Common
   
+lexical syntax
+  SELECTOR = [0-9a-zA-Z\[\]\=\*\^\ \-\_\$\.\#\>\+\,\~\|\:\(\)]+
+
+lexical restrictions
+  
+  SELECTOR -/- [\{]
+
 context-free start-symbols
   
   Selector
   
 context-free syntax
 
-// From: https://www.w3schools.com/cssref/css_selectors.asp
+  Selector.Arbitrary = SELECTOR
 
-  Selector.IdSelector       = <#<ID>>
-  Selector.ClassSelector    = <.<ID>> 
-  Selector.ElementSelector  = ID
-  Selector.All              = "*"
+// From: https://www.w3schools.com/cssref/css_selectors.asp

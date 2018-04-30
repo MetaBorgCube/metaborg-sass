@@ -16,7 +16,7 @@ li {
     height: 1em;
 }
 
-"li a" {
+li a {
   font-size: 4px;
 }
   
@@ -24,3 +24,4 @@ li a, div a {
     text-color: purple;
 }
 ]]
+

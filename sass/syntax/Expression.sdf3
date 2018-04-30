@@ -21,27 +21,27 @@ context-free syntax
   Exp = <(<Exp>)> {bracket}
 
   // Arithmetic Operators
-  Exp.Add   = <<Exp> + <Exp>>
-  Exp.Sub   = <<Exp> - <Exp>>
-  Exp.Mult  = <<Exp> * <Exp>>
-  Exp.Div   = <<Exp> / <Exp>>
-  Exp.Mod   = <<Exp> % <Exp>>
+  Exp.Add   = <<Exp> + <Exp>> {left}
+  Exp.Sub   = <<Exp> - <Exp>> {left}
+  Exp.Mult  = <<Exp> * <Exp>> {left}
+  Exp.Div   = <<Exp> / <Exp>> {left}
+  Exp.Mod   = <<Exp> % <Exp>> {left}
   
   // Logical Operators
-  Exp.And = <<Exp> and <Exp>>
-  Exp.Or  = <<Exp> or <Exp>>
-  Exp.Not = <not <Exp>>
+  Exp.And = <<Exp> and <Exp>> {left}
+  Exp.Or  = <<Exp> or <Exp>> {left}
+  Exp.Not = <not <Exp>> {right}
   
   // Comparison
-  Exp.Eq    = <<Exp> == <Exp>>
-  Exp.Ineq  = <<Exp> != <Exp>>
-  Exp.Gt    = [[Exp] > [Exp]]
-  Exp.Gte   = [[Exp] >= [Exp]]
-  Exp.Lt    = [[Exp] < [Exp]]
-  Exp.Lte   = [[Exp] <= [Exp]]
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  Exp.InEq  = <<Exp> != <Exp>> {non-assoc}
+  Exp.Gt    = [[Exp] > [Exp]]  {non-assoc}
+  Exp.Gte   = [[Exp] >= [Exp]] {non-assoc}
+  Exp.Lt    = [[Exp] < [Exp]]  {non-assoc}
+  Exp.Lte   = [[Exp] <= [Exp]] {non-assoc}
   
   // String
-  String.Quoted     = STRING
+  String.Quoted = STRING
   
   Number.Int    = INT
   Number.Float  = FLOAT
@@ -58,7 +58,7 @@ context-free priorities
   {left:
       Exp.Add
       Exp.Sub
-  } > {left:
+  } > {non-assoc:
       Exp.Gt
       Exp.Gte
       Exp.Lt
@@ -66,11 +66,13 @@ context-free priorities
   } >
   {left:
       Exp.And
-      Exp.Or
   } > 
-  {left: 
+  {left:
+    Exp.Or
+  } >
+  {non-assoc: 
       Exp.Eq
-      Exp.Ineq
+      Exp.InEq
   } 
   
   

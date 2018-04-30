@@ -1,0 +1,17 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test li a [[
+li a
+]] parse to Arbitrary("li a")
+
+test li [[
+li
+]] parse to Arbitrary("li")
+
+test .main #id a * [[
+.main #id a *
+]] parse to Arbitrary(".main #id a *")

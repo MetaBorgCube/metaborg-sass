@@ -6,8 +6,8 @@ start symbol Selector
 
 test li [[
 li
-]] parse to DOMElement("li")
+]] parse to Arbitrary("li")
 
 test ul [[
 ul
-]] parse to DOMElement("ul")
+]] parse to Arbitrary("ul")

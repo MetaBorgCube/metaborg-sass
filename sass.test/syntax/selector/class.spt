@@ -6,8 +6,8 @@ start symbol Selector
 
 test class [[
 .main
-]] parse to ClassSelector("main")
+]] parse to Arbitrary("main")
 
 test class with hyphen [[
 .my-main
-]] parse to ClassSelector("my-main")
+]] parse to Arbitrary("my-main")
