@@ -2,21 +2,23 @@ module Expression
 
 imports
   Common
+  List
 
 context-free start-symbols
   Exp
+  Colour
   
 context-free syntax
 
   // Literals
   Exp           = Number
   Exp.String    = String
-  Exp.HexColour = HEXCOLOUR
-  Exp.Length    = <<Number> <LengthUnit>>
+  Exp           = Colour
+  Exp.Length    = <<Exp> <LengthUnit>> {prefer}
   Exp.True      = <true>
   Exp.False     = <false>
   Exp.Null      = <null>
-  Exp.Variable  = <$<ID>>
+  Exp.Var       = <$<ID>>
 
   Exp = <(<Exp>)> {bracket}
 
@@ -45,8 +47,17 @@ context-free syntax
   
   Number.Int    = INT
   Number.Float  = FLOAT
+  
+  Colour.HexShort = <#<HEXShorthand>>
+  Colour.Hex      = <#<HEX>>
+
+context-free restrictions
+  Colour -/- [a-zA-Z0-9]
 
 context-free priorities
+  {non-assoc:
+    Exp.Length
+  } >
   {left:
       Exp.Not
   } >
@@ -73,6 +84,6 @@ context-free priorities
   {non-assoc: 
       Exp.Eq
       Exp.InEq
-  } 
-  
-  
+  }
+
+

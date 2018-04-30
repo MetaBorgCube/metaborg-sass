@@ -1,0 +1,7 @@
+module desugar/desugar
+
+imports 
+  desugar/expression
+
+strategies
+  desugar-all = topdown(try(desugar))

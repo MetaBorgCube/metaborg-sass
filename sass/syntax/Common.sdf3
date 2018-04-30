@@ -5,8 +5,8 @@ lexical syntax
   ID             = [a-zA-Z] [a-zA-Z0-9\-\_]* 
   INT            = "-"? [0-9]+ 
   FLOAT          = INT "." [0-9]+
-  HEXCOLOUR      = "#" HEXGroup HEXGroup? 
-  HEXGroup       = [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
+  HEXShorthand   = [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
+  HEX            = HEXShorthand HEXShorthand
   PROPERTY       = [\-\@]? [a-zA-Z0-9\-\_]+
   IdSelector     = "#" ID
   ClassSelector  = "." ID
@@ -33,7 +33,6 @@ lexical restrictions
   // Ensure greedy matching for lexicals
   INT           -/- [0-9]
   ID            -/- [a-zA-Z0-9\_\-]
-  HEXCOLOUR     -/- [a-zA-Z0-9]
   PROPERTY      -/- [a-zA-Z0-9\-\_]
   
   // EOF may not be followed by any char
