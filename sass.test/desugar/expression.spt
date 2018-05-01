@@ -1,0 +1,67 @@
+module desugar-expression-test
+
+language sass
+
+start symbol Exp
+
+test desugar hex shorthand to full hex [[
+#1af
+]] run desugar to Hex("11aaff")
+
+test desugar addition [[
+1 + 1
+]] run desugar to BinExp(Add(), Int("1"), Int("1"))
+
+test desugar subtraction [[
+1 - 1
+]] run desugar to BinExp(Sub(), Int("1"), Int("1"))
+
+test desugar multiplication [[
+1 * 1
+]] run desugar to BinExp(Mul(), Int("1"), Int("1"))
+
+test desugar division [[
+1 / 1
+]] run desugar to BinExp(Div(), Int("1"), Int("1"))
+
+test desugar modulo [[
+1 % 1
+]] run desugar to BinExp(Mod(), Int("1"), Int("1"))
+
+test desugar or [[
+true or false
+]] run desugar to BinExp(Or(), True(), False())
+
+test desugar and [[
+true and false
+]] run desugar to BinExp(And(), True(), False())
+
+test desugar equal [[
+true == false
+]] run desugar to BinExp(Eq(), True(), False())
+
+test desugar not equal [[
+true != false
+]] run desugar to BinExp(InEq(), True(), False())
+
+test desugar greater than [[
+5 > 4
+]] run desugar to BinExp(Gt(), Int("5"), Int("4"))
+
+test desugar greater equal than [[
+5 >= 4
+]] run desugar to BinExp(Gte(), Int("5"), Int("4"))
+
+test desugar less than [[
+5 < 4
+]] run desugar to BinExp(Lt(), Int("5"), Int("4"))
+
+test desugar less equal than [[
+5 <= 4
+]] run desugar to BinExp(Lte(), Int("5"), Int("4"))
+
+test desugar not than [[
+not true
+]] run desugar to UnExp(Not(), True())
+
+

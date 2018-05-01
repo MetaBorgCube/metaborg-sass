@@ -47,7 +47,6 @@ rules
   desugar: Not(e) -> UnExp(Not(), e)
   
   desugar: HexShort(hex) -> Hex(<explode-string; 
-                                 mapconcat(\c -> (2, c)\; copy(id)); 
+                                 mapconcat(\c -> [c, c]\); 
                                  implode-string> hex)
-// 
   

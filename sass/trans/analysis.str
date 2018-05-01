@@ -4,14 +4,15 @@ imports
   
   nabl2shared
   nabl2runtime
-  
-  static-semantics
 
   pp
 
+  desugar/desugar
+  analysis/sass
+
 rules // Analysis
 
-  editor-analyze = nabl2-analyze(id)
+  editor-analyze = nabl2-analyze(desugar-all)
 
 rules // Debugging
   
