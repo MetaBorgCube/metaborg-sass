@@ -22,11 +22,11 @@ test parse float [[
 
 test parse hex colour single [[
 #04f
-]] parse to HexColour("#04f")
+]] parse to HexShort("#04f")
 
 test parse hex colour double [[
 #0a6D3f
-]] parse to HexColour("#0a6D3f")
+]] parse to Hex("#0a6D3f")
 
 test parse length with arbitrary unit [[
 5em
@@ -58,4 +58,4 @@ null
 
 test parse [[
 $hello
-]] parse to Variable("hello")
+]] parse to Var("hello")

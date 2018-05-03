@@ -1,7 +1,7 @@
 module desugar/desugar
 
 imports 
-  desugar/expression
+  desugar/-
 
 strategies
-  desugar-all = topdown(try(desugar))
+  desugar-all = bottomup(try(desugar-exp))

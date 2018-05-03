@@ -6,62 +6,64 @@ start symbol Exp
 
 test desugar hex shorthand to full hex [[
 #1af
-]] run desugar to Hex("11aaff")
+]] run desugar-exp to Hex("11aaff")
 
 test desugar addition [[
 1 + 1
-]] run desugar to BinExp(Add(), Int("1"), Int("1"))
+]] run desugar-exp to BinExp(Add(), Number("1"), Number("1"))
 
 test desugar subtraction [[
 1 - 1
-]] run desugar to BinExp(Sub(), Int("1"), Int("1"))
+]] run desugar-exp to BinExp(Sub(), Number("1"), Number("1"))
 
 test desugar multiplication [[
 1 * 1
-]] run desugar to BinExp(Mul(), Int("1"), Int("1"))
-
+]] run desugar-exp to BinExp(Mul(), Number("1"), Number("1"))
+//
 test desugar division [[
 1 / 1
-]] run desugar to BinExp(Div(), Int("1"), Int("1"))
+]] run desugar-exp to BinExp(Div(), Number("1"), Number("1"))
 
 test desugar modulo [[
 1 % 1
-]] run desugar to BinExp(Mod(), Int("1"), Int("1"))
+]] run desugar-exp to BinExp(Mod(), Number("1"), Number("1"))
+//
+test desugar complex expression [[
+1 % 1 == 0
+]] run desugar-exp to BinExp(Eq(), BinExp(Mod(), Number("1"), Number("1")), Number("0"))
 
 test desugar or [[
 true or false
-]] run desugar to BinExp(Or(), True(), False())
+]] run desugar-exp to BinExp(Or(), True(), False())
 
 test desugar and [[
 true and false
-]] run desugar to BinExp(And(), True(), False())
+]] run desugar-exp to BinExp(And(), True(), False())
 
 test desugar equal [[
 true == false
-]] run desugar to BinExp(Eq(), True(), False())
+]] run desugar-exp to BinExp(Eq(), True(), False())
 
 test desugar not equal [[
 true != false
-]] run desugar to BinExp(InEq(), True(), False())
+]] run desugar-exp to BinExp(InEq(), True(), False())
 
 test desugar greater than [[
 5 > 4
-]] run desugar to BinExp(Gt(), Int("5"), Int("4"))
+]] run desugar-exp to BinExp(Gt(), Int("5"), Int("4"))
 
 test desugar greater equal than [[
 5 >= 4
-]] run desugar to BinExp(Gte(), Int("5"), Int("4"))
+]] run desugar-exp to BinExp(Gte(), Int("5"), Int("4"))
 
 test desugar less than [[
 5 < 4
-]] run desugar to BinExp(Lt(), Int("5"), Int("4"))
+]] run desugar-exp to BinExp(Lt(), Int("5"), Int("4"))
 
 test desugar less equal than [[
 5 <= 4
-]] run desugar to BinExp(Lte(), Int("5"), Int("4"))
+]] run desugar-exp to BinExp(Lte(), Int("5"), Int("4"))
 
 test desugar not than [[
-not true
-]] run desugar to UnExp(Not(), True())
-
-
+not true 
+]] run desugar-exp to UnExp(Not(), True())
