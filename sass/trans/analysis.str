@@ -8,13 +8,15 @@ imports
   pp
 
   desugar/desugar
-  interpret/interpret
+  evaluate/evaluate
   analysis/sass
   
 
 rules // Analysis
+  
+  
 
-  editor-analyze = nabl2-analyze(evaluate-all)
+  editor-analyze = nabl2-analyze(desugar-all)
 
 rules // Debugging
   

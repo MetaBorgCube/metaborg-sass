@@ -25,43 +25,41 @@ signature
     
     BinExp  : BinOp * Exp * Exp -> Exp
     UnExp   : UnOp * Exp -> Exp
-    Bool    : Exp -> Exp
-    Number  : string -> Exp
+    Number  : String -> Exp
+
+strategies
+  desugar-exp = try(desugar-e)
     
 rules
   /*
    * Literals
    */
-  desugar-exp: Int(i) -> Number(i)
-  desugar-exp: Float(f) -> Number(f)
-  desugar-exp: True() -> Bool(True())
-  desugar-exp: False() -> Bool(False())
-  desugar-exp: HexShort(hex) -> Hex(<explode-string; 
+  desugar-e: Int(i) -> Number(i)
+  desugar-e: Float(f) -> Number(f)
+  desugar-e: HexShort(hex) -> Hex(<explode-string; 
                                  mapconcat(\c -> [c, c]\); 
                                  implode-string> hex)
 
   /*
    * Compound
    */
-  desugar-exp: Add(lhs, rhs)  -> BinExp(Add() , lhs, rhs)
-  desugar-exp: Sub(lhs, rhs)  -> BinExp(Sub() , lhs, rhs)
-  desugar-exp: Mult(lhs, rhs) -> BinExp(Mul() , lhs, rhs)
-  desugar-exp: Div(lhs, rhs)  -> BinExp(Div() , lhs, rhs)
-  desugar-exp: Mod(lhs, rhs)  -> BinExp(Mod() , lhs, rhs)
-  desugar-exp: And(lhs, rhs)  -> BinExp(And() , lhs, rhs)
-  desugar-exp: Or(lhs, rhs)   -> BinExp(Or()  , lhs, rhs)
-  desugar-exp: Eq(lhs, rhs)   -> BinExp(Eq()  , lhs, rhs)
-  desugar-exp: Gt(lhs, rhs)   -> BinExp(Gt()  , lhs, rhs)
-  desugar-exp: Lt(lhs, rhs)   -> BinExp(Lt()  , lhs, rhs)
-  desugar-exp: Not(e) -> UnExp(Not(), e)
+  desugar-e: Add(lhs, rhs)  -> BinExp(Add() , lhs, rhs)
+  desugar-e: Sub(lhs, rhs)  -> BinExp(Sub() , lhs, rhs)
+  desugar-e: Mult(lhs, rhs) -> BinExp(Mul() , lhs, rhs)
+  desugar-e: Div(lhs, rhs)  -> BinExp(Div() , lhs, rhs)
+  desugar-e: Mod(lhs, rhs)  -> BinExp(Mod() , lhs, rhs)
+  desugar-e: And(lhs, rhs)  -> BinExp(And() , lhs, rhs)
+  desugar-e: Or(lhs, rhs)   -> BinExp(Or()  , lhs, rhs)
+  desugar-e: Eq(lhs, rhs)   -> BinExp(Eq()  , lhs, rhs)
+  desugar-e: Gt(lhs, rhs)   -> BinExp(Gt()  , lhs, rhs)
+  desugar-e: Lt(lhs, rhs)   -> BinExp(Lt()  , lhs, rhs)
+  desugar-e: Not(e) -> UnExp(Not(), e)
   
   // Complex desugarings
-  desugar-exp: Gte(lhs, rhs)  -> BinExp(Or(), 
+  desugar-e: Gte(lhs, rhs)  -> BinExp(Or(), 
                                       BinExp(Gt() , lhs, rhs), 
                                       BinExp(Eq(), lhs, rhs))
-  desugar-exp: Lte(lhs, rhs)  -> BinExp(Or(), 
+  desugar-e: Lte(lhs, rhs)  -> BinExp(Or(), 
                                       BinExp(Lt() , lhs, rhs), 
                                       BinExp(Eq(), lhs, rhs))
-  desugar-exp: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq() , lhs, rhs))
-  
-  
+  desugar-e: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq() , lhs, rhs))

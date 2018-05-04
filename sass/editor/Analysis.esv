@@ -8,3 +8,7 @@ imports
 language
 
   observer : editor-analyze (constraint)
+
+menus
+  menu: "Run" (openeditor)
+    action: "Evaluate" = editor-evaluate (source)
