@@ -1,0 +1,25 @@
+module analysis/expression
+
+imports
+  src-gen/signatures/Expression-sig
+  analysis/sass
+  nabl2/api
+  
+rules
+  [[ String(_) ^ (_) ]].
+  [[ Int(_) ^ (_)]].
+  [[ Float(_) ^ (_) ]].
+  [[ Hex(_) ^ (_) ]].
+  [[ Length(v, _) ^ (s) ]] := 
+    [[ v ^ (s) ]].
+  [[ True()  ^ (_) ]].
+  [[ False() ^ (_) ]].
+  [[ Null()  ^ (_) ]].
+  [[ Var(id) ^ (s) ]] := 
+    Var{id} -> s,
+    Var{id} |-> _ | error $[Undefined variable [id]] @id.
+  
+  [[ BinExp(_, lhs, rhs) ^ (s) ]] :=
+    [[ lhs ^ (s) ]], [[ rhs ^ (s)]].  
+  [[ UnExp(_, e) ^ (s) ]] := [[ e ^ (s) ]].
+  

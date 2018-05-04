@@ -1,0 +1,21 @@
+module analysis/declaration
+
+imports
+  analysis/sass
+
+rules
+  /*
+   * Anything defined within the scope of this block is not available 
+   * outside it, modulo global variables.
+   */
+  [[ BlockDeclaration(_, decs) ^ (avS, nextS, globalS) ]] :=
+    nextS ---> avS,
+    
+    new blockS,
+    blockS ---> avS,
+    ScopeIterative[[ decs ^ (blockS, globalS) ]].
+
+  [[ PropertyDeclaration(_, e) ^ (avS, _, _) ]] :=
+    [[ e ^ (avS) ]].
+
+  // And variable declaration later...

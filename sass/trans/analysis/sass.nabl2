@@ -1,0 +1,33 @@
+module analysis/sass
+
+imports
+  analysis/-
+
+signature 
+  name resolution
+    namespaces 
+      Var
+      Function
+      Mixin
+
+rules
+  
+  init ^ (sS) := 
+    new sS.
+
+  [[ Script(items) ^ (sS) ]] := 
+    ScopeIterative[[ items ^ (sS, sS) ]].
+ 
+  /*
+   * Sequentially extend the scope, as each statement can define new 
+   * variables and functions that are not available before they are
+   * defined.
+   *
+   * (available_scope, global_scope)
+   */
+  ScopeIterative[[ [] ^ (_, _) ]].
+  ScopeIterative[[ [item | items] ^ (avS, globalS) ]] := 
+    new nextS,
+    [[ item ^ (avS, nextS, globalS) ]],
+    ScopeIterative[[ items ^ (nextS, globalS) ]].
+    
