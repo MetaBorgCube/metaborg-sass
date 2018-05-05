@@ -2,7 +2,11 @@ module syntax-expression-test
 
 language sass
 
-start symbol Exp
+fixture [[
+x {
+  y: [[...]];  
+}
+]]
 
 test parse int [[
 4
@@ -22,11 +26,11 @@ test parse float [[
 
 test parse hex colour single [[
 #04f
-]] parse to HexShort("#04f")
+]] parse to HexShort("04f")
 
 test parse hex colour double [[
 #0a6D3f
-]] parse to Hex("#0a6D3f")
+]] parse to Hex("0a6D3f")
 
 test parse length with arbitrary unit [[
 5em

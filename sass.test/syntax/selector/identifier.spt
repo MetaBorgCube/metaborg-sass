@@ -6,9 +6,9 @@ start symbol Selector
 
 test id [[
 #main
-]] parse to IdSelector("main")
+]] parse to Arbitrary("#main")
 
 
 test id with hyphen [[
 #my-main
-]] parse to IdSelector("my-main")
+]] parse to Arbitrary("#my-main")

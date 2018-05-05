@@ -4,4 +4,4 @@ imports
   desugar/-
 
 strategies
-  desugar-all = bottomup(try(desugar-exp))
+  desugar-all = bottomup(desugar-exp)

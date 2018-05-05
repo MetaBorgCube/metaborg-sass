@@ -7,8 +7,7 @@ imports
   
 rules
   [[ String(_) ^ (_) ]].
-  [[ Int(_) ^ (_)]].
-  [[ Float(_) ^ (_) ]].
+  [[ Number(_, _) ^ (_)]].
   [[ Hex(_) ^ (_) ]].
   [[ Length(v, _) ^ (s) ]] := 
     [[ v ^ (s) ]].
