@@ -66,13 +66,14 @@ test desugar greater equal than [[
 
 test desugar less than [[
 5 < 4
-]] run desugar-exp to BinExp(Lt(), Number("5", Int()), Number("4", Int()))
+]] run desugar-exp to UnExp(Not(), BinExp(Or(),
+                                    BinExp(Gt(), Number("5", Int()), Number("4", Int())),
+                                    BinExp(Eq(), Number("5", Int()), Number("4", Int()))
+                                   ))
 
 test desugar less equal than [[
 5 <= 4
-]] run desugar-exp to BinExp(Or(), 
-                        BinExp(Lt(), Number("5", Int()), Number("4", Int())),
-                        BinExp(Eq(), Number("5", Int()), Number("4", Int())))
+]] run desugar-exp to UnExp(Not(), BinExp(Gt(), Number("5", Int()), Number("4", Int())))
 
 test desugar not than [[
 not true 

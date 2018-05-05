@@ -58,14 +58,16 @@ rules
   desugar-e: Or(lhs, rhs)   -> BinExp(Or()  , lhs, rhs)
   desugar-e: Eq(lhs, rhs)   -> BinExp(Eq()  , lhs, rhs)
   desugar-e: Gt(lhs, rhs)   -> BinExp(Gt()  , lhs, rhs)
-  desugar-e: Lt(lhs, rhs)   -> BinExp(Lt()  , lhs, rhs)
   desugar-e: Not(e) -> UnExp(Not(), e)
   
   // Complex desugarings
   desugar-e: Gte(lhs, rhs)  -> BinExp(Or(), 
                                       BinExp(Gt() , lhs, rhs), 
                                       BinExp(Eq(), lhs, rhs))
-  desugar-e: Lte(lhs, rhs)  -> BinExp(Or(), 
-                                      BinExp(Lt() , lhs, rhs), 
-                                      BinExp(Eq(), lhs, rhs))
-  desugar-e: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq() , lhs, rhs))
+  desugar-e: Lt(lhs, rhs)   -> UnExp(Not(),
+                                      BinExp(Or(),
+                                        BinExp(Gt(), lhs, rhs),
+                                        BinExp(Eq(), lhs, rhs))
+                                    )
+  desugar-e: Lte(lhs, rhs)  -> UnExp(Not(), BinExp(Gt(), lhs, rhs))
+  desugar-e: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq(), lhs, rhs))
