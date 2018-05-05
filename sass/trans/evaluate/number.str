@@ -1,0 +1,14 @@
+module evaluate/number
+
+imports
+  desugar/expression
+  evaluate/expression
+
+strategies
+  intl-float = real-to-string; string-replace(|",", ".") 
+  trimmed-num = trim-chars(?'0' <+ ?'.') 
+  int-component = split-at-dot; Fst
+
+rules
+  format-num: Number(f, Int())   -> Number(<int-component> f, Int())
+  format-num: Number(f, Float()) -> Number(<trimmed-num> f, Float())

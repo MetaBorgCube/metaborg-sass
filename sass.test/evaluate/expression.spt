@@ -1,0 +1,90 @@
+module evaluate-expression-test
+
+language sass
+
+fixture [[
+x {
+  y: [[...]];
+}
+]]
+
+test addition of two numbers [[
+2.3 + 1
+]] run evaluate-all to Number("3.3", Float())
+
+test multiplication of two numbers [[
+2 * 3.3
+]] run evaluate-all to Number("6.6", Float())
+
+test division of two numbers [[
+4 / 2
+]] run evaluate-all to Number("2", Int())
+
+test modulo two numbers [[
+5 % 2
+]] run evaluate-all to Number("1", Int())
+
+test and false false [[
+false and false
+]] run evaluate-all to False()
+
+test and false true [[
+false and true
+]] run evaluate-all to False()
+
+test and true false [[
+true and false
+]] run evaluate-all to False()
+
+test and true true [[
+true and true
+]] run evaluate-all to True()
+
+test or false false [[
+false or false
+]] run evaluate-all to False()
+
+test or false true [[
+false or true
+]] run evaluate-all to True()
+
+test or true true [[
+true or false
+]] run evaluate-all to True()
+
+test or true true [[
+true or true
+]] run evaluate-all to True()
+
+test equal false true [[
+false == true
+]] run evaluate-all to False()
+
+test equal true true [[
+true == true
+]] run evaluate-all to True()
+
+test equal false false [[
+false == false
+]] run evaluate-all to True()
+
+test equal 1 1 [[
+1 == 1
+]] run evaluate-all to True()
+
+test equal hex [[
+#000 == #000
+]] run evaluate-all to True()
+
+test gt true [[
+5 > 4
+]] run evaluate-all to True()
+
+test gt false [[
+4 > 5
+]] run evaluate-all to False()
+
+test negation of true [[
+not true
+]] run evaluate-all to False()
+

@@ -1,0 +1,17 @@
+module evaluate-expression-test
+
+language sass
+
+fixture [[
+x {
+  y: [[...]];
+}
+]]
+
+test int addition [[
+5 * 10
+]] run evaluate-all to Number("50", Int())
+
+test float addition [[
+6.25 * 2
+]] run evaluate-all to Number("12.5", Float())

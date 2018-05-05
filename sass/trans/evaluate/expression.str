@@ -1,0 +1,44 @@
+module evaluate/expression
+
+imports
+  evaluate/evaluate
+  evaluate/number
+  src-gen/signatures/Expression-sig
+  desugar/-
+
+strategies
+  extract: (l, r) -> (<extr> l, <extr> r)
+  extract: Number(f, _) -> <string-to-real> f
+  
+  lub: (Number(_, Int()), Number(_, Int())) -> Int()
+  lub: (_, Number(_, Float())) -> Float()
+  lub: (Number(_, Float()), _) -> Float()
+  
+  
+  extr = try(extract)
+  evaluate-exp = try(evaluate-e)
+
+  apply-bin(f) = extr; f; intl-float
+
+rules
+
+  // Compound expressions
+  
+  // Math
+  evaluate-e: BinExp(Add(), lhs, rhs) -> Number(<apply-bin(addr)>  (lhs, rhs), <lub> (lhs, rhs))
+  evaluate-e: BinExp(Sub(), lhs, rhs) -> Number(<apply-bin(subtr)> (lhs, rhs), <lub> (lhs, rhs))
+  evaluate-e: BinExp(Mul(), lhs, rhs) -> Number(<apply-bin(mulr)>  (lhs, rhs), <lub> (lhs, rhs))
+  evaluate-e: BinExp(Div(), lhs, rhs) -> Number(<apply-bin(divr)>  (lhs, rhs), <lub> (lhs, rhs))
+  evaluate-e: BinExp(Mod(), lhs, rhs) -> Number(<apply-bin(modr)>  (lhs, rhs), <lub> (lhs, rhs))
+  
+  // Logic
+  evaluate-e: BinExp(And(), lhs, rhs) -> 
+    <?(True(), True()) < !True() + !False()> (lhs, rhs)
+  evaluate-e: BinExp(Or(), lhs, rhs) -> 
+    <?(True(), _) < !True() + (?(_, True()) < !True() + !False())> (lhs, rhs)
+  evaluate-e: UnExp(Not(), e) -> <?True() < !False() + !True()> e
+  
+  // Comparison
+  evaluate-e: BinExp(Eq(), lhs, rhs) -> 
+    <extr; ?(e, e) < !True() + !False()> (lhs, rhs)
+  evaluate-e: BinExp(Gt(), lhs, rhs) -> <extr; gtr < !True() + !False()> (lhs, rhs) 

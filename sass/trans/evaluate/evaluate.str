@@ -1,0 +1,16 @@
+module evaluate/evaluate
+
+imports
+  desugar/desugar
+  evaluate/expression
+  evaluate/number
+  
+strategies
+  evaluate-all = desugar-all; 
+                  bottomup(evaluate-exp);
+                  // Note: try usage: 
+                  // If there is nothing to format, this will fail. 
+                  // Doesn't matter if it does.
+                  try(alltd(try(format-num))) 
+
+
