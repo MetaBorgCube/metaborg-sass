@@ -40,5 +40,5 @@ rules
   
   // Comparison
   evaluate-e: BinExp(Eq(), lhs, rhs) -> 
-    <extr; ?(e, e) < !True() + !False()> (lhs, rhs)
+    <?(e, e) < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
   evaluate-e: BinExp(Gt(), lhs, rhs) -> <extr; gtr < !True() + !False()> (lhs, rhs) 

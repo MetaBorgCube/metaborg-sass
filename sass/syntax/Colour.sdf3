@@ -43,7 +43,7 @@ lexical syntax
   COLOUR-LITERAL = "darkmagenta" 
   COLOUR-LITERAL = "darkolivegreen" 
   COLOUR-LITERAL = "darkorange" 
-  COLOUR-LITERAL = "darkorchCOLOUR-LITERAL" 
+  COLOUR-LITERAL = "darkorchid" 
   COLOUR-LITERAL = "darkred" 
   COLOUR-LITERAL = "darksalmon" 
   COLOUR-LITERAL = "darkseagreen" 
