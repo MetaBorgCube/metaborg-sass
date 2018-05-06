@@ -19,7 +19,6 @@ signature
     Or    : BinOp
     Eq    : BinOp
     Gt    : BinOp
-    Lt    : BinOp
 
     Not   : UnOp
     

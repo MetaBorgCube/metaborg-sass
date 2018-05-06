@@ -6,19 +6,61 @@ imports
   nabl2/api
   
 rules
-  [[ String(_) ^ (_) ]].
-  [[ Number(_, _) ^ (_)]].
-  [[ Hex(_) ^ (_) ]].
-  [[ Length(v, _) ^ (s) ]] := 
-    [[ v ^ (s) ]].
-  [[ True()  ^ (_) ]].
-  [[ False() ^ (_) ]].
-  [[ Null()  ^ (_) ]].
-  [[ Var(id) ^ (s) ]] := 
+  /*
+   * Literals
+   */
+  [[ String(_) ^ (_) : StringT() ]].
+  [[ Number(_, _) ^ (_) : NumberT() ]].
+  [[ Hex(_) ^ (_) : ColourT() ]].
+  [[ ColourLabel(_) ^ (s) : ColourT() ]].
+  [[ Length(v, Unit(u, e)) ^ (s) : LengthT(u, e) ]] := 
+    [[ v ^ (s) : NumberT() ]].
+  [[ True()  ^ (_) : BoolT() ]].
+  [[ False() ^ (_) : BoolT() ]].
+  [[ Null()  ^ (_) : NullT() ]].
+  [[ Var(id) ^ (s) : ty ]] := 
     Var{id} -> s,
-    Var{id} |-> _ | error $[Undefined variable [id]] @id.
+    Var{id} |-> d | error $[Undefined variable [id]] @id,
+    d : ty.
   
-  [[ BinExp(_, lhs, rhs) ^ (s) ]] :=
-    [[ lhs ^ (s) ]], [[ rhs ^ (s)]].  
-  [[ UnExp(_, e) ^ (s) ]] := [[ e ^ (s) ]].
+  /*
+   * Math
+   */
+  // This doesn't work, only "length" expressions will work correctly,
+  // not numbers.
+  [[ BinExp(Add(), lhs, rhs) ^ (s) : LengthT(u, e) ]] :=
+    [[ lhs ^ (s) : LengthT(u, e)]], [[ rhs ^ (s) : LengthT(u, e) ]].
+  [[ BinExp(Add(), lhs, rhs) ^ (s) : NumberT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  
+  [[ BinExp(Sub(), lhs, rhs) ^ (s) : NumberT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  [[ BinExp(Sub(), lhs, rhs) ^ (s) : LengthT(u, e) ]] :=
+    [[ lhs ^ (s) : LengthT(u, e)]], [[ rhs ^ (s) : LengthT(u, e) ]].
+    
+  [[ BinExp(Mul(), lhs, rhs) ^ (s) : NumberT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  [[ BinExp(Div(), lhs, rhs) ^ (s) : NumberT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  [[ BinExp(Mod(), lhs, rhs) ^ (s) : NumberT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]]. 
+  
+  /*
+   * Logic 
+   */
+  [[ BinExp(And(), lhs, rhs) ^ (s) : BoolT() ]] :=
+    [[ lhs ^ (s) : BoolT() ]], [[ rhs ^ (s) : BoolT() ]].
+  [[ BinExp(Or(), lhs, rhs) ^ (s) : BoolT() ]] :=
+    [[ lhs ^ (s) : BoolT() ]], [[ rhs ^ (s) : BoolT() ]].
+  [[ UnExp(Not(), e) ^ (s) : BoolT() ]] := [[ e ^ (s) : BoolT() ]].
+  
+  /*
+   * Comparison
+   */
+  [[ BinExp(Eq(), lhs, rhs) ^ (s) : BoolT() ]] :=
+    [[ lhs ^ (s) : t ]], [[ rhs ^ (s) : t ]].
+  [[ BinExp(Gt(), lhs, rhs) ^ (s) : BoolT() ]] :=
+    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  
+  
   

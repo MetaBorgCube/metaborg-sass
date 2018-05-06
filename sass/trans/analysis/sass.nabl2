@@ -5,6 +5,14 @@ imports
 
 signature 
   name resolution
+    constructors
+      NumberT : -> Type
+      BoolT   : -> Type
+      StringT : -> Type
+      NullT   : -> Type
+      ColourT : -> Type
+      LengthT : String * Int -> Type // Unit * exponent
+    
     namespaces 
       Var
       Function

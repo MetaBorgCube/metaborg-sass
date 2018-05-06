@@ -16,6 +16,6 @@ rules
     ScopeIterative[[ decs ^ (blockS, globalS) ]].
 
   [[ PropertyDeclaration(_, e) ^ (avS, _, _) ]] :=
-    [[ e ^ (avS) ]].
+    [[ e ^ (avS) : _ ]].
 
   // And variable declaration later...
