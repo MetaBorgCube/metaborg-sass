@@ -5,8 +5,6 @@ lexical syntax
   ID             = [a-zA-Z] [a-zA-Z0-9\-\_]* 
   INT            = "-"? [0-9]+ 
   FLOAT          = INT "." [0-9]+
-  HEXShorthand   = [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
-  HEX            = HEXShorthand HEXShorthand
   PROPERTY       = [\-\@]? [a-zA-Z0-9\-\_]+
   IdSelector     = "#" ID
   ClassSelector  = "." ID
@@ -47,7 +45,6 @@ lexical restrictions
 context-free restrictions
 
   // Ensure greedy matching for comments
-  
   LAYOUT? -/- [\ \t\n\r]
   LAYOUT? -/- [\/].[\/]
   LAYOUT? -/- [\/].[\*]

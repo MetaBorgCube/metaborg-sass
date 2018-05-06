@@ -2,7 +2,7 @@ module Expression
 
 imports
   Common
-  List
+  Colour
 
 context-free start-symbols
   Exp
@@ -13,7 +13,7 @@ context-free syntax
   // Literals
   Exp           = Number
   Exp.String    = String
-  Exp           = Colour
+  Exp           = Colour {prefer}
   Exp.Length    = <<Exp> <LengthUnit>> {prefer}
   Exp.True      = <true>
   Exp.False     = <false>
@@ -50,6 +50,7 @@ context-free syntax
   
   Colour.HexShort = <#<HEXShorthand>>
   Colour.Hex      = <#<HEX>>
+  Colour.ColourLabel = COLOUR-LITERAL
 
 context-free restrictions
   Colour -/- [a-zA-Z0-9]
