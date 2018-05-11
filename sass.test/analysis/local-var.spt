@@ -1,0 +1,33 @@
+module test-name-resolution-local-var
+
+language sass
+
+test refer to script var [[
+[[$v]]: 5px;
+.main {
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test refer to var in same scope [[
+.main {
+  [[$v]]: 10px;
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test nested declarations var [[
+.main {
+  [[$t]]: green;
+  li {
+    color: [[$t]];
+  }
+}
+]] resolve #2 to #1
+
+test forward reference is not allowed [[
+.main {
+  width: $w;
+  $w: 50px;
+}
+]] >= 1 errors

@@ -1,0 +1,25 @@
+//$default-width: 50px + 100px;
+$d-w: purple;
+
+#my-thingy {
+    color: black;
+    visibility: false;
+}
+
+.my-thingies {
+    $default-width: 100px + 60px !global;
+    width: $default-width;
+}
+
+li {
+    height: 1em;
+}
+
+li a {
+  font-size: 4px;
+}
+  
+li a, div a {
+    text-color: purple;
+    width: $default-width;
+}
