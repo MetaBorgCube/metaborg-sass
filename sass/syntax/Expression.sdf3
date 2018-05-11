@@ -18,7 +18,9 @@ context-free syntax
   Exp.True      = <true>
   Exp.False     = <false>
   Exp.Null      = <null>
-  Exp.Var       = <$<ID>>
+  
+  
+  Exp.VarRef    = <<VAR>>
 
   Exp = <(<Exp>)> {bracket}
 

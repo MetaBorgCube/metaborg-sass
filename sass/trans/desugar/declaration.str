@@ -1,0 +1,17 @@
+module desugar/declaration
+
+imports 
+  src-gen/signatures/Declaration-sig
+  desugar/common
+
+signature
+  constructors
+    GlobalVarDeclaration : String * Exp * List(VariableDeclarationFlag) -> VariableDeclaration
+
+rules
+
+  desugar-dec: VarDeclaration(name, e, flags) -> 
+    GlobalVarDeclaration(<dehyphenize> name, e, flags) 
+      where <member> (Global(), flags)
+  desugar-dec: VarDeclaration(name, e, flags) -> 
+    VarDeclaration(<dehyphenize> name, e, flags)

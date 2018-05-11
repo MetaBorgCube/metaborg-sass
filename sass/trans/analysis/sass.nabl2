@@ -13,18 +13,38 @@ signature
       ColourT : -> Type
       LengthT : String * Int -> Type // Unit * exponent
     
-    namespaces 
+    namespaces
       Var
       Function
       Mixin
 
+name resolution
+  labels
+    G // Global scope
+    P
+
+  order 
+    D < G,
+    D < P,
+    G < P   
+
+  well-formedness
+    P* G*
+
 rules
   
-  init ^ (sS) := 
-    new sS.
+  init.
 
-  [[ Script(items) ^ (sS) ]] := 
-    ScopeIterative[[ items ^ (sS, sS) ]].
+  [[ Script(items) ]] :=
+    new sS, 
+    RootScopeIterative[[ items ^ (sS) ]].
+ 
+  RootScopeIterative[[ [] ^ (_) ]].
+  RootScopeIterative[[ [item | items] ^ (avS) ]] :=
+    new iS,   iS  -G-> avS,
+    new terminatingGS,
+    Root[[ item ^ (avS, iS, iS, terminatingGS) ]], 
+    RootScopeIterative[[ items ^ (terminatingGS) ]].
  
   /*
    * Sequentially extend the scope, as each statement can define new 
@@ -33,9 +53,14 @@ rules
    *
    * (available_scope, global_scope)
    */
-  ScopeIterative[[ [] ^ (_, _) ]].
-  ScopeIterative[[ [item | items] ^ (avS, globalS) ]] := 
-    new nextS,
-    [[ item ^ (avS, nextS, globalS) ]],
-    ScopeIterative[[ items ^ (nextS, globalS) ]].
+  ScopeIterative[[ [] ^ (_, nGS, finalGS) ]] :=
+    finalGS -G-> nGS.
+  ScopeIterative[[ [item | items] ^ (avS, globalS, finalGS) ]] := 
+    new nextS,  nextS ---> avS,
+    new nGS,    nGS -G-> globalS,
+    new itemTerminatingGlobalScope,
+    [[ item ^ (avS, nextS, nGS, itemTerminatingGlobalScope) ]], // Not sure about nGS in the last parameter
+    ScopeIterative[[ items ^ (nextS, nGS, finalGS) ]].
+  
+  [[ BlockComment(_) ^ (_, _, _) ]].
     

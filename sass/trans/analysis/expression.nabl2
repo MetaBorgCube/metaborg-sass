@@ -18,7 +18,7 @@ rules
   [[ True()  ^ (_) : BoolT() ]].
   [[ False() ^ (_) : BoolT() ]].
   [[ Null()  ^ (_) : NullT() ]].
-  [[ Var(id) ^ (s) : ty ]] := 
+  [[ VarRef(id) ^ (s) : ty ]] := 
     Var{id} -> s,
     Var{id} |-> d | error $[Undefined variable [id]] @id,
     d : ty.

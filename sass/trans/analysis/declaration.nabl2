@@ -8,14 +8,30 @@ rules
    * Anything defined within the scope of this block is not available 
    * outside it, modulo global variables.
    */
-  [[ BlockDeclaration(_, decs) ^ (avS, nextS, globalS) ]] :=
-    nextS ---> avS,
-    
-    new blockS,
-    blockS ---> avS,
-    ScopeIterative[[ decs ^ (blockS, globalS) ]].
+  Root[[ bd@BlockDeclaration(selec, decs) ^ (avS, nextS, extendingGS, fGS) ]] :=
+    [[ bd ^ (avS, nextS, extendingGS, fGS) ]].
+  [[ BlockDeclaration(_, decs) ^ (avS, extendingS, extendingGS, fGS) ]] :=
+    new blockS,           blockS  ---> extendingS,
+    new globalS,          globalS -G-> extendingGS,
+    new internalFinalGS,  fGS     -G-> internalFinalGS,
+    ScopeIterative[[ decs ^ (blockS, globalS, internalFinalGS) ]].
 
-  [[ PropertyDeclaration(_, e) ^ (avS, _, _) ]] :=
+  [[ PropertyDeclaration(_, e) ^ (avS, _, _, _) ]] :=
     [[ e ^ (avS) : _ ]].
 
-  // And variable declaration later...
+  Root[[ v@VarDeclaration(_, _, _) ^ (avS, nextS, extendingGS, fGS) ]] :=
+    [[ v ^ (avS, nextS, extendingGS, fGS) ]],
+    fGS -G-> extendingGS.
+  [[ VarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] := 
+    [[ e ^ (avS) : t ]],
+    Var{var} <- nextS,
+    Var{var} : t !.
+
+  Root[[ v@GlobalVarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] :=
+    [[ v ^ (avS, nextS, extendingGS, fGS) ]],
+    fGS -G-> extendingGS.  
+  [[ GlobalVarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] :=
+    [[ e ^ (avS) : t ]],
+    Var{var} <- extendingGS,
+    Var{var} : t !,
+    nextS -G-> extendingGS.

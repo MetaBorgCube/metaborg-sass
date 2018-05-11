@@ -2,6 +2,7 @@ module desugar/expression
 
 imports 
   src-gen/signatures/Expression-sig
+  desugar/common
 
 signature
   sorts
@@ -44,6 +45,8 @@ rules
                                  mapconcat(\c -> [c, c]\); 
                                  implode-string> hex)
   desugar-e: Length(l, u) -> Length(l, Unit(u, 1))
+  desugar-e: VarRef(name) -> VarRef(<dehyphenize> name)
+
 
   /*
    * Compound

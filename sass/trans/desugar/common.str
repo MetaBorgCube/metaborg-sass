@@ -1,0 +1,10 @@
+module desugar/common
+
+strategies
+
+  /**
+   * In Sass identifiers can use hyphens and underscores interchangably.
+   * For this reason all hyphens in references are replaced by 
+   * underscores in the desugaring step.
+   */
+  dehyphenize = string-replace(|"-", "_")

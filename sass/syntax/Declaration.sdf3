@@ -8,6 +8,7 @@ imports
 context-free start-symbols
   Declaration
   BlockDeclaration
+  VariableDeclarationFlag
 
 context-free syntax
 
@@ -15,8 +16,13 @@ context-free syntax
   <Selector> {
     <Declaration*>
   }>
+  VariableDeclaration.VarDeclaration = <<VAR> : <Exp> <VariableDeclarationFlag*>;>
+  
+  VariableDeclarationFlag.Global  = <!global>
+  VariableDeclarationFlag.Default = <!default>
   
   Declaration = BlockDeclaration
+  Declaration = VariableDeclaration
   /* 
    * TODO: Property declarations need not be followed by a ; per se, 
    * however this is not true when there are multiple consecutive
