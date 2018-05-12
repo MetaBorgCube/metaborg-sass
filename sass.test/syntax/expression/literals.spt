@@ -60,6 +60,6 @@ test parse null [[
 null
 ]] parse to Null()
 
-test parse [[
+test parse var [[
 $hello
-]] parse to Var("hello")
+]] parse to VarRef("$hello")

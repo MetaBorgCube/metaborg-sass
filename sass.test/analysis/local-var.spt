@@ -1,4 +1,4 @@
-module test-name-resolution-local-var
+module name-resolution-local-var-test
 
 language sass
 

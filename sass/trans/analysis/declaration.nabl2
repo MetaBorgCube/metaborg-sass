@@ -63,36 +63,3 @@ rules
     Var{var} <- globalS,
     Var{var} : t,
     ScopeIterative[[ succ ^ (s, globalS, fGS) ]].
-  
- 
-  
-  
-  
-  
-  
-  
-  // OLD
-  Root[[ bd@BlockDeclaration(selec, decs) ^ (avS, nextS, extendingGS, fGS) ]] :=
-    [[ bd ^ (avS, nextS, extendingGS, fGS) ]].
-  [[ BlockDeclaration(_, decs) ^ (avS, extendingS, extendingGS, fGS) ]] :=
-    new blockS,           blockS  ---> extendingS,
-    new globalS,          globalS -G-> extendingGS,
-    new internalFinalGS,  fGS     -G-> internalFinalGS,
-    ScopeIterative[[ decs ^ (blockS, globalS, internalFinalGS) ]].
-  
-  Root[[ v@VarDeclaration(_, _, _) ^ (avS, nextS, extendingGS, fGS) ]] :=
-    [[ v ^ (avS, nextS, extendingGS, fGS) ]],
-    fGS -G-> extendingGS.
-  [[ VarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] := 
-    [[ e ^ (avS) : t ]],
-    Var{var} <- nextS,
-    Var{var} : t !.
-
-  Root[[ v@GlobalVarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] :=
-    [[ v ^ (avS, nextS, extendingGS, fGS) ]],
-    fGS -G-> extendingGS.  
-  [[ GlobalVarDeclaration(var, e, flags) ^ (avS, nextS, extendingGS, fGS) ]] :=
-    [[ e ^ (avS) : t ]],
-    Var{var} <- extendingGS,
-    Var{var} : t !,
-    nextS -G-> extendingGS.

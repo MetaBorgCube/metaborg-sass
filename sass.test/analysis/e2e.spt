@@ -1,4 +1,4 @@
-module test-name-resolution-e2e
+module name-resolution-e2e-test
 
 language sass
 

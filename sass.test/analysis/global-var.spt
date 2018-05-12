@@ -1,4 +1,4 @@
-module test-name-resolution-global
+module name-resolution-global-test
 
 language sass
 

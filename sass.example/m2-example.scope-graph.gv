@@ -1,0 +1,304 @@
+digraph scope_graph {
+rankdir="BT";
+
+"#-blockS-5" [shape="ellipse"];
+
+"#-blockS-5" -> "#-finalBlockGS-4" [label="P"];
+
+
+
+{ rank="same";
+  
+  
+  
+  "Var{\"$default_width\" @:91}" [shape="box"];
+  "Var{\"$default_width\" @:91}" -> "#-blockS-5";
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-globalS-1" [shape="ellipse"];
+
+"#-globalS-1" -> "#-finalBlockGS-1" [label="G"];
+
+
+
+{ rank="same";
+  
+  "Var{\"$default_width\" @:23}" [shape="box"];
+  "#-globalS-1" -> "Var{\"$default_width\" @:23}";
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-s-1" [shape="ellipse"];
+
+"#-s-1" -> "#-blockS-2" [label="P"];
+
+
+"#-s-1" -> "#-globalS-1" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  "Var{\"$default_width\" @:46}" [shape="box"];
+  "Var{\"$default_width\" @:46}" -> "#-s-1";
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-finalBlockGS-1" [shape="ellipse"];
+
+"#-finalBlockGS-1" -> "#-nextS-1" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-finalBlockGS-2" [shape="ellipse"];
+
+"#-finalBlockGS-2" -> "#-globalS-1" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-finalBlockGS-3" [shape="ellipse"];
+
+"#-finalBlockGS-3" -> "#-finalBlockGS-2" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-blockS-3" [shape="ellipse"];
+
+"#-blockS-3" -> "#-finalBlockGS-2" [label="P"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-blockS-4" [shape="ellipse"];
+
+"#-blockS-4" -> "#-finalBlockGS-3" [label="P"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-sS-1" [shape="ellipse"];
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-nextS-1" [shape="ellipse"];
+
+"#-nextS-1" -> "#-sS-1" [label="G"];
+
+
+
+{ rank="same";
+  
+  "Var{\"$d_w\" @:1}" [shape="box"];
+  "#-nextS-1" -> "Var{\"$d_w\" @:1}";
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-finalBlockGS-4" [shape="ellipse"];
+
+"#-finalBlockGS-4" -> "#-finalBlockGS-3" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-blockS-1" [shape="ellipse"];
+
+"#-blockS-1" -> "#-nextS-1" [label="P"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-finalBlockGS-5" [shape="ellipse"];
+
+"#-finalBlockGS-5" -> "#-finalBlockGS-4" [label="G"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+"#-blockS-2" [shape="ellipse"];
+
+"#-blockS-2" -> "#-finalBlockGS-1" [label="P"];
+
+
+
+{ rank="same";
+  
+  
+  
+  
+  
+  
+}
+{
+  
+  
+}
+
+
+}
