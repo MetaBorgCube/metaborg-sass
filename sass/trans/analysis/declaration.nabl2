@@ -4,10 +4,74 @@ imports
   analysis/sass
 
 rules
+
   /*
    * Anything defined within the scope of this block is not available 
    * outside it, modulo global variables.
    */
+  RootScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS) ]] :=
+    new blockS, 
+    blockS ---> avS,
+    new finalBlockGS,
+    ScopeIterative[[ decs ^ (blockS, avS, finalBlockGS) ]],
+    RootScopeIterative[[ succ ^ (finalBlockGS) ]]. 
+  ScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS, gS, finalGS) ]] :=
+    new blockS,
+    blockS ---> avS,
+    new finalBlockGS,
+    ScopeIterative[[ decs ^ (blockS, gS, finalBlockGS) ]],
+    
+    new nextS,
+    nextS ---> avS,
+    nextS -G-> finalBlockGS,
+    ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
+
+  ScopeIterative[[ [PropertyDeclaration(_, e) | succ] ^ (avS, gS, fGS) ]] :=
+    [[ e ^ (avS) : _ ]],
+    ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
+
+  RootScopeIterative[[ [VarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
+    [[ e ^ (avS) : t ]],
+    new nextS, 
+    nextS -G-> avS,
+    
+    Var{var} <- nextS,
+    Var{var} : t,
+    RootScopeIterative[[ succ ^ (nextS) ]].
+  ScopeIterative[[ [VarDeclaration(var, e, _) | succ] ^ (avS, gS, fGS) ]] :=
+    new nextS, 
+    nextS ---> avS,
+    
+    [[ e ^ (avS) : t ]],
+    Var{var} <- nextS,
+    Var{var} : t,
+    ScopeIterative[[ succ ^ (nextS, gS, fGS) ]].
+  
+  RootScopeIterative[[ [GlobalVarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
+    [[ e ^ (avS) : t ]],
+    new s,
+    s -G-> avS,
+    Var{var} <- s,
+    Var{var} : t,
+    RootScopeIterative[[ succ ^ (s) ]].
+  ScopeIterative[[ [GlobalVarDeclaration(var, e, _) | succ] ^ (avS, gS, fGS) ]] :=
+    new globalS,  globalS -G-> gS,
+    new s,        s ---> avS,
+    s -G-> globalS,
+    
+    [[ e ^ (avS) : t ]],
+    Var{var} <- globalS,
+    Var{var} : t,
+    ScopeIterative[[ succ ^ (s, globalS, fGS) ]].
+  
+ 
+  
+  
+  
+  
+  
+  
+  // OLD
   Root[[ bd@BlockDeclaration(selec, decs) ^ (avS, nextS, extendingGS, fGS) ]] :=
     [[ bd ^ (avS, nextS, extendingGS, fGS) ]].
   [[ BlockDeclaration(_, decs) ^ (avS, extendingS, extendingGS, fGS) ]] :=
@@ -15,10 +79,7 @@ rules
     new globalS,          globalS -G-> extendingGS,
     new internalFinalGS,  fGS     -G-> internalFinalGS,
     ScopeIterative[[ decs ^ (blockS, globalS, internalFinalGS) ]].
-
-  [[ PropertyDeclaration(_, e) ^ (avS, _, _, _) ]] :=
-    [[ e ^ (avS) : _ ]].
-
+  
   Root[[ v@VarDeclaration(_, _, _) ^ (avS, nextS, extendingGS, fGS) ]] :=
     [[ v ^ (avS, nextS, extendingGS, fGS) ]],
     fGS -G-> extendingGS.

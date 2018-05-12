@@ -61,3 +61,30 @@ test global declared in nested block [[
   width: [[$w]];
 }
 ]] resolve #2 to #1
+
+test global declared in nested nested block [[
+.main {
+  $w: 500px;
+  li {
+    $w: 50px !global;
+    a {
+      [[$w]]: 105px !global;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test local does not shadow global in nested [[
+.main {
+  $w: 500px;
+  li {
+    [[$w]]: 50px !global;
+    a {
+      $w: 105px;
+      width: $w;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
