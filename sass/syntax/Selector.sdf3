@@ -2,20 +2,88 @@ module Selector
 
 imports
   Common
-  
-lexical syntax
-  SELECTOR = [0-9a-zA-Z\[\]\=\*\^\ \-\_\$\.\#\>\+\,\~\|\:\(\)]+
 
+template options
+  tokenize: "[]()"
+
+// From: https://www.w3schools.com/cssref/css_selectors.asp
+
+lexical syntax
+  /*
+   * In HTML5 attributes can use any char as long as there is no whitespace
+   * https://www.w3.org/TR/2014/REC-html5-20141028/dom.html
+   */
+  HTML-ATTR-CHAR = ~[\ \t\r\n]
+  HTML-ATTR = HTML-ATTR-CHAR+
+  
+  
+  /*
+   * I wasn't able to find a source for this, but all existing HTML tags
+   * only use these tokens.
+   * https://www.w3schools.com/tags/default.asp
+   */
+  HTML-TAG-CHAR = [a-zA-Z0-9\!\-] 
+  HTML-TAG = [a-zA-Z0-9\!] HTML-TAG-CHAR*
+  
 lexical restrictions
   
-  SELECTOR -/- [\{]
+  HTML-ATTR -/- ~[\ \t\r\n]
+  HTML-TAG -/-  [a-zA-Z0-9\!\-]
 
 context-free start-symbols
   
   Selector
-  
+
+/**
+ * Singular selectors
+ */
 context-free syntax
+  SelectorTerm.Id     = <#<HTML-ATTR>>
+  SelectorTerm.Class  = <.<HTML-ATTR>>
+  SelectorTerm.All    = "*"
+  SelectorTerm.Element = HTML-TAG
+  
+  SubSelector = SelectorTerm
 
-  Selector.Arbitrary = SELECTOR
+/**
+ * Composed selectors
+ */
+context-free syntax
+  CSelector.AllIn             = <<SubSelector> <SubSelector>> {right}
+  CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
+  CSelector.AllDirectlyAfter  = <<SubSelector> + <SubSelector>> {right}
+  CSelector.AllPrecededBy     = <<SubSelector> ~ <SubSelector>> {right}
+  
+  SubSelector = CSelector
 
-// From: https://www.w3schools.com/cssref/css_selectors.asp
+context-free priorities
+  { right:
+    CSelector.AllPrecededBy
+    CSelector.AllDirectlyAfter
+    CSelector.AllDirectChildren
+  } > { right:
+    CSelector.AllIn
+  }
+
+/**
+ * Attributes
+ */
+lexical syntax
+  ATTR-VAL = ~[]+
+
+context-free syntax
+  AttributeSelector.Attribute = <[<ATTR-VAL>]>
+   
+  SubSelector  = AttributeSelector
+  Selector     = AttributeSelector
+
+
+/**
+ * The top level selectors
+ */
+context-free syntax
+  Selector = SubSelector
+  Selector.Multiple = <<SubSelector>, <{SubSelector ","}+>>
+
+
+  

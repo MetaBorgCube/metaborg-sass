@@ -1,0 +1,18 @@
+module test-selector
+
+language sass
+
+
+test nested blocks [[
+.main {
+  background-color: gray;
+  a {
+    color: white;
+  }
+}
+]] parse to Script([BlockDeclaration(Class("main"), [
+              PropertyDeclaration("background-color", ColourLabel("gray")),
+              BlockDeclaration(Element("a"), [
+                  PropertyDeclaration("color", ColourLabel("white"))
+                ])
+            ])])
