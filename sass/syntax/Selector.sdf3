@@ -4,7 +4,7 @@ imports
   Common
 
 template options
-  tokenize: "[]()"
+  tokenize: "[]():"
 
 // From: https://www.w3schools.com/cssref/css_selectors.asp
 
@@ -77,6 +77,22 @@ context-free syntax
   SubSelector  = AttributeSelector
   Selector     = AttributeSelector
 
+/**
+ * Pseudo selectors
+ */
+lexical syntax
+  PSEUDO-ID = [a-zA-Z0-9\(\)]+
+
+lexical restrictions
+  PSEUDO-ID -/- [a-zA-Z0-9\)]
+
+context-free syntax 
+
+  PseudoSelector.PseudoClass    = <<SelectorTerm>:<PSEUDO-ID>>  {right}
+  PseudoSelector.PseudoElement  = <<SelectorTerm>::<PSEUDO-ID>> {right}
+  SubSelector = PseudoSelector
+  Selector    = PseudoSelector
+  
 
 /**
  * The top level selectors

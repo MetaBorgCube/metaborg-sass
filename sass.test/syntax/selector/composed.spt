@@ -41,6 +41,3 @@ p > h1
 test all links to pdfs [[
 a[href$=.pdf]
 ]] parse to AllIn(Element("a"), Attribute("href$=.pdf"))
-
-
-
