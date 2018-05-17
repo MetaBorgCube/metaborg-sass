@@ -31,3 +31,12 @@ test forward reference is not allowed [[
   $w: 50px;
 }
 ]] >= 1 errors
+
+test declarations in namespace [[
+.main {
+  [[$v]]: 5px;
+  font: {
+    size: [[$v]];
+  }
+}
+]] resolve #2 to #1

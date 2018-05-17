@@ -1,0 +1,26 @@
+module syntax-declaration-test
+
+language sass
+
+
+test font namespace [[
+font: {
+  size: 10em;
+}
+]] parse to NamespacePropertyDeclaration("font", [
+    PropertyDeclaration("size", Length(Int("10"), "em"))
+  ])
+
+test something [[
+.main-text {
+  font: {
+    size: 30em;
+    weight: green;
+  }
+}
+]] parse to BlockDeclaration(Class("main-text"), [
+    NamespacePropertyDeclaration("font", [
+      PropertyDeclaration("size", Length(Int("30"), "em")),
+      PropertyDeclaration("size", ColourLabel("green"))
+    ])
+  ])

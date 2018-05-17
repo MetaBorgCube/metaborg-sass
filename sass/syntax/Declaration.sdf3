@@ -23,9 +23,17 @@ context-free syntax
   
   Declaration = BlockDeclaration
   Declaration = VariableDeclaration
+  
   /* 
    * TODO: Property declarations need not be followed by a ; per se, 
    * however this is not true when there are multiple consecutive
    * property declarations. 
    */
   Declaration.PropertyDeclaration = <<PROPERTY> : <Exp> ;>
+  Declaration.NamespacePropertyDeclaration = <
+    <PROPERTY>: {
+      <Declaration*>
+    }>
+
+context-free priorities
+  Declaration.NamespacePropertyDeclaration > BlockDeclaration.BlockDeclaration
