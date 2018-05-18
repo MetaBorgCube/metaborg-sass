@@ -13,7 +13,7 @@ lexical syntax
    * In HTML5 attributes can use any char as long as there is no whitespace
    * https://www.w3.org/TR/2014/REC-html5-20141028/dom.html
    */
-  HTML-ATTR-CHAR = ~[\ \t\r\n]
+  HTML-ATTR-CHAR = ~[\ \t\r\n\#\.]
   HTML-ATTR = HTML-ATTR-CHAR+
   
   
@@ -27,7 +27,7 @@ lexical syntax
   
 lexical restrictions
   
-  HTML-ATTR -/- ~[\ \t\r\n]
+  HTML-ATTR -/- ~[\ \t\r\n\#\.]
   HTML-TAG -/-  [a-zA-Z0-9\!\-]
 
 context-free start-symbols
@@ -35,21 +35,31 @@ context-free start-symbols
   Selector
 
 /**
+ * Attribute selector
+ */
+context-free syntax
+  CIDSelector.Id     = <#<HTML-ATTR>>
+  CIDSelector.Class  = <.<HTML-ATTR>>
+
+/**
  * Singular selectors
  */
 context-free syntax
-  SelectorTerm.Id     = <#<HTML-ATTR>>
-  SelectorTerm.Class  = <.<HTML-ATTR>>
   SelectorTerm.All    = "*"
   SelectorTerm.Element = HTML-TAG
   
+  SelectorTerm = CIDSelector
   SubSelector = SelectorTerm
 
 /**
  * Composed selectors
  */
+syntax
+  CSelector-CF.And    = SubSelector-CF CIDSelector-CF {left}
+  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF {left}
+  CSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF SubSelector-CF {right}
+
 context-free syntax
-  CSelector.AllIn             = <<SubSelector> <SubSelector>> {right}
   CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
   CSelector.AllDirectlyAfter  = <<SubSelector> + <SubSelector>> {right}
   CSelector.AllPrecededBy     = <<SubSelector> ~ <SubSelector>> {right}
@@ -57,6 +67,9 @@ context-free syntax
   SubSelector = CSelector
 
 context-free priorities
+  { left:
+    CSelector.And
+  } >
   { right:
     CSelector.AllPrecededBy
     CSelector.AllDirectlyAfter

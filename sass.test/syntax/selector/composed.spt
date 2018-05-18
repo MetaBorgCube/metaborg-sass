@@ -40,4 +40,16 @@ p > h1
 
 test all links to pdfs [[
 a[href$=.pdf]
-]] parse to AllIn(Element("a"), Attribute("href$=.pdf"))
+]] parse to And(Element("a"), Attribute("href$=.pdf"))
+
+test all elements in divs that are disabled [[
+div [disabled]
+]] parse to AllIn(Element("div"), Attribute("disabled"))
+
+test link with class hello [[
+a.hello
+]] parse to And(Element("a"), Class("hello"))
+
+test link with class hello and id bye [[
+a.hello#bye
+]] parse to And(And(Element("a"), Class("hello")), Id("bye"))
