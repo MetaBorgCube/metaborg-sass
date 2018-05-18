@@ -34,12 +34,14 @@ context-free start-symbols
   
   Selector
 
+
 /**
  * Attribute selector
  */
 context-free syntax
   CIDSelector.Id     = <#<HTML-ATTR>>
   CIDSelector.Class  = <.<HTML-ATTR>>
+
 
 /**
  * Singular selectors
@@ -55,8 +57,8 @@ context-free syntax
  * Composed selectors
  */
 syntax
-  CSelector-CF.And    = SubSelector-CF CIDSelector-CF {left}
-  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF {left}
+  CSelector-CF.And    = SubSelector-CF CIDSelector-CF           {left}
+  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF     {left}
   CSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF SubSelector-CF {right}
 
 context-free syntax
@@ -78,6 +80,7 @@ context-free priorities
     CSelector.AllIn
   }
 
+
 /**
  * Attributes
  */
@@ -88,7 +91,8 @@ context-free syntax
   AttributeSelector.Attribute = <[<ATTR-VAL>]>
    
   SubSelector  = AttributeSelector
-  Selector     = AttributeSelector
+  Selector     = AttributeSelector {prefer}
+
 
 /**
  * Pseudo selectors
@@ -104,8 +108,7 @@ context-free syntax
   PseudoSelector.PseudoClass    = <<SelectorTerm>:<PSEUDO-ID>>  {right}
   PseudoSelector.PseudoElement  = <<SelectorTerm>::<PSEUDO-ID>> {right}
   SubSelector = PseudoSelector
-  Selector    = PseudoSelector
-  
+  Selector    = PseudoSelector {prefer}
 
 /**
  * The top level selectors

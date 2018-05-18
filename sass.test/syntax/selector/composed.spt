@@ -42,6 +42,10 @@ test all links to pdfs [[
 a[href$=.pdf]
 ]] parse to And(Element("a"), Attribute("href$=.pdf"))
 
+test all disabled elements [[
+[disabled]
+]] parse to Attribute("disabled")
+
 test all elements in divs that are disabled [[
 div [disabled]
 ]] parse to AllIn(Element("div"), Attribute("disabled"))
