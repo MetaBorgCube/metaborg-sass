@@ -53,33 +53,6 @@ context-free syntax
   SelectorTerm = CIDSelector
   SubSelector = SelectorTerm
 
-/**
- * Composed selectors
- */
-syntax
-  CSelector-CF.And    = SubSelector-CF CIDSelector-CF           {left}
-  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF     {left}
-  CSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF SubSelector-CF {right}
-
-context-free syntax
-  CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
-  CSelector.AllDirectlyAfter  = <<SubSelector> + <SubSelector>> {right}
-  CSelector.AllPrecededBy     = <<SubSelector> ~ <SubSelector>> {right}
-  
-  SubSelector = CSelector
-
-context-free priorities
-  { left:
-    CSelector.And
-  } >
-  { right:
-    CSelector.AllPrecededBy
-    CSelector.AllDirectlyAfter
-    CSelector.AllDirectChildren
-  } > { right:
-    CSelector.AllIn
-  }
-
 
 /**
  * Attributes
@@ -91,7 +64,34 @@ context-free syntax
   AttributeSelector.Attribute = <[<ATTR-VAL>]>
    
   SubSelector  = AttributeSelector
-  Selector     = AttributeSelector {prefer}
+  
+/**
+ * Composed selectors
+ */
+syntax
+  CSelector-CF.And    = SubSelector-CF CIDSelector-CF           {left}
+  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF     {left}
+  TopSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF TopSelector-CF {right}
+
+context-free syntax
+  CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
+  CSelector.AllDirectlyAfter  = <<SubSelector> + <SubSelector>> {right}
+  CSelector.AllPrecededBy     = <<SubSelector> ~ <SubSelector>> {right}
+  
+  SubSelector = CSelector
+  TopSelector = SubSelector {avoid}
+
+context-free priorities
+  { left:
+    CSelector.And
+  } >
+  { right:
+    CSelector.AllPrecededBy
+    CSelector.AllDirectlyAfter
+    CSelector.AllDirectChildren
+  } > { right:
+    TopSelector.AllIn
+  }
 
 
 /**
@@ -104,18 +104,20 @@ lexical restrictions
   PSEUDO-ID -/- [a-zA-Z0-9\)]
 
 context-free syntax 
-
-  PseudoSelector.PseudoClass    = <<SelectorTerm>:<PSEUDO-ID>>  {right}
+  PseudoSelector.PseudoClass    = <:<PSEUDO-ID>>
+  PseudoSelector.AppliedPseudoClass = <<SelectorTerm>:<PSEUDO-ID>>  {right}
   PseudoSelector.PseudoElement  = <<SelectorTerm>::<PSEUDO-ID>> {right}
   SubSelector = PseudoSelector
-  Selector    = PseudoSelector {prefer}
 
 /**
  * The top level selectors
  */
 context-free syntax
   Selector = SubSelector
-  Selector.Multiple = <<SubSelector>, <{SubSelector ","}+>>
+  Selector = AttributeSelector {prefer}
+  Selector = PseudoSelector {prefer}
+  Selector = TopSelector {avoid}
+  Selector.Multiple = <<TopSelector>, <{TopSelector ","}+>>
 
 
   
