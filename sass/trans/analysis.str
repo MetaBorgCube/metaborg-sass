@@ -12,9 +12,6 @@ imports
   analysis/-
 
 rules // Analysis
-  
-  
-
   editor-analyze = nabl2-analyze(desugar-all)
 
 rules // Debugging
