@@ -1,0 +1,27 @@
+module evaluate-varref-test
+
+language sass
+
+test simple var resolution [[
+$v: 15px;
+.m {
+  width: $v;
+}
+]] run evaluate-all-no-annos to Script([
+    VarDeclaration("$v", Length(Number("15", Int()), Unit("px", 1)), []),
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Length(Number("15", Int()), Unit("px", 1)))
+    ])
+  ]) 
+
+test var in binexp [[
+$v: true;
+.m {
+  width: $v and false;
+}
+]] run evaluate-all-no-annos to Script([
+    VarDeclaration("$v", True(), []),
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", False())
+    ])
+  ]) 

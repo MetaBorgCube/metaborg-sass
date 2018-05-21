@@ -15,4 +15,6 @@ strategies
                   // Doesn't matter if it does.
                   try(alltd(format-num)) 
 
-  evaluate = bottomup(evaluate-exp)
+  evaluate = bottomup(debug(!69); evaluate-exp)
+  evaluate-all-no-annos = evaluate-all; strip-annos
+  
