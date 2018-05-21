@@ -26,6 +26,7 @@ rules
     nextS -G-> finalBlockGS,
     ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
 
+
   // This is exactly the same for block declaration, probably needs some abstraction...
   ScopeIterative[[ [NamespacePropertyDeclaration(_, decs) | succ] ^ (avS, gS, fGS) ]] :=
     new nS,
@@ -37,40 +38,49 @@ rules
     nextS ---> avS,
     nextS -G-> finalNSGS,
     ScopeIterative[[ succ ^ (nextS, finalNSGS, fGS) ]].
+
+
   ScopeIterative[[ [PropertyDeclaration(_, e) | succ] ^ (avS, gS, fGS) ]] :=
     [[ e ^ (avS) : _ ]],
     ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
 
-  RootScopeIterative[[ [VarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
-    [[ e ^ (avS) : t ]],
+
+  RootScopeIterative[[ [vd@VarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
     new nextS, 
     nextS -G-> avS,
     
-    Var{var} <- nextS,
-    Var{var} : t,
+    DeclareVar[[ vd ^ (avS, nextS) ]],
     RootScopeIterative[[ succ ^ (nextS) ]].
-  ScopeIterative[[ [VarDeclaration(var, e, _) | succ] ^ (avS, gS, fGS) ]] :=
+  ScopeIterative[[ [vd@VarDeclaration(var, e, _) | succ] ^ (avS, gS, fGS) ]] :=
     new nextS, 
     nextS ---> avS,
     
-    [[ e ^ (avS) : t ]],
-    Var{var} <- nextS,
-    Var{var} : t,
+    DeclareVar[[ vd ^ (avS, nextS) ]],
     ScopeIterative[[ succ ^ (nextS, gS, fGS) ]].
-  
-  RootScopeIterative[[ [GlobalVarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
-    [[ e ^ (avS) : t ]],
+
+
+  RootScopeIterative[[ [gvd@GlobalVarDeclaration(var, e, f) | succ] ^ (avS) ]] :=
     new s,
     s -G-> avS,
-    Var{var} <- s,
-    Var{var} : t,
+    
+    DeclareVar[[ gvd ^ (avS, s) ]],
     RootScopeIterative[[ succ ^ (s) ]].
-  ScopeIterative[[ [GlobalVarDeclaration(var, e, _) | succ] ^ (avS, gS, fGS) ]] :=
+  ScopeIterative[[ [gvd@GlobalVarDeclaration(var, e, f) | succ] ^ (avS, gS, fGS) ]] :=
     new globalS,  globalS -G-> gS,
     new s,        s ---> avS,
     s -G-> globalS,
     
-    [[ e ^ (avS) : t ]],
-    Var{var} <- globalS,
-    Var{var} : t,
+    DeclareVar[[ gvd ^ (avS, globalS) ]],
     ScopeIterative[[ succ ^ (s, globalS, fGS) ]].
+
+
+  DeclareVar[[ VarDeclaration(var, e, _) ^ (avS, decS) ]] :=
+    [[ e ^ (avS) : t ]],
+    Var{var} <- decS,
+    Var{var} : t,
+    Var{var}.e := e.
+  DeclareVar[[ GlobalVarDeclaration(var, e, _) ^ (avS, gS) ]] :=
+    [[ e ^ (avS) : t ]],
+    Var{var} <- gS,
+    Var{var} : t,
+    Var{var}.e := e.

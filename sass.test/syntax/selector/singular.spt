@@ -1,0 +1,37 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test class [[
+.main
+]] parse to Class("main")
+
+test class with hyphen [[
+.my-main
+]] parse to Class("my-main")
+
+test id [[
+#main
+]] parse to Id("main")
+
+test id with hyphen [[
+#my-main
+]] parse to Id("my-main")
+
+test li [[
+li
+]] parse to Element("li")
+
+test ul [[
+ul
+]] parse to Element("ul")
+
+test all [[
+*
+]] parse to All()
+
+test element with hyphen [[
+with-hyph
+]] parse to Element("with-hyph")

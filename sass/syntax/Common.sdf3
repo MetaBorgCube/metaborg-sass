@@ -7,8 +7,6 @@ lexical syntax
   INT            = "-"? [0-9]+ 
   FLOAT          = INT "." [0-9]+
   PROPERTY       = [\-\@]? [a-zA-Z0-9\-\_]+
-  IdSelector     = "#" ID
-  ClassSelector  = "." ID
   LengthUnit     = ID
   LengthUnit     = "%"
   

@@ -22,9 +22,4 @@ rules // Debugging
     where
       filename := <guarantee-extension(|"desugared.aterm")> path ;
       text     := <desugar-all> selected
-  
-  editor-evaluate:
-    (selected, position, ast, path, project-path) -> (filename, text)
-      where 
-        filename := <guarantee-extension(|"css.aterm")> path;
-        text     := <evaluate-all> selected
+

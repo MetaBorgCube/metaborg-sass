@@ -1,6 +1,10 @@
 module evaluate/expression
 
 imports
+  nabl2/api
+  nabl2shared
+
+imports
   evaluate/evaluate
   evaluate/number
   src-gen/signatures/Expression-sig
@@ -21,6 +25,13 @@ strategies
   apply-bin(f) = extr; f; intl-float
 
 rules
+
+  evaluate-e: VarRef(x) -> e with
+    a       := <nabl2-get-ast-analysis>;
+    ref-occ := <nabl2-mk-occurrence(|"Var")> x;
+    (dec-occ, _) := <nabl2-get-resolved-name(|a)> ref-occ;
+    vExp    := <nabl2-get-property(|a, "e")> dec-occ;
+    e       := <evaluate> vExp
 
   // Compound expressions
   

@@ -1,0 +1,17 @@
+module Analysis
+
+imports
+
+  nabl2/Menus
+  nabl2/References
+
+language
+
+  observer : editor-analyze (constraint)
+
+menus
+  menu: "Evaluate" (openeditor)
+    action: "Evaluate Variables (.scss.aterm)" = evaluate-scss
+    
+  menu: "Transpile" (openeditor)
+    action: "Transpile (.css)" = fail
