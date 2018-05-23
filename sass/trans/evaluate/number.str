@@ -10,5 +10,4 @@ strategies
   int-component = split-at-dot; Fst
 
 rules
-  format-num: Number(f, Int())   -> Number(<int-component> f, Int())
-  format-num: Number(f, Float()) -> Number(<trimmed-num> f, Float())
+  format-num: Float(f) -> Float(<trimmed-num> f)

@@ -6,7 +6,8 @@ imports
 signature 
   name resolution
     constructors
-      NumberT : -> Type
+      IntT    : -> Type
+      FloatT  : -> Type
       BoolT   : -> Type
       StringT : -> Type
       NullT   : -> Type
@@ -31,9 +32,43 @@ name resolution
   well-formedness
     P* G*
 
+relations
+  /**
+   *  Whether two types can be added together.
+   *  e.g. String + bool is allowed, but bool + bool not
+   */
+  reflexive,  symmetric,      transitive      addable : Type * Type 
+  
+  /**
+   *  Whether a type is coerceable to another, e.g. number to string
+   */
+  reflexive,    anti-symmetric, transitive      coerce : Type * Type
+
 rules
   
-  init.
+  init :=
+    StringT() <addable! StringT(),
+    FloatT()  <addable! FloatT(),
+    IntT()    <addable! IntT(),
+//    LengthT(_, _) <addable! LengthT(_, _),
+    ColourT() <addable! ColourT(),
+    
+    IntT()    <addable! FloatT(),
+    StringT() <addable! IntT(),
+    StringT() <addable! NullT(),
+//    StringT() <addable! LengthT(_, _),
+    StringT() <addable! BoolT(),
+    StringT() <addable! ColourT(),
+    
+    FloatT()  <coerce! StringT(),
+    NullT()   <coerce! StringT(), // emptystring
+    BoolT()   <coerce! StringT(),
+    ColourT() <coerce! StringT(),
+    IntT()    <coerce! FloatT(),
+//    LengthT(_, _) <coerce! StringT(),
+    
+    NullT()   <coerce! BoolT(), // false
+    FloatT()  <coerce! BoolT(). // true
 
   [[ Script(items) ]] :=
     new sS, 

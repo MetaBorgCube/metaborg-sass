@@ -8,7 +8,6 @@ signature
   sorts
     BinOp
     UnOp
-    NumberType
   
   constructors
     Add   : BinOp
@@ -23,13 +22,8 @@ signature
 
     Not   : UnOp
     
-    
-    Int   : NumberType
-    Float : NumberType
-    
     BinExp  : BinOp * Exp * Exp -> Exp
     UnExp   : UnOp * Exp -> Exp
-    Number  : String * NumberType -> Exp
     Unit    : String * Int -> Exp
 
 strategies
@@ -39,8 +33,6 @@ rules
   /*
    * Literals
    */
-  desugar-e: Int(i)   -> Number(i, Int())
-  desugar-e: Float(f) -> Number(f, Float())
   desugar-e: HexShort(hex) -> Hex(<explode-string; 
                                  mapconcat(\c -> [c, c]\); 
                                  implode-string> hex)

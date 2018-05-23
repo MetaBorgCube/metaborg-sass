@@ -1,0 +1,27 @@
+module analysis/literals
+
+imports
+  src-gen/signatures/Expression-sig
+  analysis/sass
+  nabl2/api
+  
+rules
+  /*
+   * Literals
+   */
+  [[ String(_) ^ (_)      : StringT() ]].
+  [[ Int(_) ^ (_)         : IntT()    ]].
+  [[ Float(_) ^ (_)       : FloatT()  ]].
+  [[ Hex(_) ^ (_)         : ColourT() ]].
+  [[ ColourLabel(_) ^ (s) : ColourT() ]].
+  [[ Length(v, Unit(u, e)) ^ (s) : LengthT(u, e) ]] := 
+    [[ v ^ (s) : expT ]],
+    expT <coerce? FloatT().
+  [[ True()  ^ (_) : BoolT() ]].
+  [[ False() ^ (_) : BoolT() ]].
+  [[ Null()  ^ (_) : NullT() ]].
+  [[ VarRef(id) ^ (s) : ty ]] := 
+    Var{id} -> s,
+    Var{id} |-> d | error $[Undefined variable [id]] @id,
+    d : ty.
+  

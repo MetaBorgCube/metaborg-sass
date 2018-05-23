@@ -12,13 +12,9 @@ imports
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
-  extract: Number(f, _) -> <string-to-real> f
-  
-  lub: (Number(_, Int()), Number(_, Int())) -> Int()
-  lub: (_, Number(_, Float())) -> Float()
-  lub: (Number(_, Float()), _) -> Float()
-  
-  
+  extract: Int(f) -> <string-to-int> f
+  extract: Float(f) -> <string-to-real> f
+ 
   extr = try(extract)
   evaluate-exp = try(evaluate-e)
 
@@ -36,11 +32,11 @@ rules
   // Compound expressions
   
   // Math
-  evaluate-e: BinExp(Add(), lhs, rhs) -> Number(<apply-bin(addr)>  (lhs, rhs), <lub> (lhs, rhs))
-  evaluate-e: BinExp(Sub(), lhs, rhs) -> Number(<apply-bin(subtr)> (lhs, rhs), <lub> (lhs, rhs))
-  evaluate-e: BinExp(Mul(), lhs, rhs) -> Number(<apply-bin(mulr)>  (lhs, rhs), <lub> (lhs, rhs))
-  evaluate-e: BinExp(Div(), lhs, rhs) -> Number(<apply-bin(divr)>  (lhs, rhs), <lub> (lhs, rhs))
-  evaluate-e: BinExp(Mod(), lhs, rhs) -> Number(<apply-bin(modr)>  (lhs, rhs), <lub> (lhs, rhs))
+//  evaluate-e: BinExp(Add(), lhs, rhs) -> Number(<apply-bin(addr)>  (lhs, rhs), <lub> (lhs, rhs))
+//  evaluate-e: BinExp(Sub(), lhs, rhs) -> Number(<apply-bin(subtr)> (lhs, rhs), <lub> (lhs, rhs))
+//  evaluate-e: BinExp(Mul(), lhs, rhs) -> Number(<apply-bin(mulr)>  (lhs, rhs), <lub> (lhs, rhs))
+//  evaluate-e: BinExp(Div(), lhs, rhs) -> Number(<apply-bin(divr)>  (lhs, rhs), <lub> (lhs, rhs))
+//  evaluate-e: BinExp(Mod(), lhs, rhs) -> Number(<apply-bin(modr)>  (lhs, rhs), <lub> (lhs, rhs))
   
   // Logic
   evaluate-e: BinExp(And(), lhs, rhs) -> 
