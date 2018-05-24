@@ -16,6 +16,10 @@ test parse negative int [[
 -4
 ]] parse to Int("-4") 
 
+test parse 0 float [[
+0.5
+]] parse to Float("0.5")
+
 test parse negative float [[
 -10004.50
 ]] parse to Float("-10004.50")

@@ -1,0 +1,9 @@
+module pre-evaluate/pre-evaluate
+
+imports
+  desugar/desugar
+  pre-evaluate/-
+
+strategies
+  pre-evaluate = bottomup(pre-eval-length-exp) 
+  pre-evaluate-test = desugar-all; pre-evaluate

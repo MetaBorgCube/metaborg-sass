@@ -96,3 +96,6 @@ test negation of true [[
 not true
 ]] run evaluate-all to False()
 
+test addition of lengths [[
+1px + 0.5px
+]] run evaluate-all to Length(Float("1.5"), "px")

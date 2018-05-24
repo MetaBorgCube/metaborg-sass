@@ -14,7 +14,7 @@ rules
   [[ Float(_) ^ (_)       : FloatT()  ]].
   [[ Hex(_) ^ (_)         : ColourT() ]].
   [[ ColourLabel(_) ^ (s) : ColourT() ]].
-  [[ Length(v, u) ^ (s) : LengthT(u) ]] := 
+  [[ Length(v, u) ^ (s)   : LengthT(u) ]] := 
     [[ v ^ (s) : expT ]],
     expT <coerce? FloatT().
   [[ True()  ^ (_) : BoolT() ]].

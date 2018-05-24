@@ -1,0 +1,22 @@
+module pre-evaluate/length-exp
+
+imports
+  src-gen/signatures/Expression-sig
+  desugar/common
+  desugar/expression
+
+strategies
+  pre-eval-length-exp = try(pre-eval-length-e)
+
+rules
+  pre-eval-length-e: BinExp(Add(), Length(lE, u), Length(rE, u)) -> 
+    Length(BinExp(Add(), lE, rE), u)
+  pre-eval-length-e: BinExp(Sub(), Length(lE, u), Length(rE, u)) ->
+    Length(BinExp(Sub(), lE, rE), u)
+  
+  pre-eval-length-e: BinExp(Mul(), lhs, Length(rhs, u)) -> 
+    Length(BinExp(Mul(), lhs, rhs), u)
+    where <not(?Length(_, _))> lhs
+  pre-eval-length-e: BinExp(Mul(), Length(lhs, u), rhs) -> 
+    Length(BinExp(Mul(), lhs, rhs), u)
+    where <not(?Length(_, _))> rhs
