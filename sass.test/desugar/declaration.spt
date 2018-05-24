@@ -1,0 +1,44 @@
+module desugar-declaration-test
+
+language sass
+
+test one deep namespace property [[
+.main {
+  font: {
+    size: 15px;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("main"), [
+      PropertyDeclaration("font-size", Length(Int("15"), "px"))
+    ])
+  ])
+
+test two deep namespace property [[
+.m {
+  font: {
+    size: 15px;
+    weight: {
+      kind: blue;
+    }
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("font-size", Length(Int("15"), "px")),
+      PropertyDeclaration("font-weight-kind", ColourLabel("blue"))
+    ])
+  ])
+
+test namespace property declaration with exp [[
+.m {
+  font: 24px {
+    color: green;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("font", Length(Int("24"), "px")),
+      PropertyDeclaration("font-color", ColourLabel("green"))
+    ])
+  ])

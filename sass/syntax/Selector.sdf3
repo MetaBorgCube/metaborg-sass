@@ -103,10 +103,15 @@ lexical syntax
 lexical restrictions
   PSEUDO-ID -/- [a-zA-Z0-9\)]
 
-context-free syntax 
-  PseudoSelector.PseudoClass    = <:<PSEUDO-ID>>
-  PseudoSelector.AppliedPseudoClass = <<SelectorTerm>:<PSEUDO-ID>>  {right}
-  PseudoSelector.PseudoElement  = <<SelectorTerm>::<PSEUDO-ID>> {right}
+syntax
+  // Using kernel syntax because the only difference between
+  // pseudoclass selector and namespace properties is whitespace
+  // between the ":"  
+  PseudoSelector-CF.PseudoClass         = ":" PSEUDO-ID-LEX
+  PseudoSelector-CF.AppliedPseudoClass  = SelectorTerm-CF ":" PSEUDO-ID-LEX  {right}
+  PseudoSelector-CF.PseudoElement       = SelectorTerm-CF "::" PSEUDO-ID-LEX {right}
+
+context-free syntax   
   SubSelector = PseudoSelector
 
 /**

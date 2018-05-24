@@ -26,20 +26,6 @@ rules
     nextS -G-> finalBlockGS,
     ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
 
-
-  // This is exactly the same for block declaration, probably needs some abstraction...
-  ScopeIterative[[ [NamespacePropertyDeclaration(_, decs) | succ] ^ (avS, gS, fGS) ]] :=
-    new nS,
-    nS ---> avS,
-    new finalNSGS,
-    ScopeIterative[[ decs ^ (nS, gS, finalNSGS) ]],
-    
-    new nextS,
-    nextS ---> avS,
-    nextS -G-> finalNSGS,
-    ScopeIterative[[ succ ^ (nextS, finalNSGS, fGS) ]].
-
-
   ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
     [[ e ^ (avS) : eT ]],
     cssET is typeForCSSExport of eT | error $[Expression of type [eT] cannot be assigned to [prop].] @e,

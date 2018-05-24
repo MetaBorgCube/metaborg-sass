@@ -15,3 +15,19 @@ rules
       where <member> (Global(), flags)
   desugar-dec: VarDeclaration(name, e, flags) -> 
     VarDeclaration(<dehyphenize> name, e, flags)
+  
+  desugar-namespace-prop: NamespacePropertyDeclaration(prop, decs) -> 
+    <cart(id); map(merge-namespace-prop); flatten-list> ([prop], decs) 
+  desugar-namespace-prop: NamespacePropertyDeclarationExp(prop, e, decs) ->
+    [PropertyDeclaration(prop, e) | propertyDeclarations] where
+    propertyDeclarations := 
+      <cart(id); map(merge-namespace-prop); flatten-list> ([prop], decs)
+    
+     
+  merge-namespace-prop: (propName, PropertyDeclaration(prop, e)) -> 
+    PropertyDeclaration(<concat-strings> [propName, "-", prop], e)
+  merge-namespace-prop: (propName, NamespacePropertyDeclaration(prop, decs)) ->
+    NamespacePropertyDeclaration(<concat-strings> [propName, "-", prop], decs)
+  merge-namespace-prop: (propName, NamespacePropertyDeclarationExp(prop, e, decs)) ->
+    NamespacePropertyDeclarationExp(<concat-strings> [propName, "-", prop], e, decs)
+    

@@ -10,6 +10,9 @@ context-free start-symbols
   BlockDeclaration
   VariableDeclarationFlag
 
+template options
+  tokenize: ";()[]"
+
 context-free syntax
 
   BlockDeclaration.BlockDeclaration = <
@@ -29,11 +32,22 @@ context-free syntax
    * however this is not true when there are multiple consecutive
    * property declarations. 
    */
-  Declaration.PropertyDeclaration = <<PROPERTY> : <Exp> ;>
-  Declaration.NamespacePropertyDeclaration = <
+  PropertyDeclaration.PropertyDeclaration = <<PROPERTY> : <Exp>;> 
+  PropertyDeclaration.NamespacePropertyDeclaration = <
     <PROPERTY>: {
-      <Declaration*>
+      <PropertyDeclaration*>
     }>
 
+  Declaration = PropertyDeclaration
+
+syntax
+  // Using kernel syntax, since layout matters to differentiate between 
+  // namespaces and pseudoclasses
+  PropertyDeclaration-CF.NamespacePropertyDeclarationExp = 
+  PROPERTY-LEX ":" LAYOUT-CF Exp-CF LAYOUT?-CF "{"
+    LAYOUT?-CF PropertyDeclaration-CF* LAYOUT?-CF
+  "}"
+  
+
 context-free priorities
-  Declaration.NamespacePropertyDeclaration > BlockDeclaration.BlockDeclaration
+  PropertyDeclaration.NamespacePropertyDeclaration > BlockDeclaration.BlockDeclaration
