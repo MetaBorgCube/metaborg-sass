@@ -10,19 +10,19 @@ x {
 
 test addition of two numbers [[
 2.3 + 1
-]] run evaluate-all to Number("3.3", Float())
+]] run evaluate-all to Float("3.3")
 
 test multiplication of two numbers [[
 2 * 3.3
-]] run evaluate-all to Number("6.6", Float())
+]] run evaluate-all to Float("6.6")
 
 test division of two numbers [[
 4 / 2
-]] run evaluate-all to Number("2", Int())
+]] run evaluate-all to Float("2")
 
 test modulo two numbers [[
 5 % 2
-]] run evaluate-all to Number("1", Int())
+]] run evaluate-all to Int("1")
 
 test and false false [[
 false and false
@@ -70,6 +70,14 @@ false == false
 
 test equal 1 1 [[
 1 == 1
+]] run evaluate-all to True()
+
+test not equal 2 1.5 [[
+2 == 1.5
+]] run evaluate-all to False()
+
+test inequal 2 1.5 [[
+2 != 1.5
 ]] run evaluate-all to True()
 
 test equal hex [[

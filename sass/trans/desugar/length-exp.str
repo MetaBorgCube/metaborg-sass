@@ -1,0 +1,16 @@
+module desugar/length-exp
+
+imports
+  src-gen/signatures/Expression-sig
+  desugar/common
+  desugar/expression
+
+rules
+  desugar-length-e: BinExp(Add(), Length(lE, u), Length(rE, u)) -> 
+    Length(BinExp(Add(), lE, rE), u)
+  desugar-length-e: BinExp(Sub(), Length(lE, u), Length(rE, u)) ->
+    Length(BinExp(Sub(), lE, rE), u)
+  desugar-length-e: BinExp(Mul(), lE, Length(rE, u)) -> 
+    Length(BinExp(Mul(), lE, rE), u)
+  desugar-length-e: BinExp(Mul(), Length(lE, u), rE) -> 
+    Length(BinExp(Mul(), lE, rE), u)

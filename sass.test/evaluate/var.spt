@@ -8,9 +8,9 @@ $v: 15px;
   width: $v;
 }
 ]] run evaluate-all-no-annos to Script([
-    VarDeclaration("$v", Length(Number("15", Int()), Unit("px", 1)), []),
+    VarDeclaration("$v", Length(Int("15"), "px"), []),
     BlockDeclaration(Class("m"), [
-      PropertyDeclaration("width", Length(Number("15", Int()), Unit("px", 1)))
+      PropertyDeclaration("width", Length(Int("15"), "px"))
     ])
   ]) 
 

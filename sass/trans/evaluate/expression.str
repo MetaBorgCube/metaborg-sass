@@ -9,34 +9,60 @@ imports
   evaluate/number
   src-gen/signatures/Expression-sig
   desugar/-
+  analysis/sass
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
-  extract: Int(f) -> <string-to-int> f
+  extract: Length(n, _) -> <extr> n
+  extract: Int(f) -> <string-to-real> f
   extract: Float(f) -> <string-to-real> f
- 
+  
   extr = try(extract)
   evaluate-exp = try(evaluate-e)
 
   apply-bin(f) = extr; f; intl-float
 
+  wrap-num: (IntT(),   v) -> Int(v)
+  wrap-num: (FloatT(), v) -> Float(v)
+  wrap-num: (LengthT(u), v) -> Length(v, u)
+  
 rules
 
   evaluate-e: VarRef(x) -> e with
     a       := <nabl2-get-ast-analysis>;
     ref-occ := <nabl2-mk-occurrence(|"Var")> x;
-    (dec-occ, _) := <nabl2-get-resolved-name(|a)> ref-occ;
+    dec-occ := <nabl2-get-resolved-name(|a); Fst> ref-occ;
     vExp    := <nabl2-get-property(|a, "e")> dec-occ;
     e       := <evaluate> vExp
 
   // Compound expressions
   
   // Math
-//  evaluate-e: BinExp(Add(), lhs, rhs) -> Number(<apply-bin(addr)>  (lhs, rhs), <lub> (lhs, rhs))
-//  evaluate-e: BinExp(Sub(), lhs, rhs) -> Number(<apply-bin(subtr)> (lhs, rhs), <lub> (lhs, rhs))
-//  evaluate-e: BinExp(Mul(), lhs, rhs) -> Number(<apply-bin(mulr)>  (lhs, rhs), <lub> (lhs, rhs))
-//  evaluate-e: BinExp(Div(), lhs, rhs) -> Number(<apply-bin(divr)>  (lhs, rhs), <lub> (lhs, rhs))
-//  evaluate-e: BinExp(Mod(), lhs, rhs) -> Number(<apply-bin(modr)>  (lhs, rhs), <lub> (lhs, rhs))
+  evaluate-e: e@BinExp(Add(), lhs, rhs) -> r with 
+    a   := <nabl2-get-ast-analysis>;
+    eT  := <nabl2-get-ast-type(|a)> e;
+    v   := <apply-bin(addr)> (lhs, rhs);
+    r   := <wrap-num> (eT, v)
+  evaluate-e: e@BinExp(Sub(), lhs, rhs) -> r with 
+    a   := <nabl2-get-ast-analysis>;
+    eT  := <nabl2-get-ast-type(|a)> e;
+    v   := <apply-bin(subtr)> (lhs, rhs);
+    r   := <wrap-num> (eT, v)
+  evaluate-e: e@BinExp(Mul(), lhs, rhs) -> r with 
+    a   := <nabl2-get-ast-analysis>;
+    eT  := <nabl2-get-ast-type(|a)> e;
+    v   := <apply-bin(mulr)> (lhs, rhs);
+    r   := <wrap-num> (eT, v)
+  evaluate-e: e@BinExp(Div(), lhs, rhs) -> r with 
+    a   := <nabl2-get-ast-analysis>;
+    eT  := <nabl2-get-ast-type(|a)> e;
+    v   := <apply-bin(divr)> (lhs, rhs);
+    r   := <wrap-num> (eT, v)
+  evaluate-e: e@BinExp(Mod(), lhs, rhs) -> r with 
+    a   := <nabl2-get-ast-analysis>;
+    eT  := <nabl2-get-ast-type(|a)> e;
+    v   := <apply-bin(modr)> (lhs, rhs);
+    r   := <wrap-num> (eT, v)
   
   // Logic
   evaluate-e: BinExp(And(), lhs, rhs) -> 

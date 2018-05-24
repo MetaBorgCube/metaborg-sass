@@ -10,8 +10,8 @@ x {
 
 test int addition [[
 5 * 10
-]] run evaluate-all to Number("50", Int())
+]] run evaluate-all to Int("50")
 
 test float addition [[
 6.25 * 2
-]] run evaluate-all to Number("12.5", Float())
+]] run evaluate-all to Float("12.5")

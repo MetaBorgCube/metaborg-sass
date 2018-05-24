@@ -1,6 +1,7 @@
 module evaluate/number
 
 imports
+  src-gen/signatures/Expression-sig
   desugar/expression
   evaluate/expression
 
@@ -11,3 +12,4 @@ strategies
 
 rules
   format-num: Float(f) -> Float(<trimmed-num> f)
+  format-num: Int(f)   -> Int(<int-component> f)
