@@ -11,16 +11,15 @@ imports
 rules
   [[ BinExp(Add(), lhs, rhs) ^ (s) : eTy ]] :=
     [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    lTy <addable? rTy | error $[Expressions of type [lTy] and [rTy] cannot be added together.],
-    eTy is coerce.lub of (lTy, rTy).
+    eTy is typeForAddition of (lTy, rTy) | error $[Expressions of type [lTy] and [rTy] cannot be added.].
   
-//  [[ BinExp(Sub(), lhs, rhs) ^ (s) : NumberT() ]] :=
-//    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
-//  [[ BinExp(Sub(), lhs, rhs) ^ (s) : LengthT(u, e) ]] :=
-//    [[ lhs ^ (s) : LengthT(u, e)]], [[ rhs ^ (s) : LengthT(u, e) ]].
-//    
-//  [[ BinExp(Mul(), lhs, rhs) ^ (s) : NumberT() ]] :=
-//    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
+  [[ BinExp(Sub(), lhs, rhs) ^ (s) : eTy ]] :=
+    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+    eTy is typeForSubtraction of (lTy, rTy) | error $[Expressions of type [lTy] and [rTy] cannot be subtracted.].
+  
+  [[ BinExp(Mul(), lhs, rhs) ^ (s) : eTy ]] :=
+    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+    eTy is typeForMultiplication of (lTy, rTy) | error $[Expressions of type [lTy] and [rTy] cannot be subtracted.].
 //  [[ BinExp(Div(), lhs, rhs) ^ (s) : NumberT() ]] :=
 //    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]].
 //  [[ BinExp(Mod(), lhs, rhs) ^ (s) : NumberT() ]] :=

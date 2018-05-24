@@ -12,12 +12,77 @@ signature
       StringT : -> Type
       NullT   : -> Type
       ColourT : -> Type
-      LengthT : String * Int -> Type // Unit * exponent
-    
+      LengthT : String -> Type // Unit
+      BinExpT : Type * Type -> Type
+      
+      CSSAble : -> CSSAble
+      
+      IntTC    : -> CSSType
+      FloatTC  : -> CSSType
+      BoolTC   : -> CSSType
+      StringTC : -> CSSType
+      ColourTC : -> CSSType
+      LengthTC : -> CSSType
+      
     namespaces
       Var
       Function
       Mixin
+   
+  functions
+    typeForAddition: (Type * Type) -> Type {
+      (IntT(), IntT())          -> IntT(),
+      (FloatT(), FloatT())      -> FloatT(),
+      (StringT(), StringT())    -> StringT(),
+      (ColourT(), ColourT())    -> ColourT(),
+      (LengthT(u), LengthT(u))  -> LengthT(u),
+      
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+      
+      (_, StringT()) -> StringT(),
+      (StringT(), _) -> StringT()
+    }
+    
+    typeForSubtraction: (Type * Type) -> Type {
+      (IntT(), IntT())          -> IntT(),
+      (FloatT(), FloatT())      -> FloatT(),
+      (ColourT(), ColourT())    -> ColourT(),
+      (LengthT(u), LengthT(u))  -> LengthT(u),
+      
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT()
+    }
+    
+    typeForMultiplication: (Type * Type) -> Type {
+      (IntT(), IntT())          -> IntT(),
+      (FloatT(), FloatT())      -> FloatT(),
+      (ColourT(), ColourT())    -> ColourT(),
+      
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+      (IntT(), LengthT(u))    -> LengthT(u),
+      (FloatT(), LengthT(u))  -> LengthT(u),
+      (LengthT(u), IntT())    -> LengthT(u),
+      (LengthT(u), FloatT())  -> LengthT(u),
+      (IntT(), ColourT())     -> ColourT(),
+      (FloatT(), ColourT())   -> ColourT(),
+      (ColourT(), IntT())     -> ColourT(),
+      (ColourT(), FloatT())   -> ColourT(),
+      
+      (LengthT(u), LengthT(u))  -> BinExpT(LengthT(u), LengthT(u)),
+      (BinExpT(x, y), z)        -> BinExpT(BinExpT(x, y), z),
+      (z, BinExpT(x, y))        -> BinExpT(z, BinExpT(x, y))
+    }
+    
+    typeForCSSExport: Type -> CSSType {
+      IntT()      -> IntTC(),
+      FloatT()    -> FloatTC(),
+      BoolT()     -> BoolTC(),
+      StringT()   -> StringTC(),
+      ColourT()   -> ColourTC(),
+      LengthT(_)  -> LengthTC()
+    }
 
 name resolution
   labels
@@ -32,44 +97,37 @@ name resolution
   well-formedness
     P* G*
 
-relations
-  /**
-   *  Whether two types can be added together.
-   *  e.g. String + bool is allowed, but bool + bool not
-   */
-  reflexive,  symmetric,      transitive      addable : Type * Type 
+relations 
   
   /**
    *  Whether a type is coerceable to another, e.g. number to string
    */
   reflexive,    anti-symmetric, transitive      coerce : Type * Type
 
+  /**
+   * Whether a type can be emited to CSS
+   */
+  reflexive,    symmetric,      transitive      cssable: Type * CSSAble
+   
 rules
   
   init :=
-    StringT() <addable! StringT(),
-    FloatT()  <addable! FloatT(),
-    IntT()    <addable! IntT(),
-//    LengthT(_, _) <addable! LengthT(_, _),
-    ColourT() <addable! ColourT(),
-    
-    IntT()    <addable! FloatT(),
-    StringT() <addable! IntT(),
-    StringT() <addable! NullT(),
-//    StringT() <addable! LengthT(_, _),
-    StringT() <addable! BoolT(),
-    StringT() <addable! ColourT(),
+    FloatTC()  <cssable! CSSAble(),
+    IntTC()    <cssable! CSSAble(),
+    BoolTC()   <cssable! CSSAble(),
+    ColourTC() <cssable! CSSAble(),
+    StringTC() <cssable! CSSAble(),
+    LengthTC() <cssable! CSSAble(),
     
     FloatT()  <coerce! StringT(),
     NullT()   <coerce! StringT(), // emptystring
     BoolT()   <coerce! StringT(),
     ColourT() <coerce! StringT(),
     IntT()    <coerce! FloatT(),
-//    LengthT(_, _) <coerce! StringT(),
     
     NullT()   <coerce! BoolT(), // false
     FloatT()  <coerce! BoolT(). // true
-
+  
   [[ Script(items) ]] :=
     new sS, 
     RootScopeIterative[[ items ^ (sS) ]].

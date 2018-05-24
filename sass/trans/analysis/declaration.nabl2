@@ -40,8 +40,10 @@ rules
     ScopeIterative[[ succ ^ (nextS, finalNSGS, fGS) ]].
 
 
-  ScopeIterative[[ [PropertyDeclaration(_, e) | succ] ^ (avS, gS, fGS) ]] :=
-    [[ e ^ (avS) : _ ]],
+  ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
+    [[ e ^ (avS) : eT ]],
+    cssET is typeForCSSExport of eT | error $[Expression of type [eT] cannot be assigned to [prop].] @e,
+    cssET <cssable? CSSAble()       | error $[Expression of type [eT] cannot be assigned to [prop].] @e,
     ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
 
 

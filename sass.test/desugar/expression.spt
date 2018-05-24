@@ -14,29 +14,29 @@ test desugar hex shorthand to full hex [[
 
 test desugar addition [[
 1 + 3
-]] run desugar-all to BinExp(Add(), Number("1", Int()), Number("3", Int()))
+]] run desugar-all to BinExp(Add(), Int("1"), Int("3"))
 
 test desugar subtraction [[
 1 - 3
-]] run desugar-exp to BinExp(Sub(), Number("1", Int()), Number("3", Int()))
+]] run desugar-exp to BinExp(Sub(), Int("1"), Int("3"))
 
 test desugar multiplication [[
-1 * 1
-]] run desugar-exp to BinExp(Mul(), Number("1", Int()), Number("1", Int()))
+1 * 3
+]] run desugar-exp to BinExp(Mul(), Int("1"), Int("3"))
 
 test desugar division [[
-1 / 1
-]] run desugar-exp to BinExp(Div(), Number("1", Int()), Number("1", Int()))
+1 / 5
+]] run desugar-exp to BinExp(Div(), Int("1"), Int("5"))
 
 test desugar modulo [[
-1 % 1
-]] run desugar-exp to BinExp(Mod(), Number("1", Int()), Number("1", Int()))
+3 % 2
+]] run desugar-exp to BinExp(Mod(), Int("3"), Int("2"))
 
 test desugar complex expression [[
-1 % 1 == 0
+3 % 2 == 0
 ]] run desugar-exp to BinExp(Eq(), 
-                        BinExp(Mod(), Number("1", Int()), Number("1", Int())), 
-                        Number("0", Int()))
+                        BinExp(Mod(), Int("3"), Int("2")), 
+                        Int("0"))
 
 test desugar or [[
 true or false
@@ -56,24 +56,24 @@ true != false
 
 test desugar greater than [[
 5 > 4
-]] run desugar-exp to BinExp(Gt(), Number("5", Int()), Number("4", Int()))
+]] run desugar-exp to BinExp(Gt(), Int("5"), Int("4"))
 
 test desugar greater equal than [[
 5 >= 4
 ]] run desugar-exp to BinExp(Or(), 
-                        BinExp(Gt(), Number("5", Int()), Number("4", Int())),
-                        BinExp(Eq(), Number("5", Int()), Number("4", Int())))
+                        BinExp(Gt(), Int("5"), Int("4")),
+                        BinExp(Eq(),  Int("5"),  Int("4")))
 
 test desugar less than [[
 5 < 4
 ]] run desugar-exp to UnExp(Not(), BinExp(Or(),
-                                    BinExp(Gt(), Number("5", Int()), Number("4", Int())),
-                                    BinExp(Eq(), Number("5", Int()), Number("4", Int()))
+                                    BinExp(Gt(), Int("5"), Int("4")),
+                                    BinExp(Eq(), Int("5"),  Int("4"))
                                    ))
 
 test desugar less equal than [[
 5 <= 4
-]] run desugar-exp to UnExp(Not(), BinExp(Gt(), Number("5", Int()), Number("4", Int())))
+]] run desugar-exp to UnExp(Not(), BinExp(Gt(), Int("5"), Int("4")))
 
 test desugar not than [[
 not true 
@@ -81,6 +81,4 @@ not true
 
 test length [[
 5px
-]] run desugar-all to Length(Number("5", Int()), Unit("px", 1)) 
-
-
+]] run desugar-all to Length(Int("5"), "px")
