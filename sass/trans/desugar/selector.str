@@ -1,0 +1,18 @@
+module desugar/selector
+
+imports 
+  src-gen/signatures/Selector-sig
+  desugar/common
+
+signature
+  constructors
+    Multiple    : List(Selector) -> Selector
+    AllIn       : List(Selector) -> Selector
+
+strategies
+  desugar-selectors = bottomup(try(desugar-selec))
+    
+rules
+  desugar-selec: Multiple(head, t)  -> Multiple([head | t]) 
+  desugar-selec: AllIn(h, AllIn(t)) -> AllIn([h | t])
+  desugar-selec: AllIn(h, t)        -> AllIn([h , t])

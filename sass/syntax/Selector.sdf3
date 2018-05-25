@@ -13,7 +13,7 @@ lexical syntax
    * In HTML5 attributes can use any char as long as there is no whitespace
    * https://www.w3.org/TR/2014/REC-html5-20141028/dom.html
    */
-  HTML-ATTR-CHAR = ~[\ \t\r\n\#\.]
+  HTML-ATTR-CHAR = ~[\ \t\r\n\#\.\,]
   HTML-ATTR = HTML-ATTR-CHAR+
   
   
@@ -27,7 +27,7 @@ lexical syntax
   
 lexical restrictions
   
-  HTML-ATTR -/- ~[\ \t\r\n\#\.]
+  HTML-ATTR -/- ~[\ \t\r\n\#\.\,]
   HTML-TAG -/-  [a-zA-Z0-9\!\-]
 
 context-free start-symbols
@@ -39,20 +39,22 @@ context-free start-symbols
  * Attribute selector
  */
 context-free syntax
-  CIDSelector.Id     = <#<HTML-ATTR>>
-  CIDSelector.Class  = <.<HTML-ATTR>>
+  CIDSelector.Id     = "#" HTML-ATTR
+  CIDSelector.Class  = "." HTML-ATTR
 
 
 /**
  * Singular selectors
  */
 context-free syntax
-  SelectorTerm.All    = "*"
+  SelectorTerm.All     = "*"
   SelectorTerm.Element = HTML-TAG
   
   SelectorTerm = CIDSelector
   SubSelector = SelectorTerm
 
+context-free priorities
+  CIDSelector.Id > SelectorTerm.Element
 
 /**
  * Attributes
@@ -69,8 +71,8 @@ context-free syntax
  * Composed selectors
  */
 syntax
-  CSelector-CF.And    = SubSelector-CF CIDSelector-CF           {left}
-  CSelector-CF.And    = SubSelector-CF AttributeSelector-CF     {left}
+  CSelector-CF.And      = SubSelector-CF CIDSelector-CF           {left}
+  CSelector-CF.And      = SubSelector-CF AttributeSelector-CF     {left}
   TopSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF TopSelector-CF {right}
 
 context-free syntax
@@ -124,5 +126,7 @@ context-free syntax
   Selector = TopSelector {avoid}
   Selector.Multiple = <<TopSelector>, <{TopSelector ","}+>>
 
+context-free priorities
+  Selector.Multiple > { CIDSelector.Id CIDSelector.Class }
 
   

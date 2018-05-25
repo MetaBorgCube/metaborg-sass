@@ -57,3 +57,15 @@ a.hello
 test link with class hello and id bye [[
 a.hello#bye
 ]] parse to And(And(Element("a"), Class("hello")), Id("bye"))
+
+test all in multiple [[
+a #link, .main
+]] parse to Multiple(AllIn(Element("a"), Id("link")), [Class("main")])
+
+test complex multiple [[
+a > #id, .main, p, hr
+]] parse to Multiple(AllDirectChildren(Element("a"), Id("id")), [
+              Class("main"),
+              Element("p"),
+              Element("hr")
+            ])

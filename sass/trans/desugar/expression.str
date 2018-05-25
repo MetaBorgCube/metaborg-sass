@@ -27,6 +27,7 @@ signature
     Unit    : String * Int -> Exp
 
 strategies
+  desugar-expressions = bottomup(try(desugar-e)) 
   desugar-exp = try(desugar-e)
     
 rules

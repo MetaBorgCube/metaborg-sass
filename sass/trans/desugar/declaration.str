@@ -8,6 +8,9 @@ signature
   constructors
     GlobalVarDeclaration : String * Exp * List(VariableDeclarationFlag) -> VariableDeclaration
 
+strategies
+  desugar-declarations = try(alltd(desugar-dec))
+
 rules
 
   desugar-dec: VarDeclaration(name, e, flags) -> 
