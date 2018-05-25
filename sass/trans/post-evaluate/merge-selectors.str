@@ -1,0 +1,32 @@
+module post-evaluate/merge-selectors
+
+imports 
+  src-gen/signatures/Selector-sig
+  desugar/selector
+
+/**
+ * Multiple
+ */
+rules
+  merge-selectors: (Multiple(parentSelecs), Multiple(childSelecs)) -> Multiple(selecs) with
+    selecs := <cart(merge-selectors)> (parentSelecs, childSelecs)
+  merge-selectors: (Multiple(parentSelecs),childSelec) -> Multiple(selecs) with
+    selecs := <cart(merge-selectors)> (parentSelecs, [childSelec])
+  merge-selectors: (parentSelec, Multiple(childSelecs)) -> Multiple(selecs) with
+  selecs := <cart(merge-selectors)> ([parentSelec], childSelecs)
+
+
+/**
+ * AllIn
+ */
+rules
+  merge-selectors: (AllIn(p), AllIn(c)) -> AllIn(<conc> (p, c))
+  merge-selectors: (AllIn(p), c) -> AllIn(<conc>(p, [c]))
+  merge-selectors: (p, AllIn(c)) -> AllIn([p | c])
+
+
+/**
+ * Other
+ */
+rules
+  merge-selectors: (x, y) -> AllIn([x, y])

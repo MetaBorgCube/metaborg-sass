@@ -8,6 +8,7 @@ imports
   analysis
   desugar/desugar
   evaluate/evaluate
+  post-evaluate/post-evaluate
 
 rules // Debugging
   
@@ -22,4 +23,3 @@ rules // Debugging
     where
       filename := <guarantee-extension(|"desugared.aterm")> path ;
       text     := <desugar-all> selected
-

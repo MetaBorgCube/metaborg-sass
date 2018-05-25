@@ -1,0 +1,30 @@
+module post-evaluate/flatten-declaration
+
+imports
+  src-gen/signatures/Selector-sig
+  src-gen/signatures/Declaration-sig
+  src-gen/signatures/sass-sig
+
+imports
+  post-evaluate/merge-selectors
+
+strategies
+  flatten-declarations = topdown(try(flatten-decl)); flatten-decl
+
+rules
+  flatten-decl: Script(items) -> Script(<flatten-list> items)
+  flatten-decl: BlockDeclaration(selec, decls) -> 
+    [BlockDeclaration(selec, propDecls) | blockDeclsMergedSelec] with
+      propDecls := <filter(?PropertyDeclaration(_, _))> decls
+      ; nestedBlocks := <filter(?BlockDeclaration(_, _))> decls 
+      ; blockDeclsMergedSelec := <cart(id); map(merge-parent-decl-selector <+ Snd)> ([selec], nestedBlocks)
+    where 
+      // Only do this if there is a block declaration inside the top block declarations
+      <getfirst(?BlockDeclaration(_, _))> decls
+  
+  /**
+   * Merge the parent selector with the block declaration
+   */
+  merge-parent-decl-selector: (parentSelector, BlockDeclaration(selec, decs)) -> 
+    BlockDeclaration(mergedSelector, decs) with
+      mergedSelector := <merge-selectors> (parentSelector, selec)

@@ -1,0 +1,23 @@
+module post-evaluate/build
+
+imports
+  evaluate/evaluate
+  post-evaluate/post-evaluate
+  
+imports
+
+  libspoofax/resource/path
+
+rules
+
+  /**
+   * Transform Sass AST to Sass AST and show the resulting ATerm.
+   * The transformed AST has no variable references anymore.
+   *
+   * @type Sass AST -> Sass AST
+   */
+  transpile:
+    (selected, _, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|$[css.aterm])> path
+    ; result   := <evaluate-all; post-evaluate; strip-annos> ast
