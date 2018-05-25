@@ -40,7 +40,7 @@ p > h1
 
 test all links to pdfs [[
 a[href$=.pdf]
-]] parse to And(Element("a"), Attribute("href$=.pdf"))
+]] parse to AndS(Element("a"), Attribute("href$=.pdf"))
 
 test all disabled elements [[
 [disabled]
@@ -52,11 +52,11 @@ div [disabled]
 
 test link with class hello [[
 a.hello
-]] parse to And(Element("a"), Class("hello"))
+]] parse to AndS(Element("a"), Class("hello"))
 
 test link with class hello and id bye [[
 a.hello#bye
-]] parse to And(And(Element("a"), Class("hello")), Id("bye"))
+]] parse to AndS(AndS(Element("a"), Class("hello")), Id("bye"))
 
 test all in multiple [[
 a #link, .main
@@ -69,3 +69,12 @@ a > #id, .main, p, hr
               Element("p"),
               Element("hr")
             ])
+
+test link with class external [[
+a.external
+]] parse to AndS(Element("a"), Class("external"))
+
+test link to main page [[
+a#main
+]] parse to AndS(Element("a"), Id("main")) 
+        

@@ -38,9 +38,9 @@ context-free start-symbols
 /**
  * Attribute selector
  */
-context-free syntax
-  CIDSelector.Id     = "#" HTML-ATTR
-  CIDSelector.Class  = "." HTML-ATTR
+syntax
+  CIDSelector-CF.Id     = "#" HTML-ATTR-LEX
+  CIDSelector-CF.Class  = "." HTML-ATTR-LEX
 
 
 /**
@@ -71,9 +71,9 @@ context-free syntax
  * Composed selectors
  */
 syntax
-  CSelector-CF.And      = SubSelector-CF CIDSelector-CF           {left}
-  CSelector-CF.And      = SubSelector-CF AttributeSelector-CF     {left}
-  TopSelector-CF.AllIn  = SubSelector-CF LAYOUT-CF TopSelector-CF {right}
+  CSelector-CF.AndS      = SubSelector-CF CIDSelector-CF           {left}
+  CSelector-CF.AndS      = SubSelector-CF AttributeSelector-CF     {left}
+  TopSelector-CF.AllIn   = SubSelector-CF LAYOUT-CF TopSelector-CF {right}
 
 context-free syntax
   CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
@@ -85,7 +85,7 @@ context-free syntax
 
 context-free priorities
   { left:
-    CSelector.And
+    CSelector.AndS
   } >
   { right:
     CSelector.AllPrecededBy
