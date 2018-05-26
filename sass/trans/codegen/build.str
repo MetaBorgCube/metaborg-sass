@@ -1,8 +1,8 @@
-module post-evaluate/build
+module codegen/build
 
 imports
   evaluate/evaluate
-  post-evaluate/post-evaluate
+  codegen/codegen
   
 imports
 
@@ -20,4 +20,4 @@ rules
     (selected, _, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|$[css.aterm])> path
-    ; result   := <evaluate-all; post-evaluate; strip-annos> ast
+    ; result   := <evaluate-all; codegen; strip-annos> ast

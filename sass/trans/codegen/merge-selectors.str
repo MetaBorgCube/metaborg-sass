@@ -1,4 +1,4 @@
-module post-evaluate/merge-selectors
+module codegen/merge-selectors
 
 imports 
   src-gen/signatures/Selector-sig

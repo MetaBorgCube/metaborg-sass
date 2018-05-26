@@ -1,0 +1,16 @@
+module test-codegen-flatten-declaration
+
+language sass
+
+test simple block declaration [[
+.main {
+  width: 1px;
+  #hello {
+    color: white;
+  }
+}
+]] run codegen-test to Script([
+      BlockDeclaration(Class("main"),                       [PropertyDeclaration("width", Length(Int("1"), "px"))])
+    , BlockDeclaration(AllIn([Class("main"), Id("hello")]), [PropertyDeclaration("color", ColourLabel("white"))])
+  ])
+  

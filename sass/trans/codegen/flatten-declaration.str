@@ -1,4 +1,4 @@
-module post-evaluate/flatten-declaration
+module codegen/flatten-declaration
 
 imports
   src-gen/signatures/Selector-sig
@@ -6,7 +6,7 @@ imports
   src-gen/signatures/sass-sig
 
 imports
-  post-evaluate/merge-selectors
+  codegen/merge-selectors
 
 strategies
   flatten-declarations = topdown(try(flatten-decl)); flatten-decl
@@ -17,7 +17,7 @@ rules
     [BlockDeclaration(selec, propDecls) | blockDeclsMergedSelec] with
       propDecls := <filter(?PropertyDeclaration(_, _))> decls
       ; nestedBlocks := <filter(?BlockDeclaration(_, _))> decls 
-      ; blockDeclsMergedSelec := <cart(id); map(merge-parent-decl-selector <+ Snd)> ([selec], nestedBlocks)
+      ; blockDeclsMergedSelec := <cart(id); map(merge-parent-decl-selector)> ([selec], nestedBlocks)
     where 
       // Only do this if there is a block declaration inside the top block declarations
       <getfirst(?BlockDeclaration(_, _))> decls

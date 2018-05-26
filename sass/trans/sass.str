@@ -8,7 +8,7 @@ imports
   analysis
   desugar/desugar
   evaluate/evaluate
-  post-evaluate/post-evaluate
+  codegen/codegen
 
 rules // Debugging
   

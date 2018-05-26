@@ -1,0 +1,10 @@
+module codegen/codegen
+
+imports
+  codegen/-
+  evaluate/-
+  pre-evaluate/-
+
+strategies
+  codegen = flatten-declarations
+  codegen-test = pre-evaluate; evaluate-all; codegen; strip-annos

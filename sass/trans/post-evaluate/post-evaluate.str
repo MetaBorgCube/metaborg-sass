@@ -1,7 +1,0 @@
-module post-evaluate/post-evaluate
-
-imports
-  post-evaluate/-
-
-strategies
-  post-evaluate = flatten-declarations
