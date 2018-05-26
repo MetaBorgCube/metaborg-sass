@@ -8,9 +8,6 @@ test plan example [[
     visibility: false;
 }
 
-/*
- * My comment
- */
 .my-thingies {
     width: 50px + 50px;
 }

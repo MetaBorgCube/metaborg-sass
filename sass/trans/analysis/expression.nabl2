@@ -11,11 +11,11 @@ imports
 rules
   [[ BinExp(Add(), lhs, rhs) ^ (s) : eTy ]] :=
     [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForAddition of (lTy, rTy) | error $[Expressions of type [lTy] and [rTy] cannot be added.].
+    eTy is typeForAddition of (lTy, rTy) | error $[Types [lTy] and [rTy] cannot be added.].
   
   [[ BinExp(Sub(), lhs, rhs) ^ (s) : eTy ]] :=
     [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForSubtraction of (lTy, rTy) | error $[Expressions of type [lTy] and [rTy] cannot be subtracted.].
+    eTy is typeForSubtraction of (lTy, rTy) | error $[Types [lTy] and [rTy] cannot be subtracted.].
   
   [[ BinExp(Mul(), lhs, rhs) ^ (s) : eTy ]] :=
     [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],

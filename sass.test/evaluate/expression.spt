@@ -85,7 +85,7 @@ test equal hex [[
 ]] run evaluate-all to True()
 
 test gt true [[
-5 > 4
+4.0001 > 4
 ]] run evaluate-all to True()
 
 test gt false [[

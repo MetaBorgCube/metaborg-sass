@@ -14,64 +14,83 @@ imports
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
   extract: Length(n, _) -> <extr> n
-  extract: Int(f) -> <string-to-real> f
+  extract: Int(f) -> <string-to-int> f
   extract: Float(f) -> <string-to-real> f
+  extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
+  extr-f: f@Float(_) -> <extr> f
+  extr-f: Int(f) -> <string-to-real> f
   
   extr = try(extract)
   evaluate-exp = try(evaluate-e)
 
   apply-bin(f) = extr; f; intl-float
-
-  wrap-num: (IntT(),   v) -> Int(v)
-  wrap-num: (FloatT(), v) -> Float(v)
-  wrap-num: (LengthT(u), v) -> Length(v, u)
+  apply-binf(|f) = extr; call(f||); intl-float
   
+  wrap-result: (IntT(),   v) -> Int(v)
+  wrap-result: (FloatT(), v) -> Float(v)
+  wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
+  
+  
+  op-to-f: (Add(), IntT()) -> "addi"
+  op-to-f: (Sub(), IntT()) -> "subti"
+  op-to-f: (Mul(), IntT()) -> "muli"
+  op-to-f: (Mod(), IntT()) -> "modi"
+  
+  op-to-f: (Add(), FloatT()) -> "addr"
+  op-to-f: (Sub(), FloatT()) -> "subtr"
+  op-to-f: (Mul(), FloatT()) -> "mulr"
+  op-to-f: (Div(), FloatT()) -> "divr"
+  op-to-f: (Mod(), FloatT()) -> "modr"
+  
+  op-to-f: (Add(), StringT()) -> "string-conc"
+
+  extr-math-type: LengthT(e, _) -> e  
+  extr-comp-v: Length(e, _) -> e
+/**
+ * Variable lookup
+ */  
 rules
-
   evaluate-e: VarRef(x) -> e with
-    a       := <nabl2-get-ast-analysis>;
-    ref-occ := <nabl2-mk-occurrence(|"Var")> x;
-    dec-occ := <nabl2-get-resolved-name(|a); Fst> ref-occ;
-    vExp    := <nabl2-get-property(|a, "e")> dec-occ;
-    e       := <evaluate> vExp
+    a := <nabl2-get-ast-analysis>
+    ; ref-occ := <nabl2-mk-occurrence(|"Var")> x
+    ; dec-occ := <nabl2-get-resolved-name(|a); Fst> ref-occ
+    ; vExp    := <nabl2-get-property(|a, "e")> dec-occ
+    ; e       := <evaluate> vExp
 
-  // Compound expressions
-  
-  // Math
-  evaluate-e: e@BinExp(Add(), lhs, rhs) -> r with 
-    a   := <nabl2-get-ast-analysis>;
-    eT  := <nabl2-get-ast-type(|a)> e;
-    v   := <apply-bin(addr)> (lhs, rhs);
-    r   := <wrap-num> (eT, v)
-  evaluate-e: e@BinExp(Sub(), lhs, rhs) -> r with 
-    a   := <nabl2-get-ast-analysis>;
-    eT  := <nabl2-get-ast-type(|a)> e;
-    v   := <apply-bin(subtr)> (lhs, rhs);
-    r   := <wrap-num> (eT, v)
-  evaluate-e: e@BinExp(Mul(), lhs, rhs) -> r with 
-    a   := <nabl2-get-ast-analysis>;
-    eT  := <nabl2-get-ast-type(|a)> e;
-    v   := <apply-bin(mulr)> (lhs, rhs);
-    r   := <wrap-num> (eT, v)
-  evaluate-e: e@BinExp(Div(), lhs, rhs) -> r with 
-    a   := <nabl2-get-ast-analysis>;
-    eT  := <nabl2-get-ast-type(|a)> e;
-    v   := <apply-bin(divr)> (lhs, rhs);
-    r   := <wrap-num> (eT, v)
-  evaluate-e: e@BinExp(Mod(), lhs, rhs) -> r with 
-    a   := <nabl2-get-ast-analysis>;
-    eT  := <nabl2-get-ast-type(|a)> e;
-    v   := <apply-bin(modr)> (lhs, rhs);
-    r   := <wrap-num> (eT, v)
-  
-  // Logic
+/** 
+ * Logic
+ */
+rules
   evaluate-e: BinExp(And(), lhs, rhs) -> 
     <?(True(), True()) < !True() + !False()> (lhs, rhs)
   evaluate-e: BinExp(Or(), lhs, rhs) -> 
     <?(True(), _) < !True() + (?(_, True()) < !True() + !False())> (lhs, rhs)
   evaluate-e: UnExp(Not(), e) -> <?True() < !False() + !True()> e
-  
-  // Comparison
+
+
+/**
+ * Comparison
+ */
+rules
   evaluate-e: BinExp(Eq(), lhs, rhs) -> 
     <?(e, e) < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
-  evaluate-e: BinExp(Gt(), lhs, rhs) -> <extr; gtr < !True() + !False()> (lhs, rhs) 
+  evaluate-e: BinExp(Gt(), lhs, rhs) ->  
+    <extr-f; gtr < !True() + !False()> (lhs, rhs) 
+
+  
+/**
+ * Math
+ */
+rules
+  evaluate-e: e@BinExp(op, lhs, rhs) -> r with 
+    a := <nabl2-get-ast-analysis>
+    ; endT  := <nabl2-get-ast-type(|a)> e
+    
+    // Needed for length expressions
+    ; eT  := <try(extr-math-type)> endT
+    ; eLV := <try(extr-comp-v)> lhs
+    ; eRV := <try(extr-comp-v)> rhs
+    
+    ; f   := <op-to-f> (op, eT)
+    ; v   := <apply-binf(|f)> (eLV, eRV)
+    ; r   := <wrap-result> (endT, v)

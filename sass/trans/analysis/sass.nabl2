@@ -12,8 +12,9 @@ signature
       StringT : -> Type
       NullT   : -> Type
       ColourT : -> Type
-      LengthT : String -> Type // Unit
+      LengthT : Type * String -> Type // The exp type and the unit
       BinExpT : Type * Type -> Type
+      
       
       CSSAble : -> CSSAble
       
@@ -35,7 +36,11 @@ signature
       (FloatT(), FloatT())      -> FloatT(),
       (StringT(), StringT())    -> StringT(),
       (ColourT(), ColourT())    -> ColourT(),
-      (LengthT(u), LengthT(u))  -> LengthT(u),
+      
+      (LengthT(IntT(), u), LengthT(IntT(), u))      -> LengthT(IntT(), u),
+      (LengthT(FloatT(), u), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
+      (LengthT(IntT(), u), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
+      (LengthT(FloatT(), u), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
       
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT(),
@@ -48,8 +53,12 @@ signature
       (IntT(), IntT())          -> IntT(),
       (FloatT(), FloatT())      -> FloatT(),
       (ColourT(), ColourT())    -> ColourT(),
-      (LengthT(u), LengthT(u))  -> LengthT(u),
       
+      (LengthT(IntT(), u), LengthT(IntT(), u))      -> LengthT(IntT(), u),
+      (LengthT(FloatT(), u), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
+      (LengthT(IntT(), u), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
+      (LengthT(FloatT(), u), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
+
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT()
     }
@@ -61,16 +70,25 @@ signature
       
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT(),
-      (IntT(), LengthT(u))    -> LengthT(u),
-      (FloatT(), LengthT(u))  -> LengthT(u),
-      (LengthT(u), IntT())    -> LengthT(u),
-      (LengthT(u), FloatT())  -> LengthT(u),
+      
+      
+      (IntT(), LengthT(IntT(), u))      -> LengthT(IntT(), u),
+      (LengthT(IntT(), u), IntT())      -> LengthT(IntT(), u),
+      (IntT(), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
+      (LengthT(FloatT(), u), IntT())    -> LengthT(FloatT(), u),
+      
+      (FloatT(), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
+      (LengthT(FloatT(), u), FloatT())  -> LengthT(FloatT(), u),
+      (FloatT(), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
+      (LengthT(IntT(), u), FloatT())    -> LengthT(FloatT(), u),
+      
+      
       (IntT(), ColourT())     -> ColourT(),
       (FloatT(), ColourT())   -> ColourT(),
       (ColourT(), IntT())     -> ColourT(),
       (ColourT(), FloatT())   -> ColourT(),
       
-      (LengthT(u), LengthT(u))  -> BinExpT(LengthT(u), LengthT(u)),
+//      (LengthT(u), LengthT(u))  -> BinExpT(LengthT(u), LengthT(u)),
       (BinExpT(x, y), z)        -> BinExpT(BinExpT(x, y), z),
       (z, BinExpT(x, y))        -> BinExpT(z, BinExpT(x, y))
     }
@@ -81,7 +99,7 @@ signature
       BoolT()     -> BoolTC(),
       StringT()   -> StringTC(),
       ColourT()   -> ColourTC(),
-      LengthT(_)  -> LengthTC()
+      LengthT(_, _)  -> LengthTC()
     }
 
 name resolution

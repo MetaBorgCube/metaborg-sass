@@ -10,10 +10,9 @@ imports
   desugar/desugar
   evaluate/evaluate
   analysis/-
-  pre-evaluate/pre-evaluate
 
 rules // Analysis
-  editor-analyze = nabl2-analyze(desugar-all; pre-evaluate)
+  editor-analyze = nabl2-analyze(desugar-all)
 
 rules // Debugging
   
