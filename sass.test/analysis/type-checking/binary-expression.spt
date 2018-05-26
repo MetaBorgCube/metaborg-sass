@@ -1,0 +1,37 @@
+module type-check-expression-test
+
+language sass
+
+fixture [[
+.m {
+  width: [[...]];
+}
+]]
+
+test simple int exp [[
+[[1]]
+]] run get-type on #1 to IntT()
+
+test addition of two ints [[
+[[1 + 2]]
+]] run get-type on #1 to IntT()
+
+test addition of int and float [[
+[[14 + 15.6]]
+]] run get-type on #1 to FloatT()
+
+test multiplication of ints [[
+[[14 * 56]]
+]] run get-type on #1 to IntT()
+
+test multiplication of int and length [[
+[[4 * 10pt]]
+]] run get-type on #1 to LengthT(IntT(), "pt")
+
+test multiplication of lengths [[
+[[145px * 14px]]
+]] run get-type on #1 to BinExpT(IntT(), LengthT(FloatT(), "px"), LengthT(FloatT(), "px"))
+
+test multiplication + division of lengths [[
+[[10px * 50pt / 10pt]]
+]] run get-type on #1 to LengthT(FloatT(), "px")

@@ -14,6 +14,14 @@ imports
 rules // Analysis
   editor-analyze = nabl2-analyze(desugar-all)
 
+  /**
+   * Use this rule to get the type of an ast node.
+   */
+  get-type: astNode -> <strip-annos> t with
+    a := <nabl2-get-ast-analysis>
+    ; t := <nabl2-get-ast-type(|a)> astNode
+  
+
 rules // Debugging
   
   // Prints the abstract syntax ATerm of a selection.
