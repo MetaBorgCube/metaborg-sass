@@ -109,6 +109,15 @@ signature
     }
     
     typeForDivision: (Type * Type) -> Type {
+      (IntT(), IntT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      
+      (ColourT(), IntT()) -> ColourT(),
+      (ColourT(), FloatT()) -> ColourT(),
+      (ColourT(), ColourT()) -> ColourT(),
+    
       (BinExpT(_, LengthT(_, u), r), LengthT(_, u)) -> r,
       (BinExpT(_, l, LengthT(_, u)), LengthT(_, u)) -> l
     }
