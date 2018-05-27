@@ -107,3 +107,7 @@ test addition of lengths [[
 test addition of strings [[
 "Hello," + " world"
 ]] run evaluate-all to String("Hello, world")
+
+test division of numbers > 0 < 1 [[
+1/5
+]] run evaluate-all to Float("0.2")

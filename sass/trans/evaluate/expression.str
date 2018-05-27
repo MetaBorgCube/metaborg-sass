@@ -91,5 +91,5 @@ rules
     ; eRV := <try(extr-comp-v)> rhs
     
     ; f   := <op-to-f> (op, eT)
-    ; r   := <wrap-result> (endT, v)
     ; v   := <apply-bin(|f)> (eLV, eRV)
+    ; r   := <wrap-result> (endT, v)

@@ -7,9 +7,10 @@ imports
 
 strategies
   intl-float = real-to-string; string-replace(|",", ".") 
-  trimmed-num = trim-chars(?'0' <+ ?'.') 
+  trimmed-num = rtrim-chars(?'0' <+ ?'.') 
   int-component = split-at-dot; Fst
 
 rules
   format-num: Float(f) -> Float(<trimmed-num> f)
   format-num: Int(f)   -> Int(<int-component> f)
+
