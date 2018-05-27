@@ -97,8 +97,15 @@ signature
       (ColourT(), IntT())     -> ColourT(),
       (ColourT(), FloatT())   -> ColourT(),
       
-      (LengthT(IntT(), l), LengthT(IntT(), r))  -> BinExpT(IntT(), LengthT(FloatT(), l), LengthT(FloatT(), r)),
-      (BinExpT(t, x, y), LengthT(IntT(), u))    -> BinExpT(IntT(), BinExpT(t, x, y), LengthT(IntT(), u))
+      (LengthT(IntT(), l), LengthT(IntT(), r))      -> BinExpT(IntT(), LengthT(IntT(), l), LengthT(IntT(), r)),
+      (LengthT(FloatT(), l), LengthT(IntT(), r))    -> BinExpT(FloatT(), LengthT(FloatT(), l), LengthT(IntT(), r)),
+      (LengthT(IntT(), l), LengthT(FloatT(), r))    -> BinExpT(FloatT(), LengthT(IntT(), l), LengthT(FloatT(), r)),
+      (LengthT(FloatT(), l), LengthT(FloatT(), r))  -> BinExpT(FloatT(), LengthT(FloatT(), l), LengthT(FloatT(), r)),
+      
+      (BinExpT(IntT(), x, y), LengthT(IntT(), u))     -> BinExpT(IntT(), BinExpT(IntT(), x, y), LengthT(IntT(), u)),
+      (BinExpT(FloatT(), x, y), LengthT(IntT(), u))   -> BinExpT(FloatT(), BinExpT(FloatT(), x, y), LengthT(IntT(), u)),
+      (BinExpT(IntT(), x, y), LengthT(FloatT(), u))   -> BinExpT(FloatT(), BinExpT(IntT(), x, y), LengthT(FloatT(), u)),
+      (BinExpT(FloatT(), x, y), LengthT(FloatT(), u)) -> BinExpT(FloatT(), BinExpT(FloatT(), x, y), LengthT(FloatT(), u))
     }
     
     typeForDivision: (Type * Type) -> Type {

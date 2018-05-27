@@ -30,7 +30,7 @@ test multiplication of int and length [[
 
 test multiplication of lengths [[
 [[145px * 14px]]
-]] run get-type on #1 to BinExpT(IntT(), LengthT(FloatT(), "px"), LengthT(FloatT(), "px"))
+]] run get-type on #1 to BinExpT(IntT(), LengthT(IntT(), "px"), LengthT(IntT(), "px"))
 
 test multiplication + division of lengths [[
 [[10px * 50pt / 10pt]]

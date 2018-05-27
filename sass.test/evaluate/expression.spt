@@ -84,6 +84,10 @@ test equal hex [[
 #000 == #000
 ]] run evaluate-all to True()
 
+test equal hex shorthand with hex [[
+#000 == #000000
+]] run evaluate-all to True()
+
 test gt true [[
 4.0001 > 4
 ]] run evaluate-all to True()
@@ -99,3 +103,7 @@ not true
 test addition of lengths [[
 1px + 0.5px
 ]] run evaluate-all to Length(Float("1.5"), "px")
+
+test addition of strings [[
+"Hello," + " world"
+]] run evaluate-all to String("Hello, world")

@@ -16,6 +16,7 @@ strategies
   extract: Length(n, _) -> <extr> n
   extract: Int(f) -> <string-to-int> f
   extract: Float(f) -> <string-to-real> f
+  extract: String(Quoted(s)) -> s
   extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
   extr-f: f@Float(_) -> <extr> f
   extr-f: Int(f) -> <string-to-real> f
@@ -23,13 +24,12 @@ strategies
   extr = try(extract)
   evaluate-exp = try(evaluate-e)
 
-  apply-bin(f) = extr; f; intl-float
-  apply-binf(|f) = extr; call(f||); intl-float
+  apply-bin(|f) = extr; call(f||); try(intl-float)
   
   wrap-result: (IntT(),   v) -> Int(v)
   wrap-result: (FloatT(), v) -> Float(v)
   wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
-  
+  wrap-result: (StringT(), v) -> String(v)
   
   op-to-f: (Add(), IntT()) -> "addi"
   op-to-f: (Sub(), IntT()) -> "subti"
@@ -42,7 +42,7 @@ strategies
   op-to-f: (Div(), FloatT()) -> "divr"
   op-to-f: (Mod(), FloatT()) -> "modr"
   
-  op-to-f: (Add(), StringT()) -> "string-conc"
+  op-to-f: (Add(), StringT()) -> "conc-strings"
 
   extr-math-type: LengthT(e, _) -> e  
   extr-comp-v: Length(e, _) -> e
@@ -86,11 +86,10 @@ rules
     a := <nabl2-get-ast-analysis>
     ; endT  := <nabl2-get-ast-type(|a)> e
     
-    // Needed for length expressions
     ; eT  := <try(extr-math-type)> endT
     ; eLV := <try(extr-comp-v)> lhs
     ; eRV := <try(extr-comp-v)> rhs
     
     ; f   := <op-to-f> (op, eT)
-    ; v   := <apply-binf(|f)> (eLV, eRV)
     ; r   := <wrap-result> (endT, v)
+    ; v   := <apply-bin(|f)> (eLV, eRV)
