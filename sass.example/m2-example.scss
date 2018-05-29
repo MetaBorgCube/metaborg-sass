@@ -1,25 +1,31 @@
-//$default-width: 50px + 100px;
-$d-w: purple;
+$default-highlight-colour: violet;
 
-#my-thingy {
-    color: black;
-    visibility: false;
-}
-
-.my-thingies {
-    $default-width: 100px + 60px !global;
-    width: $default-width;
+body, html {
+  margin: 0px;
+  height: 100%;
+  a {
+    color: $default_highlight_colour; // - and _ can be used interchangeably in Sass.
+    $visited-link-highlight: purple !global;
+  }
 }
 
-li {
-    height: 1em;
+div.important.link {
+  :visited {
+    color: $visited-link-highlight;
+  }
 }
 
-li a {
-  font-size: 4px;
+.main {
+  $main-width: 80% !global;
+  width: $main-width;
 }
-  
-li a, div a {
-    text-color: purple;
-    width: $default-width;
+
+img, div.decoration {
+  border: 10px {
+    color: $default-highlight-colour;
+    width: 2px;
+  }
 }
+
+
+

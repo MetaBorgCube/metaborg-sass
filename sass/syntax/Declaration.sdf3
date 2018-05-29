@@ -44,10 +44,9 @@ syntax
   // Using kernel syntax, since layout matters to differentiate between 
   // namespaces and pseudoclasses
   PropertyDeclaration-CF.NamespacePropertyDeclarationExp = 
-  PROPERTY-LEX ":" LAYOUT-CF Exp-CF LAYOUT?-CF "{"
-    LAYOUT?-CF PropertyDeclaration-CF* LAYOUT?-CF
+  PROPERTY-LEX ":" LAYOUT-CF Exp-CF LAYOUT-CF "{"
+    LAYOUT?-CF PropertyDeclaration*-CF LAYOUT?-CF
   "}"
-  
 
 context-free priorities
   PropertyDeclaration.NamespacePropertyDeclaration > BlockDeclaration.BlockDeclaration

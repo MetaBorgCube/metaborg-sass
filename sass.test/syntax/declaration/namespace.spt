@@ -46,7 +46,7 @@ test nested namespace [[
     ])
   ])
   
-test variables are not allowed in namespaces [[
+test variable declarations are not allowed in namespaces [[
 .main {
   font: {
     $v: 5px;
@@ -65,6 +65,22 @@ test namespace with exp [[
     BlockDeclaration(Class("m"), [
       NamespacePropertyDeclarationExp("font", Length(Int("24"), "px"), [
         PropertyDeclaration("color", ColourLabel("green"))
+      ])
+    ])
+  ])
+
+test namespace with exp [[
+.m {
+  font: 24px {
+    color: green;
+    width: 2px;
+  }
+}
+]] parse to Script([
+    BlockDeclaration(Class("m"), [
+      NamespacePropertyDeclarationExp("font", Length(Int("24"), "px"), [
+        PropertyDeclaration("color", ColourLabel("green")),
+        PropertyDeclaration("width", Length(Int("2"), "px"))
       ])
     ])
   ])
