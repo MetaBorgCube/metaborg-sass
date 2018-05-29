@@ -3,16 +3,15 @@ module Expression
 imports
   Common
   Colour
-
+  String
+  
 context-free start-symbols
   Exp
-  Colour
   
 context-free syntax
-
+  Exp = String
   // Literals
   Exp           = Number
-  Exp.String    = String
   Exp           = Colour {prefer}
   Exp.Length    = <<Exp> <LengthUnit>> {prefer}
   Exp.True      = <true>
@@ -44,18 +43,9 @@ context-free syntax
   Exp.Lt    = [[Exp] < [Exp]]  {non-assoc}
   Exp.Lte   = [[Exp] <= [Exp]] {non-assoc}
   
-  // String
-  String.Quoted = STRING
-  
   Number.Int    = INT
   Number.Float  = FLOAT
-  
-  Colour.HexShort = <#<HEXShorthand>>
-  Colour.Hex      = <#<HEX>>
-  Colour.ColourLabel = COLOUR-LITERAL
 
-context-free restrictions
-  Colour -/- [a-zA-Z0-9]
 
 context-free priorities
   {non-assoc:

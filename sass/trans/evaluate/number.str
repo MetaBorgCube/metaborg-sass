@@ -2,7 +2,7 @@ module evaluate/number
 
 imports
   src-gen/signatures/Expression-sig
-  desugar/expression
+  desugar/expression/-
   evaluate/expression
 
 strategies

@@ -2,14 +2,16 @@ module analysis/literals
 
 imports
   src-gen/signatures/Expression-sig
+  desugar/expression/-
   analysis/sass
+  
   nabl2/api
   
 rules
   /*
    * Literals
    */
-  [[ String(_) ^ (_)      : StringT() ]].
+  [[ String(_, _) ^ (_)   : StringT() ]].
   [[ Int(_) ^ (_)         : IntT()    ]].
   [[ Float(_) ^ (_)       : FloatT()  ]].
   [[ Hex(_) ^ (_)         : ColourT() ]].

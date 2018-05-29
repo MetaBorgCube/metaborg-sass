@@ -1,0 +1,20 @@
+module desugar/expression/string
+
+imports
+  src-gen/signatures/String-sig
+
+signature
+  sorts
+    StringDelimiter
+
+  constructors
+    DoubleQuote : StringDelimiter
+    SingleQuote : StringDelimiter
+    None        : StringDelimiter
+  
+    String      : String * StringDelimiter -> String
+
+rules
+  desugar-e: DoubleQuoteString(s) -> String(<un-double-quote> s, DoubleQuote())
+  desugar-e: SingleQuoteString(s) -> String(<un-single-quote> s, SingleQuote())
+  desugar-e: UnquoteString(s)     -> String(s, None())

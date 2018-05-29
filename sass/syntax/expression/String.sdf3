@@ -1,0 +1,34 @@
+module String
+
+imports
+  Expression
+
+context-free start-symbols
+  String
+
+lexical syntax
+  BackSlashChar = "\\" 
+  
+  DOUBLE-STRING    = "\"" DoubleStringChar* "\""
+  DoubleStringChar = ~[\"\n] 
+  DoubleStringChar = "\\\"" 
+  DoubleStringChar = BackSlashChar 
+
+  SINGLE-STRING     = "'" SingleStringChar* "'"
+  SingleStringChar  = ~[\'\n]
+  SingleStringChar  = "\\'"
+  SingleStringChar  = BackSlashChar
+  
+  STRING = [a-zA-Z][a-zA-Z0-9]*
+
+
+lexical restrictions
+  STRING -/- [a-zA-Z0-9]
+  // Backslash chars in strings may not be followed by "
+  BackSlashChar -/- [\"]
+
+
+context-free syntax
+  String.DoubleQuoteString = DOUBLE-STRING
+  String.SingleQuoteString = SINGLE-STRING
+  String.UnquoteString     = STRING

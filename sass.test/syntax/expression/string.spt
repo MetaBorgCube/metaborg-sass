@@ -1,0 +1,21 @@
+module syntax-string-test
+
+language sass
+
+fixture [[
+.m {
+  weight: [[...]];
+}
+]]
+
+test unquoted string [[
+bold
+]] parse to UnquoteString("bold")
+
+test single quoted string [[
+'hel\'lo'
+]] parse to SingleQuoteString("'hel\'lo'")
+
+test double quoted string [[
+"hello \"world"
+]] parse to DoubleQuoteString("\"hello \\\"world\"")

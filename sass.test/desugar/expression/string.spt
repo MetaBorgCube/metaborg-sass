@@ -1,0 +1,21 @@
+module test-desugar-string
+
+language sass
+
+fixture [[
+.m {
+  width: [[...]];
+}
+]]
+
+test unquoted string [[
+bold
+]] run desugar-all to String("bold", None())
+
+test single quoted string [[
+'bo\'ld'
+]] run desugar-all to String("bo\'ld", SingleQuote())
+
+test double quoted string [[
+"bo\"ld"
+]] run desugar-all to String("bo\"ld", DoubleQuote())

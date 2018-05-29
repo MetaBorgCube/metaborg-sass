@@ -10,11 +10,6 @@ lexical syntax
   LengthUnit     = ID
   LengthUnit     = "%"
   
-  STRING         = "\"" StringChar* "\""
-  StringChar     = ~[\"\n] 
-  StringChar     = "\\\"" 
-  StringChar     = BackSlashChar 
-  BackSlashChar  = "\\" 
   LAYOUT         = [\ \t\n\r] 
   LAYOUT         = "//" ~[\n\r]* NewLineEOF 
   NewLineEOF     = [\n\r] 
@@ -35,11 +30,6 @@ lexical restrictions
   // EOF may not be followed by any char
   
   EOF           -/- ~[]
-
-  
-  // Backslash chars in strings may not be followed by " 
-  
-  BackSlashChar -/- [\"]
 
 context-free restrictions
 

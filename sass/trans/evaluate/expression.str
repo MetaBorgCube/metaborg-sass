@@ -8,7 +8,8 @@ imports
   evaluate/evaluate
   evaluate/number
   src-gen/signatures/Expression-sig
-  desugar/-
+  src-gen/signatures/String-sig
+  desugar/expression/-
   analysis/sass
 
 strategies
@@ -16,7 +17,7 @@ strategies
   extract: Length(n, _) -> <extr> n
   extract: Int(f) -> <string-to-int> f
   extract: Float(f) -> <string-to-real> f
-  extract: String(Quoted(s)) -> s
+  extract: String(s, _) -> s
   extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
   extr-f: f@Float(_) -> <extr> f
   extr-f: Int(f) -> <string-to-real> f
@@ -29,7 +30,7 @@ strategies
   wrap-result: (IntT(),   v) -> Int(v)
   wrap-result: (FloatT(), v) -> Float(v)
   wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
-  wrap-result: (StringT(), v) -> String(v)
+  wrap-result: (StringT(), v) -> String(v, DoubleQuote())
   
   op-to-f: (Add(), IntT()) -> "addi"
   op-to-f: (Sub(), IntT()) -> "subti"
