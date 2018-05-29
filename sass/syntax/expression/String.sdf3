@@ -19,16 +19,16 @@ lexical syntax
   SingleStringChar  = "\\'"
   SingleStringChar  = BackSlashChar
   
-  STRING = [a-zA-Z][a-zA-Z0-9]*
-
+  STRING = ~[\n\ \r\t\;\(\)]+
 
 lexical restrictions
-  STRING -/- [a-zA-Z0-9]
+  STRING -/- ~[\n\ \r\t\;\(\)]
   // Backslash chars in strings may not be followed by "
   BackSlashChar -/- [\"]
-
 
 context-free syntax
   String.DoubleQuoteString = DOUBLE-STRING
   String.SingleQuoteString = SINGLE-STRING
-  String.UnquoteString     = STRING
+  // This is a last resort case
+  // Why does avoid not work for true/false/null?
+  String.UnquoteString     = STRING {avoid}
