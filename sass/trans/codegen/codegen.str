@@ -6,5 +6,5 @@ imports
   pre-evaluate/-
 
 strategies
-  codegen = flatten-declarations
+  codegen = filter-nodes; flatten-declarations; filter-nodes
   codegen-test = evaluate-all; codegen; strip-annos

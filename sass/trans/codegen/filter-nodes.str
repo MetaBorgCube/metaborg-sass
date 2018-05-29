@@ -1,0 +1,24 @@
+module codegen/filter-nodes
+
+imports
+  src-gen/signatures/Selector-sig
+  src-gen/signatures/Declaration-sig
+  src-gen/signatures/sass-sig
+  desugar/-
+
+strategies
+  filter-nodes = bottomup(try(remove-redundant))
+
+  /**
+   * The AST nodes that should be removed when the evaluated Sass AST
+   * is compiled to a CSS AST.
+   */
+  should-keep = not(?BlockDeclaration(_, [])          // Empty blocks
+                    <+ ?VarDeclaration(_, _, _)
+                    <+ ?GlobalVarDeclaration(_, _, _) 
+                   )
+  
+rules
+  remove-redundant: Script(items) -> Script(<filter(should-keep)> items)
+  remove-redundant: BlockDeclaration(s, items) ->
+    BlockDeclaration(s, <filter(should-keep)> items)
