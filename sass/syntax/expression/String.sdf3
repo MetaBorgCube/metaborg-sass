@@ -19,7 +19,7 @@ lexical syntax
   SingleStringChar  = "\\'"
   SingleStringChar  = BackSlashChar
   
-  STRING = [a-zA-Z0-9\-\_]+ 
+  STRING = [a-zA-Z\-\_][a-zA-Z0-9\-\_]*
 
 lexical restrictions
   STRING -/- [a-zA-Z0-9\-\_]
