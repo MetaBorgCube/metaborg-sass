@@ -111,3 +111,7 @@ test addition of strings [[
 test division of numbers > 0 < 1 [[
 1/5
 ]] run evaluate-all to Float("0.2")
+
+test complex length expression with multiplication and division [[
+5pt * 5px / 2pt
+]] run evaluate-all to Length(Float("12.5"), "px")

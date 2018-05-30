@@ -36,3 +36,6 @@ test float plus int [[
 2 + 1
 ]] parse to Add(Int("2"), Int("1"))
 
+test length plus length [[
+1px + 0.5px
+]] parse to Add(Length(Int("1"), "px"), Length(Float("0.5"), "px"))

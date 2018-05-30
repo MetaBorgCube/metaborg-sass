@@ -19,10 +19,10 @@ lexical syntax
   SingleStringChar  = "\\'"
   SingleStringChar  = BackSlashChar
   
-  STRING = ~[\n\ \r\t\;\(\)]+
+  STRING = [a-zA-Z0-9\-\_]+ 
 
 lexical restrictions
-  STRING -/- ~[\n\ \r\t\;\(\)]
+  STRING -/- [a-zA-Z0-9\-\_]
   // Backslash chars in strings may not be followed by "
   BackSlashChar -/- [\"]
 
