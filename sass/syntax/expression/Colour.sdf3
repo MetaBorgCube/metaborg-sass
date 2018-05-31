@@ -10,8 +10,7 @@ context-free syntax
   Colour.HexShort = <#<HEXShorthand>>
   Colour.Hex      = <#<HEX>>
   Colour.ColourLabel = COLOUR-LITERAL
-  
-  Exp = Colour
+
 context-free restrictions
   Colour -/- [a-zA-Z0-9]
 

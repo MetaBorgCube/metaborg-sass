@@ -3,48 +3,70 @@ module Expression
 imports
   Common
   Colour
+  ExpressionList
   String
   
 context-free start-symbols
   Exp
-  
+  PropertyExp
+
+
 context-free syntax
+  PropertyExp = Exp
+  PropertyExp = ExpList
+
   Exp = String
-  // Literals
-  Exp           = Number
-  Exp           = Colour {prefer}
+  Exp = Number
+  Exp = Colour {prefer}
+  
+  Exp = <(<Exp>)> {bracket}
+
+
+/**
+ * Literals
+ */
+context-free syntax
   Exp.Length    = <<Exp> <LengthUnit>> {prefer}
   Exp.True      = <true>
   Exp.False     = <false>
   Exp.Null      = <null>
   
-  
   Exp.VarRef    = <<VAR>>
 
-  Exp = <(<Exp>)> {bracket}
+  Number.Int    = INT
+  Number.Float  = FLOAT
 
-  // Arithmetic Operators
+
+/**
+ * Arithmetic Operators
+ */
+context-free syntax
   Exp.Add   = <<Exp> + <Exp>> {left}
   Exp.Sub   = <<Exp> - <Exp>> {left}
   Exp.Mult  = <<Exp> * <Exp>> {left}
   Exp.Div   = <<Exp> / <Exp>> {left}
   Exp.Mod   = <<Exp> % <Exp>> {left}
-  
-  // Logical Operators
+
+
+/**
+ * Logical Operators
+ */
+context-free syntax
   Exp.And = <<Exp> and <Exp>> {left}
   Exp.Or  = <<Exp> or <Exp>> {left}
   Exp.Not = <not <Exp>> {right}
-  
-  // Comparison
+
+
+/**
+ * Comparison
+ */
+context-free syntax
   Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
   Exp.InEq  = <<Exp> != <Exp>> {non-assoc}
   Exp.Gt    = [[Exp] > [Exp]]  {non-assoc}
   Exp.Gte   = [[Exp] >= [Exp]] {non-assoc}
   Exp.Lt    = [[Exp] < [Exp]]  {non-assoc}
   Exp.Lte   = [[Exp] <= [Exp]] {non-assoc}
-  
-  Number.Int    = INT
-  Number.Float  = FLOAT
 
 
 context-free priorities
@@ -78,5 +100,3 @@ context-free priorities
       Exp.Eq
       Exp.InEq
   }
-
-

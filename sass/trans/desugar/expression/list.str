@@ -1,0 +1,21 @@
+module desugar/list
+
+imports 
+  src-gen/signatures/Expression-sig
+  src-gen/signatures/ExpressionList-sig
+  desugar/common
+
+signature
+  sorts
+    ListSeparator
+  
+  constructors
+    Space : ListSeparator
+    Comma : ListSeparator
+    
+    ExpList : list * ListSeparator -> ExpList
+
+rules
+  desugar-e: ExpListSpace(l, ExpList(t, Space())) -> 
+              ExpList([l | t], Space())
+  desugar-e: ExpListSpace(l, r) -> ExpList([l, r], Space())

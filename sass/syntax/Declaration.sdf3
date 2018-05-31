@@ -19,7 +19,7 @@ context-free syntax
   <Selector> {
     <Declaration*>
   }>
-  VariableDeclaration.VarDeclaration = <<VAR> : <Exp> <VariableDeclarationFlag*>;>
+  VariableDeclaration.VarDeclaration = <<VAR> : <PropertyExp> <VariableDeclarationFlag*>;>
   
   VariableDeclarationFlag.Global  = <!global>
   VariableDeclarationFlag.Default = <!default>
@@ -32,7 +32,7 @@ context-free syntax
    * however this is not true when there are multiple consecutive
    * property declarations. 
    */
-  PropertyDeclaration.PropertyDeclaration = <<PROPERTY> : <Exp>;> 
+  PropertyDeclaration.PropertyDeclaration = <<PROPERTY> : <PropertyExp>;> 
   PropertyDeclaration.NamespacePropertyDeclaration = <
     <PROPERTY>: {
       <PropertyDeclaration*>
@@ -44,7 +44,7 @@ syntax
   // Using kernel syntax, since layout matters to differentiate between 
   // namespaces and pseudoclasses
   PropertyDeclaration-CF.NamespacePropertyDeclarationExp = 
-  PROPERTY-LEX ":" LAYOUT-CF Exp-CF LAYOUT-CF "{"
+  PROPERTY-LEX ":" LAYOUT-CF PropertyExp-CF LAYOUT-CF "{"
     LAYOUT?-CF PropertyDeclaration*-CF LAYOUT?-CF
   "}"
 
