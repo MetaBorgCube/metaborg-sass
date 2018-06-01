@@ -14,9 +14,9 @@ signature
       ColourT : -> Type
       ListT   : list(Type) -> Type
       LengthT : Type * string -> Type // The exp type and the unit
-      // Result type * lhsT * rhsT 
-      // The result type is only used for evaluation, not type checking
-      BinExpT : Type * Type * Type -> Type 
+      // Result type * numT * lhsT * rhsT 
+      // The result and num type is only used for evaluation, not type checking
+      BinExpT : Type * Type * Type * Type -> Type 
       
       CSSAble : -> CSSAble
       
@@ -84,15 +84,26 @@ signature
       (ColourT(), IntT())     -> ColourT(),
       (ColourT(), FloatT())   -> ColourT(),
       
-      (LengthT(IntT(), l), LengthT(IntT(), r))      -> BinExpT(IntT(), LengthT(IntT(), l), LengthT(IntT(), r)),
-      (LengthT(FloatT(), l), LengthT(IntT(), r))    -> BinExpT(FloatT(), LengthT(FloatT(), l), LengthT(IntT(), r)),
-      (LengthT(IntT(), l), LengthT(FloatT(), r))    -> BinExpT(FloatT(), LengthT(IntT(), l), LengthT(FloatT(), r)),
-      (LengthT(FloatT(), l), LengthT(FloatT(), r))  -> BinExpT(FloatT(), LengthT(FloatT(), l), LengthT(FloatT(), r)),
+      // Length expressions
       
-      (BinExpT(IntT(), x, y), LengthT(IntT(), u))     -> BinExpT(IntT(), BinExpT(IntT(), x, y), LengthT(IntT(), u)),
-      (BinExpT(FloatT(), x, y), LengthT(IntT(), u))   -> BinExpT(FloatT(), BinExpT(FloatT(), x, y), LengthT(IntT(), u)),
-      (BinExpT(IntT(), x, y), LengthT(FloatT(), u))   -> BinExpT(FloatT(), BinExpT(IntT(), x, y), LengthT(FloatT(), u)),
-      (BinExpT(FloatT(), x, y), LengthT(FloatT(), u)) -> BinExpT(FloatT(), BinExpT(FloatT(), x, y), LengthT(FloatT(), u))
+      (LengthT(IntT(), l), LengthT(IntT(), r)) ->
+        BinExpT(LengthT(LengthT(None(), l), r), IntT(), LengthT(IntT(), l), LengthT(IntT(), r)),
+      (LengthT(FloatT(), l), LengthT(IntT(), r)) ->
+        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(FloatT(), l), LengthT(IntT(), r)),
+      (LengthT(IntT(), l), LengthT(FloatT(), r)) ->
+        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(IntT(), l), LengthT(FloatT(), r)),
+      (LengthT(FloatT(), l), LengthT(FloatT(), r)) ->
+        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(FloatT(), l), LengthT(FloatT(), r)),
+      
+      (BinExpT(l, n, x, y), IntT())   -> BinExpT(l, n,        x, y),
+      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
+      (IntT(), BinExpT(l, n, x, y))   -> BinExpT(l, n,        x, y),
+      (FloatT(), BinExpT(l, _, x, y)) -> BinExpT(l, FloatT(), x, y),
+      
+      (BinExpT(l, n, x, y), LengthT(IntT(), u)) ->
+        BinExpT(LengthT(l, u), n,        BinExpT(l, n, x, y), LengthT(IntT(), u)),
+      (BinExpT(l, n, x, y), LengthT(FloatT(), u)) ->
+        BinExpT(LengthT(l, u), FloatT(), BinExpT(l, n, x, y), LengthT(FloatT(), u))
     }
     
     typeForDivision: (Type * Type) -> Type {
@@ -105,8 +116,13 @@ signature
       (ColourT(), FloatT()) -> ColourT(),
       (ColourT(), ColourT()) -> ColourT(),
     
-      (BinExpT(_, LengthT(_, u), r), LengthT(_, u)) -> r,
-      (BinExpT(_, l, LengthT(_, u)), LengthT(_, u)) -> l
+      (LengthT(_, u), IntT())   -> LengthT(FloatT(), u),
+      (LengthT(_, u), FloatT()) -> LengthT(FloatT(), u),
+      (BinExpT(l, _, x, y), IntT())   -> BinExpT(l, FloatT(), x, y),
+      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
+      
+      (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, lU)) -> LengthT(FloatT(), rU),
+      (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, rU)) -> LengthT(FloatT(), lU)
     }
 
 name resolution
@@ -132,7 +148,7 @@ relations
   /**
    * Whether a type can be emited to CSS
    */
-  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+  irreflexive, anti-symmetric, anti-transitive cssable: Type * CSSAble {
     ListT(=),
     [=]
   }

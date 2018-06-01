@@ -22,6 +22,10 @@ strategies
   extr-f: f@Float(_) -> <extr> f
   extr-f: Int(f) -> <string-to-real> f
   
+  construct-end-type: BinExpT(l, nT, _, _) -> <construct-end-type> (l, nT)
+  construct-end-type: (LengthT(None(), u), nT) -> LengthT(nT, u)
+  construct-end-type: (LengthT(l, u), nT) -> LengthT(<construct-end-type> (l, nT), u)
+  
   extr = try(extract)
   evaluate-exp = try(evaluate-e)
 
@@ -40,13 +44,14 @@ strategies
   op-to-f: (Add(), FloatT()) -> "addr"
   op-to-f: (Sub(), FloatT()) -> "subtr"
   op-to-f: (Mul(), FloatT()) -> "mulr"
-  op-to-f: (Div(), FloatT()) -> "divr"
+  op-to-f: (Div(), _) -> "divr"
   op-to-f: (Mod(), FloatT()) -> "modr"
   
   op-to-f: (Add(), StringT()) -> "conc-strings"
 
-  extr-math-type: LengthT(e, _) -> e  
-  extr-comp-v: Length(e, _) -> e
+  extr-math-type: LengthT(e, _) -> <try(extr-math-type)> e  
+  extr-math-type: BinExpT(_, t, _, _) -> t
+  extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
 /**
  * Variable lookup
  */  
@@ -73,7 +78,7 @@ rules
  * Comparison
  */
 rules
-  evaluate-e: BinExp(Eq(), lhs, rhs) -> 
+  evaluate-e: BinExp(Eq(), lhs, rhs) -> // This might not be accurate for number comparisons
     <?(e, e) < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
   evaluate-e: BinExp(Gt(), lhs, rhs) ->  
     <extr-f; gtr < !True() + !False()> (lhs, rhs) 
@@ -85,7 +90,8 @@ rules
 rules
   evaluate-e: e@BinExp(op, lhs, rhs) -> r with 
     a := <nabl2-get-ast-analysis>
-    ; endT  := <nabl2-get-ast-type(|a)> e
+    ; endT  := <nabl2-get-ast-type(|a)> e 
+    ; wrapT := <try(construct-end-type)> endT
     
     ; eT  := <try(extr-math-type)> endT
     ; eLV := <try(extr-comp-v)> lhs
@@ -93,4 +99,4 @@ rules
     
     ; f   := <op-to-f> (op, eT)
     ; v   := <apply-bin(|f)> (eLV, eRV)
-    ; r   := <wrap-result> (endT, v)
+    ; r   := <wrap-result> (wrapT, v)
