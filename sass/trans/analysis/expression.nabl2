@@ -24,8 +24,10 @@ rules
   [[ BinExp(Div(), lhs, rhs) ^ (s) : eTy ]] :=
     [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
     eTy is typeForDivision of (lTy, rTy) | error $[Types [lTy] and [rTy] are not divisible].
-//  [[ BinExp(Mod(), lhs, rhs) ^ (s) : NumberT() ]] :=
-//    [[ lhs ^ (s) : NumberT() ]], [[ rhs ^ (s) : NumberT() ]]. 
+  
+  [[ BinExp(Mod(), lhs, rhs) ^ (s) : eTy ]] :=
+    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+    eTy is typeForDivision of (lTy, rTy) | error $[Types [lTy] and [rTy] are not divisible]. 
 
 /*
  * Logic 

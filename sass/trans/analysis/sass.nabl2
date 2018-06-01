@@ -12,18 +12,12 @@ signature
       StringT : -> Type
       NullT   : -> Type
       ColourT : -> Type
-      LengthT : Type * String -> Type // The exp type and the unit
-      BinExpT : Type * Type * Type -> Type // Result num type * lhsT * rhsT
-      
+      LengthT : Type * string -> Type // The exp type and the unit
+      // Result type * lhsT * rhsT 
+      // The result type is only used for evaluation, not type checking
+      BinExpT : Type * Type * Type -> Type 
       
       CSSAble : -> CSSAble
-      
-      IntTC    : -> CSSType
-      FloatTC  : -> CSSType
-      BoolTC   : -> CSSType
-      StringTC : -> CSSType
-      ColourTC : -> CSSType
-      LengthTC : -> CSSType
       
     namespaces
       Var
@@ -31,14 +25,6 @@ signature
       Mixin
    
   functions
-    typeForCSSExport: Type -> CSSType {
-      IntT()      -> IntTC(),
-      FloatT()    -> FloatTC(),
-      BoolT()     -> BoolTC(),
-      StringT()   -> StringTC(),
-      ColourT()   -> ColourTC(),
-      LengthT(_, _)  -> LengthTC()
-    }
     
     typeForAddition: (Type * Type) -> Type {
       (IntT(), IntT())          -> IntT(),
@@ -140,22 +126,23 @@ relations
   /**
    *  Whether a type is coerceable to another, e.g. number to string
    */
-  reflexive,    anti-symmetric, transitive      coerce : Type * Type
+  reflexive, anti-symmetric, transitive coerce : Type * Type
 
   /**
    * Whether a type can be emited to CSS
    */
-  reflexive,    symmetric,      transitive      cssable: Type * CSSAble
-   
+  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+  }
 rules
   
   init :=
-    FloatTC()  <cssable! CSSAble(),
-    IntTC()    <cssable! CSSAble(),
-    BoolTC()   <cssable! CSSAble(),
-    ColourTC() <cssable! CSSAble(),
-    StringTC() <cssable! CSSAble(),
-    LengthTC() <cssable! CSSAble(),
+    FloatT()  <cssable! CSSAble(),
+    IntT()    <cssable! CSSAble(),
+    BoolT()   <cssable! CSSAble(),
+    ColourT() <cssable! CSSAble(),
+    StringT() <cssable! CSSAble(),
+    // LengthT is done at declaration
+    // Also ListT?
     
     FloatT()  <coerce! StringT(),
     NullT()   <coerce! StringT(), // emptystring

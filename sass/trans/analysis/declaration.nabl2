@@ -28,8 +28,7 @@ rules
 
   ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
     [[ e ^ (avS) : eT ]],
-    cssET is typeForCSSExport of eT | error $[Expression of type [eT] cannot be assigned to [prop].] @e,
-    cssET <cssable? CSSAble()       | error $[Expression of type [eT] cannot be assigned to [prop].] @e,
+    eT <cssable? CSSAble() | error $[Expression with type [eT] is not a valid CSS expression.] @e,
     ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
 
 

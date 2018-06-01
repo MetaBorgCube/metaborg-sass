@@ -18,7 +18,8 @@ rules
   [[ ColourLabel(_) ^ (s) : ColourT() ]].
   [[ Length(v, u) ^ (s)   : LengthT(expT, u) ]] := 
     [[ v ^ (s) : expT ]],
-    expT <coerce? FloatT().
+    expT <coerce? FloatT(),
+    LengthT(expT, u) <cssable! CSSAble().
   [[ True()  ^ (_) : BoolT() ]].
   [[ False() ^ (_) : BoolT() ]].
   [[ Null()  ^ (_) : NullT() ]].
