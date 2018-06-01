@@ -1,0 +1,13 @@
+module analysis/list
+
+imports
+  src-gen/signatures/ExpressionList-sig
+  desugar/expression/list
+  analysis/sass
+  
+  nabl2/api
+  
+rules
+  [[ ExpList(items, _) ^ (s) : ListT(eTys) ]] :=
+    Map1T[[ items ^ (s) : eTys ]].
+  

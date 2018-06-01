@@ -12,6 +12,7 @@ signature
       StringT : -> Type
       NullT   : -> Type
       ColourT : -> Type
+      ListT   : list(Type) -> Type
       LengthT : Type * string -> Type // The exp type and the unit
       // Result type * lhsT * rhsT 
       // The result type is only used for evaluation, not type checking
@@ -132,7 +133,10 @@ relations
    * Whether a type can be emited to CSS
    */
   irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+    ListT(=),
+    [=]
   }
+
 rules
   
   init :=

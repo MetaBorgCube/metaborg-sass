@@ -13,7 +13,7 @@ context-free start-symbols
 
 context-free syntax
   PropertyExp = Exp
-  PropertyExp = ExpList
+  PropertyExp = ExpList {avoid}
 
   Exp = String
   Exp = Number

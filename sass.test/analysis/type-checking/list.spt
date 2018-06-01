@@ -1,0 +1,17 @@
+module type-check-expression-test
+
+language sass
+
+fixture [[
+.m {
+  width: [[...]];
+}
+]]
+
+test a list of exps [[
+[[1 5pt]]
+]] run get-type on #1 to ListT([IntT(), LengthT(IntT(), "pt")])
+
+test a list of complex expressions [[
+[[5px + 50px 10.5 * 2]]
+]] run get-type on #1 to ListT([LengthT(IntT(), "px"), FloatT()])
