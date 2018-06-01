@@ -25,19 +25,26 @@ signature
     
     BinExp  : BinOp * Exp * Exp -> Exp
     UnExp   : UnOp * Exp -> Exp
-    Unit    : String * Int -> Exp
+    Hex     : string * string * string -> Exp
 
 strategies
   desugar-expressions = bottomup(try(desugar-e)) 
   desugar-exp = try(desugar-e)
-    
+  
 rules
   /*
    * Literals
    */
-  desugar-e: HexShort(hex) -> Hex(<explode-string; 
-                                 mapconcat(\c -> [c, c]\); 
-                                 implode-string> hex)
+  desugar-e: HexShort(hex) -> Hex(red, green, blue) with
+    components := <explode-string; map(\c -> [c, c]\; implode-string)> hex
+    ; red   := <index> (1, components)
+    ; green := <index> (2, components)
+    ; blue  := <index> (3, components)
+  desugar-e: Hex(hex) -> Hex(red, green, blue) with
+    components := <explode-string> hex
+    ; red   := <implode-string> [<index> (1, components), <index> (2, components)]
+    ; green := <implode-string> [<index> (3, components), <index> (4, components)]
+    ; blue  := <implode-string> [<index> (5, components), <index> (6, components)]
   desugar-e: VarRef(name) -> VarRef(<dehyphenize> name)
 
 

@@ -8,10 +8,6 @@ fixture [[
 }
 ]]
 
-test desugar hex shorthand to full hex [[
-#1af
-]] run desugar-exp to Hex("11aaff")
-
 test desugar addition [[
 1 + 3
 ]] run desugar-all to BinExp(Add(), Int("1"), Int("3"))
