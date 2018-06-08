@@ -30,5 +30,4 @@ context-free syntax
   String.DoubleQuoteString = DOUBLE-STRING
   String.SingleQuoteString = SINGLE-STRING
   // This is a last resort case
-  // Why does avoid not work for true/false/null?
   String.UnquoteString     = STRING {avoid}

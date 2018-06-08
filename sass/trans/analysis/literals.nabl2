@@ -17,10 +17,12 @@ rules
   [[ Hex(_) ^ (_)         : ColourT() ]].
   [[ ColourLabel(_) ^ (s) : ColourT() ]].
   [[ Length(v, u) ^ (s)   : LengthT(expT, u) ]] := 
-    [[ v ^ (s) : expT ]],
-    expT <coerce? FloatT(),
-    LengthT(IntT(), u) <cssable! CSSAble(),
-    LengthT(FloatT(), u) <cssable! CSSAble().
+    [[ v ^ (s) : expT ]]
+    , expT <coerce? FloatT()
+    , LengthT(IntT(), u) <cssable! CSSAble()
+    , LengthT(FloatT(), u) <cssable! CSSAble()
+    .
+  
   [[ True()  ^ (_) : BoolT() ]].
   [[ False() ^ (_) : BoolT() ]].
   [[ Null()  ^ (_) : NullT() ]].

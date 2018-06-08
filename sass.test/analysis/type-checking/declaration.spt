@@ -1,0 +1,15 @@
+module type-check-declaration-test
+
+language sass
+
+test invalid css expression is not allowed at property [[
+.m {
+  prop: 15px * 15px;
+}
+]] > 0 errors
+
+test valid css expresssions are allowed at property [[
+.m {
+  prop: 15px;
+}
+]] 0 errors

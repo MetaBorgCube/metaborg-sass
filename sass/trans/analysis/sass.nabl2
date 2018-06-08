@@ -171,20 +171,17 @@ relations
   /**
    * Whether a type can be emited to CSS
    */
-  irreflexive, anti-symmetric, anti-transitive cssable: Type * CSSAble {
-    ListT(=),
-    [=]
-  }
+  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble
 
 rules
   
-  init :=
+  init ^ (s) :=
+    new s,
     FloatT()  <cssable! CSSAble(),
     IntT()    <cssable! CSSAble(),
     BoolT()   <cssable! CSSAble(),
     ColourT() <cssable! CSSAble(),
     StringT() <cssable! CSSAble(),
-    // LengthT is done at declaration
     // Also ListT?
     
     FloatT()  <coerce! StringT(),
@@ -196,9 +193,8 @@ rules
     NullT()   <coerce! BoolT(), // false
     FloatT()  <coerce! BoolT(). // true
   
-  [[ Script(items) ]] :=
-    new sS, 
-    RootScopeIterative[[ items ^ (sS) ]].
+  [[ Script(items) ^ (s) ]] :=
+    RootScopeIterative[[ items ^ (s) ]].
  
   RootScopeIterative[[ [] ^ (_) ]].
   ScopeIterative    [[ [] ^ (_, nGS, finalGS) ]] :=
