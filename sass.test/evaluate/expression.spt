@@ -111,3 +111,7 @@ test addition of strings [[
 test division of numbers > 0 < 1 [[
 1/5
 ]] run evaluate-all to Float("0.2")
+
+test modulo float of length [[
+5px % 1.5
+]] run evaluate-all to Length(Float("0.5"), "px")

@@ -15,3 +15,11 @@ test int addition [[
 test float addition [[
 6.25 * 2
 ]] run evaluate-all to Float("12.5")
+
+test simple int as float [[
+10.0
+]] run evaluate-all to Float("10")
+
+test int [[
+4
+]] run evaluate-all to Int("4")

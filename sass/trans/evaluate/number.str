@@ -7,10 +7,14 @@ imports
 
 strategies
   intl-float = real-to-string; string-replace(|",", ".") 
-  trimmed-num = rtrim-chars(?'0' <+ ?'.') 
-  int-component = split-at-dot; Fst
+  int-component   = split-at-dot; Fst
+  float-component = split-at-dot; Snd
+  trimmed-float-component = float-component; rtrim-chars(?'0')
+  should-remove-dot = trimmed-float-component; ?""
+  get-dot = not(should-remove-dot) < !"." + !""
 
 rules
-  format-num: Float(f) -> Float(<trimmed-num> f)
+  format-num: Float(f) -> Float( <concat-strings> [ <int-component> f, 
+                                                    <get-dot> f,
+                                                    <trimmed-float-component> f])
   format-num: Int(f)   -> Int(<int-component> f)
-

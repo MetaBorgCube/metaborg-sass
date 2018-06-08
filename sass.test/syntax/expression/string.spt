@@ -18,4 +18,4 @@ test single quoted string [[
 
 test double quoted string [[
 "hello \"world"
-]] parse to DoubleQuoteString("\"hello \\\"world\"")
+]] parse to DoubleQuoteString("\"hello \\"world\"")
