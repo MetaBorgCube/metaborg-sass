@@ -111,6 +111,6 @@ rules
     ; compRV := <coerce> (eRV, compExpT)
     
     // Perform the calculation
-    ; f   := <op-to-f; debug> (op, compExpT)
+    ; f   := <op-to-f> (op, compExpT)
     ; v   := <apply-bin(|f)> (compLV, compRV)
     ; r   := <wrap-result> (wrapT, v)
