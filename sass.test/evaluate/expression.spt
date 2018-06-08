@@ -115,3 +115,11 @@ test division of numbers > 0 < 1 [[
 test modulo float of length [[
 5px % 1.5
 ]] run evaluate-all to Length(Float("0.5"), "px")
+
+test modulo two floats [[
+3.5 % 0.5
+]] run evaluate-all to Float("0")
+
+test modulo an int and float [[
+3.5 % 1
+]] run evaluate-all to Float("0.5")

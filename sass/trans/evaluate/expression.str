@@ -11,6 +11,8 @@ imports
   src-gen/signatures/String-sig
   desugar/expression/-
   analysis/sass
+  
+  evaluate/coerce
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
@@ -44,7 +46,7 @@ strategies
   op-to-f: (Add(), FloatT()) -> "addr"
   op-to-f: (Sub(), FloatT()) -> "subtr"
   op-to-f: (Mul(), FloatT()) -> "mulr"
-  op-to-f: (Div(), _) -> "divr"
+  op-to-f: (Div(), _)        -> "divr"
   op-to-f: (Mod(), FloatT()) -> "modr"
   
   op-to-f: (Add(), StringT()) -> "conc-strings"
@@ -52,6 +54,9 @@ strategies
   extr-math-type: LengthT(e, _) -> <try(extr-math-type)> e  
   extr-math-type: BinExpT(_, t, _, _) -> t
   extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
+
+  
+
 /**
  * Variable lookup
  */  
@@ -62,6 +67,7 @@ rules
     ; dec-occ := <nabl2-get-resolved-name(|a); Fst> ref-occ
     ; vExp    := <nabl2-get-property(|a, "e")> dec-occ
     ; e       := <evaluate> vExp
+
 
 /** 
  * Logic
@@ -89,14 +95,22 @@ rules
  */
 rules
   evaluate-e: e@BinExp(op, lhs, rhs) -> r with 
+    // Get the expression result types
     a := <nabl2-get-ast-analysis>
     ; endT  := <nabl2-get-ast-type(|a)> e 
     ; wrapT := <try(construct-end-type)> endT
     
-    ; eT  := <try(extr-math-type)> endT
+    // Extract the types for the math (sub)expressions,
+    // e.g. LengthT(IntT(), _) -> IntT()
+    ; compExpT  := <try(extr-math-type)> endT
     ; eLV := <try(extr-comp-v)> lhs
     ; eRV := <try(extr-comp-v)> rhs
     
-    ; f   := <op-to-f> (op, eT)
-    ; v   := <apply-bin(|f)> (eLV, eRV)
+    // Coerce the expressions to the needed types.
+    ; compLV := <coerce> (eLV, compExpT)
+    ; compRV := <coerce> (eRV, compExpT)
+    
+    // Perform the calculation
+    ; f   := <op-to-f; debug> (op, compExpT)
+    ; v   := <apply-bin(|f)> (compLV, compRV)
     ; r   := <wrap-result> (wrapT, v)

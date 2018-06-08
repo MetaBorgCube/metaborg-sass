@@ -124,6 +124,29 @@ signature
       (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, lU)) -> LengthT(FloatT(), rU),
       (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, rU)) -> LengthT(FloatT(), lU)
     }
+    
+    typeForModulo: (Type * Type) -> Type {
+      (IntT(), IntT()) -> IntT(),
+      (FloatT(), IntT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      
+      (ColourT(), ColourT())  -> ColourT(),
+      (ColourT(), IntT())     -> ColourT(),
+      (ColourT(), FloatT())   -> ColourT(),
+      
+      (LengthT(IntT(), u), IntT())    -> LengthT(IntT(), u),
+      (LengthT(FloatT(), u), IntT())  -> LengthT(FloatT(), u),
+      (LengthT(_, u), FloatT())  -> LengthT(FloatT(), u),
+      
+      (BinExpT(l, IntT(), x, y), IntT()) -> BinExpT(l, IntT(), x, y),
+      (BinExpT(l, FloatT(), x, y), IntT()) -> BinExpT(l, FloatT(), x, y),
+      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
+      
+      (BinExpT(l, IntT(), x, y), BinExpT(_, IntT(), _, _)) -> BinExpT(l, IntT(), x, y),
+      (BinExpT(l, FloatT(), x, y), BinExpT(_, IntT(), _, _)) -> BinExpT(l, IntT(), x, y),
+      (BinExpT(l, _, x, y), BinExpT(_, FloatT(), _, _)) -> BinExpT(l, FloatT(), x, y)
+    }
 
 name resolution
   labels
