@@ -9,52 +9,62 @@ imports
  * Math
  */
 rules
-  [[ BinExp(Add(), lhs, rhs) ^ (s) : eTy ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForAddition of (lTy, rTy) | error $[Types [lTy] and [rTy] are not addable.].
+  [[ BinExp(Add(), lhs, rhs) ^ (s, css) : eTy ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
+    eTy is typeForAddition of (lTy, rTy) | error $[Types [lTy] and [rTy] are not addable.],
+    css == CSSAble().
   
-  [[ BinExp(Sub(), lhs, rhs) ^ (s) : eTy ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForSubtraction of (lTy, rTy) | error $[Types [lTy] and [rTy] are not subtractable.].
+  [[ BinExp(Sub(), lhs, rhs) ^ (s, css) : eTy ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
+    eTy is typeForSubtraction of (lTy, rTy) | error $[Types [lTy] and [rTy] are not subtractable.],
+    css == CSSAble().
   
-  [[ BinExp(Mul(), lhs, rhs) ^ (s) : eTy ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForMultiplication of (lTy, rTy) | error $[Types [lTy] and [rTy] are not multiplicable.].
+  [[ BinExp(Mul(), lhs, rhs) ^ (s, css) : eTy ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
+    eTy is typeForMultiplication of (lTy, rTy) | error $[Types [lTy] and [rTy] are not multiplicable.],
+    css == CSSAble().
 
-  [[ BinExp(Div(), lhs, rhs) ^ (s) : eTy ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForDivision of (lTy, rTy) | error $[Types [lTy] and [rTy] are not divisible].
+  [[ BinExp(Div(), lhs, rhs) ^ (s, css) : eTy ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
+    eTy is typeForDivision of (lTy, rTy) | error $[Types [lTy] and [rTy] are not divisible],
+    css == CSSAble().
   
-  [[ BinExp(Mod(), lhs, rhs) ^ (s) : eTy ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
-    eTy is typeForModulo of (lTy, rTy) | error $[Types [lTy] and [rTy] are not modulable]. 
+  [[ BinExp(Mod(), lhs, rhs) ^ (s, css) : eTy ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
+    eTy is typeForModulo of (lTy, rTy) | error $[Types [lTy] and [rTy] are not modulable],
+    css == CSSAble(). 
 
 /*
  * Logic 
  */
 rules
-  [[ BinExp(And(), lhs, rhs) ^ (s) : BoolT() ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+  [[ BinExp(And(), lhs, rhs) ^ (s, css) : BoolT() ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
     lTy <coerce? BoolT(),
-    rTy <coerce? BoolT().
-  [[ BinExp(Or(), lhs, rhs) ^ (s) : BoolT() ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+    rTy <coerce? BoolT(),
+    css == CSSAble().
+  [[ BinExp(Or(), lhs, rhs) ^ (s, css) : BoolT() ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
     lTy <coerce? BoolT(),
-    rTy <coerce? BoolT().
-  [[ UnExp(Not(), e) ^ (s) : BoolT() ]] := 
-    [[ e ^ (s) : ty ]],
-    ty <coerce? BoolT().
+    rTy <coerce? BoolT(),
+    css == CSSAble().
+  [[ UnExp(Not(), e) ^ (s, css) : BoolT() ]] := 
+    [[ e ^ (s, _) : ty ]],
+    ty <coerce? BoolT(),
+    css == CSSAble().
   
 /*
  * Comparison
  */
 rules
-  [[ BinExp(Eq(), lhs, rhs) ^ (s) : BoolT() ]] :=
-    [[ lhs ^ (s) : t ]], [[ rhs ^ (s) : t ]]. // TODO: Fix, can also happen for int and float
-  [[ BinExp(Gt(), lhs, rhs) ^ (s) : BoolT() ]] :=
-    [[ lhs ^ (s) : lTy ]], [[ rhs ^ (s) : rTy ]],
+  [[ BinExp(Eq(), lhs, rhs) ^ (s, css) : BoolT() ]] :=
+    [[ lhs ^ (s, _) : t ]], [[ rhs ^ (s, _) : t ]],
+    css == CSSAble(). // TODO: Fix, can also happen for int and float
+  [[ BinExp(Gt(), lhs, rhs) ^ (s, css) : BoolT() ]] :=
+    [[ lhs ^ (s, _) : lTy ]], [[ rhs ^ (s, _) : rTy ]],
     lTy <coerce? FloatT(),
-    rTy <coerce? FloatT().
+    rTy <coerce? FloatT(),
+    css == CSSAble().
   
   
   

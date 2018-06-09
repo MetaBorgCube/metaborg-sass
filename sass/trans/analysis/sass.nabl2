@@ -171,7 +171,10 @@ relations
   /**
    * Whether a type can be emited to CSS
    */
-  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble
+  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+    ListT(=),
+    [=]
+  }
 
 rules
   
@@ -182,7 +185,6 @@ rules
     BoolT()   <cssable! CSSAble(),
     ColourT() <cssable! CSSAble(),
     StringT() <cssable! CSSAble(),
-    // Also ListT?
     
     FloatT()  <coerce! StringT(),
     NullT()   <coerce! StringT(), // emptystring

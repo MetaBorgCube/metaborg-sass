@@ -27,10 +27,9 @@ rules
     ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
 
   ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
-    [[ e ^ (avS) : eT ]],
-    eT <cssable? CSSAble() | error $[[eT] is not a valid CSS expression type.] @e,
+    [[ e ^ (avS, cssAbleCheck) : eT ]],
+    eT <cssable? cssAbleCheck | error $[[eT] is not a valid CSS expression type.] @e,
     ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
-
 
   RootScopeIterative[[ [vd@VarDeclaration(var, e, _) | succ] ^ (avS) ]] :=
     new nextS, 
@@ -62,12 +61,12 @@ rules
 
 
   DeclareVar[[ VarDeclaration(var, e, _) ^ (avS, decS) ]] :=
-    [[ e ^ (avS) : t ]],
+    [[ e ^ (avS, _) : t ]],
     Var{var} <- decS,
     Var{var} : t,
     Var{var}.e := e.
   DeclareVar[[ GlobalVarDeclaration(var, e, _) ^ (avS, gS) ]] :=
-    [[ e ^ (avS) : t ]],
+    [[ e ^ (avS, _) : t ]],
     Var{var} <- gS,
     Var{var} : t,
     Var{var}.e := e.

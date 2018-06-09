@@ -11,23 +11,25 @@ rules
   /*
    * Literals
    */
-  [[ String(_, _) ^ (_)   : StringT() ]].
-  [[ Int(_) ^ (_)         : IntT()    ]].
-  [[ Float(_) ^ (_)       : FloatT()  ]].
-  [[ Hex(_) ^ (_)         : ColourT() ]].
-  [[ ColourLabel(_) ^ (s) : ColourT() ]].
-  [[ Length(v, u) ^ (s)   : LengthT(expT, u) ]] := 
-    [[ v ^ (s) : expT ]]
+  [[ String(_, _) ^ (_, css) : StringT() ]] := css == CSSAble().
+  [[ Int(_) ^ (_, css)       : IntT()    ]] := css == CSSAble().
+  [[ Float(_) ^ (_, css)       : FloatT()  ]] := css == CSSAble().
+  [[ Hex(_) ^ (_, css)         : ColourT() ]] := css == CSSAble().
+  [[ ColourLabel(_) ^ (s, css) : ColourT() ]] := css == CSSAble().
+  [[ Length(v, u) ^ (s, css)   : LengthT(expT, u) ]] := 
+    [[ v ^ (s, _) : expT ]]
     , expT <coerce? FloatT()
     , LengthT(IntT(), u) <cssable! CSSAble()
     , LengthT(FloatT(), u) <cssable! CSSAble()
+    , css == CSSAble()
     .
   
-  [[ True()  ^ (_) : BoolT() ]].
-  [[ False() ^ (_) : BoolT() ]].
-  [[ Null()  ^ (_) : NullT() ]].
-  [[ VarRef(id) ^ (s) : ty ]] := 
+  [[ True()  ^ (_, css) : BoolT() ]] := css == CSSAble().
+  [[ False() ^ (_, css) : BoolT() ]] := css == CSSAble().
+  [[ Null()  ^ (_, css) : NullT() ]] := css == CSSAble().
+  [[ VarRef(id) ^ (s, css) : ty ]] := 
     Var{id} -> s,
     Var{id} |-> d | error $[Undefined variable [id]] @id,
-    d : ty.
+    d : ty,
+    css == CSSAble().
   

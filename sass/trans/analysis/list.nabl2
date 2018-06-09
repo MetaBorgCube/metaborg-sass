@@ -8,6 +8,13 @@ imports
   nabl2/api
   
 rules
-  [[ ExpList(items, _) ^ (s) : ListT(eTys) ]] :=
-    Map1T[[ items ^ (s) : eTys ]].
+  [[ ExpList(items, _) ^ (s, cssAbleCheck) : ListT(eTys) ]] :=
+    ExpList[[ items ^ (s, cssAbleCheck) : eTys ]].
   
+  ExpList[[ [] ^ (s, cssCh) : [] ]] :=
+    cssCh == [].
+  ExpList[[ [h | t] ^ (s, topCssCheck) : [ty | tys] ]] :=
+    [[ h ^ (s, cssCheck) : ty]],
+    topCssCheck == [cssCheck | cssT],
+    ExpList[[ t ^ (s, cssT) : tys]].
+    
