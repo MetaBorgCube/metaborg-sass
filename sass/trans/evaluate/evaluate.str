@@ -5,16 +5,15 @@ imports
   nabl2runtime
 
 imports
+  evaluate/interpret/interpret
   desugar/desugar
   evaluate/-
   
 strategies
-  evaluate-all = bottomup(evaluate-exp);
-                  // Note: try usage: 
-                  // If there is nothing to format, this will fail. 
-                  // Doesn't matter if it does.
-                  try(alltd(format-num)) 
-
-  evaluate = bottomup(evaluate-exp)
+  format = try(alltd(format-num))
+  evaluate-all = interpret-script
+                  ; format 
+  
+  evaluate = bottomup(evaluate-exp); format
   evaluate-all-no-annos = evaluate-all; strip-annos
   

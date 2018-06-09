@@ -1,0 +1,36 @@
+module interpret/declaration
+
+imports
+  src-gen/signatures/Declaration-sig
+  desugar/declaration
+
+imports
+  evaluate/interpret/interpret
+  evaluate/expression
+
+
+rules
+  interp-item(|global-vars, vars): VarDeclaration(l, exp) ->
+    (VarDeclaration(l, v), global-vars, varsV)
+  with
+    v := <evaluate-exp(|vars)> exp
+    ; varsV := <update-store> (l, v, vars)
+  
+  interp-item(|global-vars, vars): GlobalVarDeclaration(l, exp) ->
+    (GlobalVarDeclaration(l, v), globalVarsV, varsV)
+  with
+    v := <evaluate-exp(|vars)> exp
+    ; globalVarsV := <update-store> (l, v, global-vars)
+    ; varsV := <update-store> (l, v, vars)
+  
+  interp-item(|global-vars, vars): BlockDeclaration(selec, decls) ->
+    (BlockDeclaration(selec, d), global-vars, vars)
+  with
+    // TODO: Update the output global vars with the global
+    // vars in the sub declarations
+    d := <interpret(|global-vars, vars)> decls
+  
+  interp-item(|global-vars, vars): PropertyDeclaration(p, exp) ->
+    (PropertyDeclaration(p, e), global-vars, vars)
+  with
+    e := <evaluate-exp(|vars)> exp

@@ -1,0 +1,34 @@
+module interpret/interpret
+
+imports
+  src-gen/signatures/Script-sig
+
+imports
+  evaluate/interpret/-
+  evaluate/expression  
+
+strategies
+  update-store: (k, v, s) -> [ (<strip-annos> k, <strip-annos> v) |s]
+  get-value: (k, s) -> v with
+    key := <strip-annos> k
+    ; v := <fetch-elem(?(key, _)); Snd> s
+
+rules
+
+  interpret-script: Script(items) ->
+    Script(<interpret(|[], [])> items)
+
+  /**
+   * Interprets a Sass scripts AST
+   *
+   * Arguments:
+   *  Strategies:
+   *    -
+   *  Terms:
+   *    - vars: A map of variables    
+   */
+  interpret(|global-vars, vars): [] -> []
+  interpret(|global-vars, vars): [h | t] -> 
+    [item | <interpret(|new-global-vars, new-vars)> t] with
+    (item, new-global-vars, new-vars) := <interp-item(|global-vars, vars)> h
+    

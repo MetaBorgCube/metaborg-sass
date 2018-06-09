@@ -12,4 +12,5 @@ language
 menus
   menu: "Transpile" (openeditor)
     action: "Transpile  (.css.aterm)" = transpile 
+    action: "Transpile  (interpret)"  = transpile-interpret
     action: "Transpile  (.css)"       = fail

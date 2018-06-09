@@ -13,6 +13,10 @@ imports
   analysis/sass
   
   evaluate/coerce
+  evaluate/interpret/interpret
+
+strategies
+  evaluate-exp(|vars) = bottomup(debug(!97); try(evaluate-e(|vars)))
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
@@ -29,7 +33,6 @@ strategies
   construct-end-type: (LengthT(l, u), nT) -> LengthT(<construct-end-type> (l, nT), u)
   
   extr = try(extract)
-  evaluate-exp = try(evaluate-e)
 
   apply-bin(|f) = extr; call(f||); try(intl-float)
   
@@ -61,32 +64,28 @@ strategies
  * Variable lookup
  */  
 rules
-  evaluate-e: VarRef(x) -> e with
-    a := <nabl2-get-ast-analysis>
-    ; ref-occ := <nabl2-mk-occurrence(|"Var")> x
-    ; dec-occ := <nabl2-get-resolved-name(|a); Fst> ref-occ
-    ; vExp    := <nabl2-get-property(|a, "e")> dec-occ
-    ; e       := <evaluate> vExp
+  evaluate-e(|vars): VarRef(x) -> e with
+    e := <get-value> (x, vars)
 
 
 /** 
  * Logic
  */
 rules
-  evaluate-e: BinExp(And(), lhs, rhs) -> 
+  evaluate-e(|vars): BinExp(And(), lhs, rhs) -> 
     <?(True(), True()) < !True() + !False()> (lhs, rhs)
-  evaluate-e: BinExp(Or(), lhs, rhs) -> 
+  evaluate-e(|vars): BinExp(Or(), lhs, rhs) -> 
     <?(True(), _) < !True() + (?(_, True()) < !True() + !False())> (lhs, rhs)
-  evaluate-e: UnExp(Not(), e) -> <?True() < !False() + !True()> e
+  evaluate-e(|vars): UnExp(Not(), e) -> <?True() < !False() + !True()> e
 
 
 /**
  * Comparison
  */
 rules
-  evaluate-e: BinExp(Eq(), lhs, rhs) -> // This might not be accurate for number comparisons
+  evaluate-e(|vars): BinExp(Eq(), lhs, rhs) -> // This might not be accurate for number comparisons
     <?(e, e) < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
-  evaluate-e: BinExp(Gt(), lhs, rhs) ->  
+  evaluate-e(|vars): BinExp(Gt(), lhs, rhs) ->  
     <extr-f; gtr < !True() + !False()> (lhs, rhs) 
 
   
@@ -94,7 +93,7 @@ rules
  * Math
  */
 rules
-  evaluate-e: e@BinExp(op, lhs, rhs) -> r with 
+  evaluate-e(|vars): e@BinExp(op, lhs, rhs) -> r with 
     // Get the expression result types
     a := <nabl2-get-ast-analysis>
     ; endT  := <nabl2-get-ast-type(|a)> e 

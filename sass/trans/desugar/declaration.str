@@ -6,8 +6,9 @@ imports
 
 signature
   constructors
-    GlobalVarDeclaration : String * Exp * List(VariableDeclarationFlag) -> VariableDeclaration
-
+    VarDeclaration       : String * Exp -> VariableDeclaration
+    GlobalVarDeclaration : String * Exp -> VariableDeclaration
+    
 strategies
   desugar-declarations = try(alltd(desugar-dec))
                           ; topdown(try(desugar-namespace-prop))
@@ -19,10 +20,10 @@ strategies
 rules
 
   desugar-dec: VarDeclaration(name, e, flags) -> 
-    GlobalVarDeclaration(<dehyphenize> name, e, flags) 
+    GlobalVarDeclaration(<dehyphenize> name, e) 
       where <member> (Global(), flags)
   desugar-dec: VarDeclaration(name, e, flags) -> 
-    VarDeclaration(<dehyphenize> name, e, flags)
+    VarDeclaration(<dehyphenize> name, e)
 
 /** 
  * Namespace properties

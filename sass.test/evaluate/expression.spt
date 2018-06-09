@@ -10,116 +10,116 @@ x {
 
 test addition of two numbers [[
 2.3 + 1
-]] run evaluate-all to Float("3.3")
+]] run evaluate to Float("3.3")
 
 test multiplication of two numbers [[
 2 * 3.3
-]] run evaluate-all to Float("6.6")
+]] run evaluate to Float("6.6")
 
 test division of two numbers [[
 4 / 2
-]] run evaluate-all to Float("2")
+]] run evaluate to Float("2")
 
 test modulo two numbers [[
 5 % 2
-]] run evaluate-all to Int("1")
+]] run evaluate to Int("1")
 
 test and false false [[
 false and false
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test and false true [[
 false and true
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test and true false [[
 true and false
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test and true true [[
 true and true
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test or false false [[
 false or false
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test or false true [[
 false or true
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test or true true [[
 true or false
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test or true true [[
 true or true
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test equal false true [[
 false == true
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test equal true true [[
 true == true
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test equal false false [[
 false == false
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test equal 1 1 [[
 1 == 1
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test not equal 2 1.5 [[
 2 == 1.5
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test inequal 2 1.5 [[
 2 != 1.5
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test equal hex [[
 #000 == #000
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test equal hex shorthand with hex [[
 #000 == #000000
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test gt true [[
 4.0001 > 4
-]] run evaluate-all to True()
+]] run evaluate to True()
 
 test gt false [[
 4 > 5
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test negation of true [[
 not true
-]] run evaluate-all to False()
+]] run evaluate to False()
 
 test addition of lengths [[
 1px + 0.5px
-]] run evaluate-all to Length(Float("1.5"), "px")
+]] run evaluate to Length(Float("1.5"), "px")
 
 test addition of strings [[
 "Hello," + " world"
-]] run evaluate-all to String("Hello, world", DoubleQuote())
+]] run evaluate to String("Hello, world", DoubleQuote())
 
 test division of numbers > 0 < 1 [[
 1/5
-]] run evaluate-all to Float("0.2")
+]] run evaluate to Float("0.2")
 
 test modulo float of length [[
 5px % 1.5
-]] run evaluate-all to Length(Float("0.5"), "px")
+]] run evaluate to Length(Float("0.5"), "px")
 
 test modulo two floats [[
 3.5 % 0.5
-]] run evaluate-all to Float("0")
+]] run evaluate to Float("0")
 
 test modulo an int and float [[
 3.5 % 1
-]] run evaluate-all to Float("0.5")
+]] run evaluate to Float("0.5")

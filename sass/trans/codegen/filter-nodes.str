@@ -14,8 +14,8 @@ strategies
    * is compiled to a CSS AST.
    */
   should-keep = not(?BlockDeclaration(_, [])          // Empty blocks
-                    <+ ?VarDeclaration(_, _, _)
-                    <+ ?GlobalVarDeclaration(_, _, _) 
+                    <+ ?VarDeclaration(_, _)
+                    <+ ?GlobalVarDeclaration(_, _) 
                    )
   
 rules
