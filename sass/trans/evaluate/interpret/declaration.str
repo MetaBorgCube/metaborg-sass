@@ -10,27 +10,28 @@ imports
 
 
 rules
-  interp-item(|global-vars, vars): VarDeclaration(l, exp) ->
-    (VarDeclaration(l, v), global-vars, varsV)
+  interp-item(|vars): VarDeclaration(l, exp) ->
+    (VarDeclaration(l, v), globalVars, localVars)
   with
     v := <evaluate-exp(|vars)> exp
-    ; varsV := <update-store> (l, v, vars)
+    ; globalVars := <create-store> ()
+    ; localVars := <create-store> (l, v)
   
-  interp-item(|global-vars, vars): GlobalVarDeclaration(l, exp) ->
-    (GlobalVarDeclaration(l, v), globalVarsV, varsV)
+  interp-item(|vars): GlobalVarDeclaration(l, exp) ->
+    (GlobalVarDeclaration(l, v), globalVars, localVars)
   with
     v := <evaluate-exp(|vars)> exp
-    ; globalVarsV := <update-store> (l, v, global-vars)
-    ; varsV := <update-store> (l, v, vars)
+    ; globalVars := <create-store> (l, v)
+    ; localVars := <create-store> (l, v)
   
-  interp-item(|global-vars, vars): BlockDeclaration(selec, decls) ->
-    (BlockDeclaration(selec, d), global-vars, vars)
+  interp-item(|vars): BlockDeclaration(selec, decls) ->
+    (BlockDeclaration(selec, d), globalVars, globalVars)
   with
-    // TODO: Update the output global vars with the global
-    // vars in the sub declarations
-    d := <interpret(|global-vars, vars)> decls
+    (d, globalVars) := <interpret-items(|vars)> decls
   
-  interp-item(|global-vars, vars): PropertyDeclaration(p, exp) ->
-    (PropertyDeclaration(p, e), global-vars, vars)
+  interp-item(|vars): PropertyDeclaration(p, exp) ->
+    (PropertyDeclaration(p, e), globalVars, localVars)
   with
     e := <evaluate-exp(|vars)> exp
+    ; globalVars := <create-store> ()
+    ; localVars  := <create-store> ()

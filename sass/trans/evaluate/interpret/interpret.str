@@ -7,28 +7,85 @@ imports
   evaluate/interpret/-
   evaluate/expression  
 
+/**
+ * Variable stores
+ * A list of key value tuples. The head of the list shadows the 
+ * tail of the list, thus <get-value> (x, [(x, 1), (x, 2)]) = 1
+ */
 strategies
+  /**
+   * Creates an empty store
+   */
+  create-store: () -> []
+  
+  /**
+   * Creates a store from a KV pair.
+   */
+  create-store: (k, v) -> <update-store> (k, v, [])
+
+  /**
+   * Adds a new KV pair to a store.
+   */
   update-store: (k, v, s) -> [ (<strip-annos> k, <strip-annos> v) |s]
+  
+  /**
+   * Merges two stores, where the first one precedes the second one.
+   */
+  extend-store: (e, s) -> <conc> (e, s)
+  
+  /**
+   * Gets a value from the store, fails if no such value exists.
+   */
   get-value: (k, s) -> v with
-    key := <strip-annos> k
-    ; v := <fetch-elem(?(key, _)); Snd> s
+    key := <strip-annos; debug> k
+    ; v := <debug; fetch-elem(?(key, _)); Snd> s
 
 rules
-
-  interpret-script: Script(items) ->
-    Script(<interpret(|[], [])> items)
 
   /**
    * Interprets a Sass scripts AST
    *
    * Arguments:
-   *  Strategies:
-   *    -
    *  Terms:
-   *    - vars: A map of variables    
+   *    - vars: A variable store
+   *
+   * Matches:
+   *  A `Script` AST node
+   *  
+   * Returns:
+   *  A `Script` AST node with interpreted subnodes.
    */
-  interpret(|global-vars, vars): [] -> []
-  interpret(|global-vars, vars): [h | t] -> 
-    [item | <interpret(|new-global-vars, new-vars)> t] with
-    (item, new-global-vars, new-vars) := <interp-item(|global-vars, vars)> h
-    
+  interpret-script: Script(items) ->
+    Script(interpretedItems)
+  with
+    newStore := <create-store> ()
+    ; (interpretedItems, _) := <interpret-items(|newStore)> items 
+  
+  /**
+   * Interprets a list of script elements.
+   * 
+   * Arguments:
+   *  Terms:
+   *    - vars: A variable store
+   *
+   * Matches: 
+   *  A list
+   * 
+   * Returns:
+   *  (items, globalsToAdd): 
+   *    A tuple of a list of interpreted elements and global 
+   *    variables to add.
+   */
+  interpret-items(|vars): [] -> ([], [])
+  interpret-items(|vars): [h | t] -> (
+      [item | tItems]
+      , globalVars
+    )
+  with
+    // tailGlobalVars <= newLocalVars
+    (item, tailGlobalVars, newLocalVars) := <interp-item(|vars)> h
+    ; localVars := <extend-store> (newLocalVars, vars)
+    ; (tItems, headGlobalVars) := <interpret-items(|localVars)> t
+    // The globalVars are built in reverse order, since the later items shadow
+    // earlier items, and the head of a store shadows the the tail.
+    ; globalVars := <extend-store> (headGlobalVars, tailGlobalVars)

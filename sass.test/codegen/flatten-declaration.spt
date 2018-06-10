@@ -14,3 +14,15 @@ test simple block declaration [[
     , BlockDeclaration(AllIn([Class("main"), Id("hello")]), [PropertyDeclaration("color", ColourLabel("white"))])
   ])
   
+test global var inside nested block [[
+.m {
+  .n {
+    $t: 1 !global;
+  }
+  count: $t;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("count", Int("1"))
+    ])
+  ])

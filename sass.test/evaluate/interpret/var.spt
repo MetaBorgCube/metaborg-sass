@@ -1,0 +1,60 @@
+module evaluate-varref-test
+
+language sass
+
+test simple var resolution [[
+$v: 15px;
+.m {
+  width: $v;
+}
+]] run evaluate-all-test to Script([
+    VarDeclaration("$v", Length(Int("15"), "px")),
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Length(Int("15"), "px"))
+    ])
+  ]) 
+
+test var in binexp [[
+$v: true;
+.m {
+  width: $v and false;
+}
+]] run evaluate-all-test to Script([
+    VarDeclaration("$v", True()),
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", False())
+    ])
+  ]) 
+
+test global var outside block [[
+.m {
+  $v: 10px !global;
+}
+
+.n {
+  width: $v;
+}
+]] run evaluate-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      GlobalVarDeclaration("$v", Length(Int("10"), "px"))
+    ]),
+    BlockDeclaration(Class("n"), [
+      PropertyDeclaration("width", Length(Int("10"), "px"))
+    ])
+  ])
+
+test global var inside nested block [[
+.m {
+  .n {
+    $t: 1 !global;
+  }
+  count: $t;
+}
+]] run evaluate-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      BlockDeclaration(Class("n"), [
+        GlobalVarDeclaration("$t", Int("1"))
+      ]),
+      PropertyDeclaration("count", Int("1"))
+    ])
+  ])
