@@ -1,0 +1,64 @@
+module syntax-declaration-test
+
+language sass
+
+test mixin with no arguments [[
+@mixin hello {
+
+}
+]] parse to Script([MixinDeclarationNoArgs("hello", [])])
+
+test mixin with no arguments and declarations [[
+@mixin hello {
+  .m {
+    colour: green;
+  }
+}
+]] parse to Script([
+    MixinDeclarationNoArgs("hello", [
+      BlockDeclaration(Class("m"), [
+        PropertyDeclaration("colour", ColourLabel("green"))
+      ])
+    ])
+  ])
+
+test mixin with one argument [[
+@mixin hello($width) {
+  width: $width;
+}
+]] parse to Script([
+    MixinDeclaration("hello", 
+      [FArg("$width")],
+      [PropertyDeclaration("width", VarRef("$width"))])
+  ])
+
+test mixin with two arguments [[
+@mixin hello($width, $height) {
+  width: $width;
+}
+]] parse to Script([
+    MixinDeclaration("hello", 
+      [FArg("$width"), FArg("$height")],
+      [PropertyDeclaration("width", VarRef("$width"))])
+  ])
+
+test mixin with no argument but with braces [[
+@mixin hello() {
+  width: 10;
+}
+]] parse to Script([
+    MixinDeclaration("hello", 
+      [],
+      [PropertyDeclaration("width", Int("10"))])
+  ])
+
+test mixin with two arguments with one default [[
+@mixin hello($width, $height: 100px) {
+  width: $width;
+}
+]] parse to Script([
+    MixinDeclaration("hello", 
+      [FArg("$width"), FArgWithDefault("$height", Length(Int("100"), "px"))],
+      [PropertyDeclaration("width", VarRef("$width"))])
+  ])
+

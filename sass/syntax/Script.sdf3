@@ -13,6 +13,3 @@ context-free syntax
   
   >
   
-  ScriptItem = BlockDeclaration
-  ScriptItem = VariableDeclaration
-  

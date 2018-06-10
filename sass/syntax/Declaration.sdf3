@@ -6,39 +6,63 @@ imports
   Selector
 
 context-free start-symbols
-  Declaration
-  BlockDeclaration
-  VariableDeclarationFlag
+  ScriptItem
 
 template options
   tokenize: ";()[]"
 
+/*
+ * General declarations
+ */
 context-free syntax
 
-  BlockDeclaration.BlockDeclaration = <
+  Declaration = ScriptItem
+  ScriptItem.BlockDeclaration = <
   <Selector> {
     <Declaration*>
-  }>
-  VariableDeclaration.VarDeclaration = <<VAR> : <PropertyExp> <VariableDeclarationFlag*>;>
+  }
+  
+  >
+  ScriptItem.VarDeclaration = <<VAR> : <PropertyExp> <VariableDeclarationFlag*>;>
   
   VariableDeclarationFlag.Global  = <!global>
   VariableDeclarationFlag.Default = <!default>
   
-  Declaration = BlockDeclaration
-  Declaration = VariableDeclaration
+  ScriptItem.MixinDeclarationNoArgs = <
+  @mixin <ID> {
+    <Declaration*>
+  }
   
+  >
+  ScriptItem.MixinDeclaration = <
+  @mixin <ID>(<{FArgument ","}*>) {
+    <Declaration*>
+  }
+  
+  >
+  
+  FArgument.FArg = <<VAR>>
+  FArgument.FArgWithDefault = <<VAR>: <PropertyExp>>
+
+
+/*
+ * Namespaced property declarations
+ */
+context-free syntax
+
   /* 
    * TODO: Property declarations need not be followed by a ; per se, 
    * however this is not true when there are multiple consecutive
    * property declarations. 
    */
+  Declaration = PropertyDeclaration
   PropertyDeclaration.PropertyDeclaration = <<PROPERTY> : <PropertyExp>;> 
   PropertyDeclaration.NamespacePropertyDeclaration = <
-    <PROPERTY>: {
-      <PropertyDeclaration*>
-    }>
-
-  Declaration = PropertyDeclaration
+  <PROPERTY>: {
+    <PropertyDeclaration*>
+  }
+  
+  >
 
 syntax
   // Using kernel syntax, since layout matters to differentiate between 
@@ -49,4 +73,4 @@ syntax
   "}"
 
 context-free priorities
-  PropertyDeclaration.NamespacePropertyDeclaration > BlockDeclaration.BlockDeclaration
+  PropertyDeclaration.NamespacePropertyDeclaration > ScriptItem.BlockDeclaration
