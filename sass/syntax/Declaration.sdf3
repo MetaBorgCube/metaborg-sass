@@ -28,21 +28,37 @@ context-free syntax
   VariableDeclarationFlag.Global  = <!global>
   VariableDeclarationFlag.Default = <!default>
   
-  ScriptItem.MixinDeclarationNoArgs = <
-  @mixin <ID> {
-    <Declaration*>
-  }
-  
-  >
+/**
+ * Mixins
+ */
+context-free syntax
   ScriptItem.MixinDeclaration = <
-  @mixin <ID>(<{FArgument ","}*>) {
+  @mixin <ID><FArgumentGroup?> {
     <Declaration*>
-  }
+  }        
   
   >
+  
+  FArgumentGroup.FArguments = <(<{FArgument ","}+>)>
+  FArgumentGroup.FArgumentsStandardAndDefaults = 
+                                      <(<{FArgument ","}+>, <{FArgumentDefault ","}+>)>
+  FArgumentGroup.FArgumentsDefaults = <(<{FArgumentDefault ","}+>)>
   
   FArgument.FArg = <<VAR>>
-  FArgument.FArgWithDefault = <<VAR>: <PropertyExp>>
+  FArgumentDefault.FArgDefault = <<VAR>: <PropertyExp>>
+
+  
+  ScriptItem.IncludeMixin = <@include <ID><AArgumentGroup?>;>
+  ScriptItem.IncludeMixinContentBlock = <
+  @include <ID><AArgumentGroup?> {
+    <Declaration*>
+  }
+  >
+  
+  AArgumentGroup.AArgGroup = <(<{AArgument ","}*>)>
+  AArgumentGroup.KeywordAArgGroup = <(<{AArgumentKeyword ","}*>)>
+  AArgument.AArg = <<PropertyExp>>
+  AArgumentKeyword.KeywordArgGroup = <<VAR>: <PropertyExp>>
 
 
 /*

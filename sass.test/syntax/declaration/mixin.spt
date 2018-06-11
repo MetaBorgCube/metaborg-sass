@@ -6,7 +6,7 @@ test mixin with no arguments [[
 @mixin hello {
 
 }
-]] parse to Script([MixinDeclarationNoArgs("hello", [])])
+]] parse to Script([MixinDeclaration("hello", None(), [])])
 
 test mixin with no arguments and declarations [[
 @mixin hello {
@@ -15,7 +15,7 @@ test mixin with no arguments and declarations [[
   }
 }
 ]] parse to Script([
-    MixinDeclarationNoArgs("hello", [
+    MixinDeclaration("hello", None(), [
       BlockDeclaration(Class("m"), [
         PropertyDeclaration("colour", ColourLabel("green"))
       ])
@@ -27,8 +27,8 @@ test mixin with one argument [[
   width: $width;
 }
 ]] parse to Script([
-    MixinDeclaration("hello", 
-      [FArg("$width")],
+    MixinDeclaration("hello", Some(
+      FArguments([FArg("$width")])),
       [PropertyDeclaration("width", VarRef("$width"))])
   ])
 
@@ -38,18 +38,8 @@ test mixin with two arguments [[
 }
 ]] parse to Script([
     MixinDeclaration("hello", 
-      [FArg("$width"), FArg("$height")],
+      Some(FArguments([FArg("$width"), FArg("$height")])),
       [PropertyDeclaration("width", VarRef("$width"))])
-  ])
-
-test mixin with no argument but with braces [[
-@mixin hello() {
-  width: 10;
-}
-]] parse to Script([
-    MixinDeclaration("hello", 
-      [],
-      [PropertyDeclaration("width", Int("10"))])
   ])
 
 test mixin with two arguments with one default [[
@@ -58,7 +48,59 @@ test mixin with two arguments with one default [[
 }
 ]] parse to Script([
     MixinDeclaration("hello", 
-      [FArg("$width"), FArgWithDefault("$height", Length(Int("100"), "px"))],
+      Some(FArgumentsStandardAndDefaults([FArg("$width")], [FArgDefault("$height", Length(Int("100"), "px"))])),
       [PropertyDeclaration("width", VarRef("$width"))])
   ])
 
+test mixins with first argument default, second argument nondefault [[
+@mixin hello($width: 10px, $height) { }
+]] parse fails
+
+test mixin with only default arguments [[
+@mixin hello($width: 10, $height: 20) {}
+]] parse to Script([
+    MixinDeclaration("hello",
+      Some(FArgumentsDefaults([FArgDefault("$width", Int("10")), 
+            FArgDefault("$height", Int("20"))])),
+      []
+    )
+  ])
+
+test include mixin with no arguments [[
+@include hello;
+]] parse to Script([
+    IncludeMixin("hello", None())
+  ])
+
+test include mixin with a single argument [[
+@include hello(10);
+]] parse to Script([
+    IncludeMixin("hello", Some(AArgGroup([AArg(Int("10"))])))
+  ])
+
+test include mixins with two arguments [[
+@include hello(10, 25);
+]] parse to Script([
+    IncludeMixin("hello", Some(AArgGroup([AArg(Int("10")), AArg(Int("25"))])))
+  ])
+
+test include mixin with two keyword arguments [[
+@include hello($width: 10, $height: 25);
+]] parse to Script([
+    IncludeMixin("hello", Some(KeywordAArgGroup([KeywordArgGroup("$width", Int("10")), 
+                                                  KeywordArgGroup("$height", Int("25"))])))
+  ])
+
+test include mixin with keyword and no keywords are not allowed [[
+@include hello($width: 10, 25);
+]] parse fails
+
+test include mixin with content block [[
+@include hello(10, 25) {
+  color: white;
+}
+]] parse to Script([
+    IncludeMixinContentBlock("hello", Some(AArgGroup([AArg(Int("10")), AArg(Int("25"))])), [
+      PropertyDeclaration("color", ColourLabel("white"))
+    ])
+  ])
