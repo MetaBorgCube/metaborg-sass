@@ -43,7 +43,7 @@ strategies
    * Updates the value of a variable in the store.
    */
   update-variable(|s): (k, v)
-    -> ([(<strip-annos> k, <strip-annos> v) | vars], mixins)
+    -> ([(<strip-annos> k, v) | vars], mixins)
     with
       vars := <get-vars> s
       ; mixins := <get-mixins> s
@@ -52,7 +52,7 @@ strategies
    * Updates the mixin definition in the store.
    */
   update-mixin(|s): (name, mixin)
-    -> (vars, [(<strip-annos> name, <strip-annos> mixin) | mixins])
+    -> (vars, [(<strip-annos> name, mixin) | mixins])
     with
       vars := <get-vars> s
       ; mixins := <get-mixins> s
