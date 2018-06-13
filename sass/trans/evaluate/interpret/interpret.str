@@ -37,8 +37,8 @@ strategies
    * Gets a value from the store, fails if no such value exists.
    */
   get-value: (k, s) -> v with
-    key := <strip-annos; debug> k
-    ; v := <debug; fetch-elem(?(key, _)); Snd> s
+    key := <strip-annos> k
+    ; v := <fetch-elem(?(key, _)); Snd> s
 
 rules
 

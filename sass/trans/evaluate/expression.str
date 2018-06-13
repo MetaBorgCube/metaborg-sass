@@ -16,7 +16,7 @@ imports
   evaluate/interpret/interpret
 
 strategies
-  evaluate-exp(|vars) = bottomup(debug(!97); try(evaluate-e(|vars)))
+  evaluate-exp(|vars) = bottomup(try(evaluate-e(|vars)))
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)

@@ -12,18 +12,28 @@ signature
       StringT : -> Type
       NullT   : -> Type
       ColourT : -> Type
+      VarT    : -> Type
       ListT   : list(Type) -> Type
       LengthT : Type * string -> Type // The exp type and the unit
       // Result type * numT * lhsT * rhsT 
       // The result and num type is only used for evaluation, not type checking
-      BinExpT : Type * Type * Type * Type -> Type 
+      BinExpT : Type * Type * Type * Type -> Type
+      
+      MixinT : list(FArg) -> Type
       
       CSSAble : -> CSSAble
       
     namespaces
       Var
+      
       Function
       Mixin
+
+      // Used to check whether mixin/function calls have the right number/named arguments
+      Arg
+      IArg
+      ArgDefault
+      IArgDefault
    
   functions
     
@@ -150,6 +160,7 @@ signature
 
 name resolution
   labels
+    A // Associated scope label for arguments of mixins
     G // Global scope
     P
 
@@ -198,7 +209,21 @@ rules
   [[ Script(items) ^ (s) ]] :=
     RootScopeIterative[[ items ^ (s) ]].
  
+  /**
+   * RootScopeIterative iteratively builds a scope chain at the root of a script. The 
+   * scope variable contains the scope node available at the evaluation of the 
+   * current AST node.
+   */
   RootScopeIterative[[ [] ^ (_) ]].
-  ScopeIterative    [[ [] ^ (_, nGS, finalGS) ]] :=
+  
+  /**
+   * ScopeIterative iteratively builds a scope graph. The scope variable contains:
+   *  - The available scope
+   *  - The last global scope node
+   *  - The global scope that should be linked to the last global scope defined in the block.
+   *      This allows nested blocks to define global variables that are available in later
+          blocks and script elements.
+   */
+  ScopeIterative[[ [] ^ (_, nGS, finalGS) ]] :=
     finalGS -G-> nGS.
     

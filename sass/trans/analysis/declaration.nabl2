@@ -3,12 +3,74 @@ module analysis/declaration
 imports
   analysis/sass
 
+/**
+ * Mixins
+ */
+rules
+  RootScopeIterative[[ [MixinDeclaration(n, args, argsDefault, body) | succ] ^ (avS) ]] :=
+    Mixin{n} <- avS
+    
+    , new argS
+    , argS ---> avS
+    , Mixin{n} =A=> argS
+    
+    , Map1(DeclareFArg)[[ args ^ (argS) ]]
+    , Map1(DeclareFArg)[[ argsDefault ^ (argS) ]]
+    , distinct/name D(argS)/Var | error $[Duplicate argument definition [NAME]] @NAMES
+    
+    , new bodyS
+    , bodyS ---> argS
+    
+    , new finalMixinGS
+    , ScopeIterative[[ body ^ (bodyS, avS, finalMixinGS) ]]
+    
+    , RootScopeIterative[[ succ ^ (finalMixinGS) ]]
+    .
+
+  ScopeIterative[[ [MixinDeclaration(n, args, defaults, body) | succ] ^ (avS, gS, finalGS) ]] :=
+    Mixin{n} <- avS
+    
+    , new argS
+    , argS ---> avS
+    , Mixin{n} =A=> argS
+    
+    , Map1(DeclareFArg)[[ args ^ (argS) ]]
+    , Map1(DeclareFArg)[[ defaults ^ (argS) ]]
+    , distinct/name D(argS)/Var | error $[Duplicate argument definition [NAME]] @NAMES
+    
+    , new bodyS
+    , bodyS ---> argS
+    
+    , new finalMixinGS
+    , ScopeIterative[[ body ^ (bodyS, gS, finalMixinGS) ]]
+    
+    , new nextS
+    , nextS -G-> finalMixinGS
+    , nextS ---> avS
+    , ScopeIterative[[ succ ^ (nextS, finalMixinGS, finalGS) ]]
+    .
+  
+  DeclareFArg[[ FArg(i, FArg(n)) ^ (argS) ]] :=
+    Var{n} <- argS
+    , Var{n}: VarT()
+    , Arg{n} <- argS
+    , IArg{i} <- argS
+    .
+  DeclareFArg[[ FArg(i, FArgDefault(n, exp)) ^ (argS) ]] :=
+    Var{n} <- argS
+    , [[ exp ^ (s, _) : t ]]
+    , Var{n} : t
+
+    , ArgDefault{n} <- argS
+    , IArgDefault{i} <- argS
+    .
+
+
+/**
+ * Block declarations
+ */
 rules
 
-  /*
-   * Anything defined within the scope of this block is not available 
-   * outside it, modulo global variables.
-   */
   RootScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS) ]] :=
     new blockS, 
     blockS ---> avS,
@@ -26,11 +88,21 @@ rules
     nextS -G-> finalBlockGS,
     ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
 
+
+/**
+ * Property declarations
+ */
+rules
   ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
     [[ e ^ (avS, cssAbleCheck) : eT ]],
     eT <cssable? cssAbleCheck | error $[[eT] is not a valid CSS expression type.] @e,
     ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
 
+
+/**
+ * Variable declarations
+ */
+rules
   RootScopeIterative[[ [vd@VarDeclaration(var, e) | succ] ^ (avS) ]] :=
     new nextS, 
     nextS -G-> avS,

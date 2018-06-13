@@ -6,6 +6,7 @@ imports
   Selector
 
 context-free start-symbols
+  Declaration
   ScriptItem
 
 template options
@@ -55,10 +56,10 @@ context-free syntax
   }
   >
   
-  AArgumentGroup.AArgGroup = <(<{AArgument ","}*>)>
-  AArgumentGroup.KeywordAArgGroup = <(<{AArgumentKeyword ","}*>)>
+  AArgumentGroup.AArgGroup = <(<{AArgument ","}*>)> {prefer}
   AArgument.AArg = <<PropertyExp>>
-  AArgumentKeyword.KeywordArgGroup = <<VAR>: <PropertyExp>>
+  AArgumentGroup.KeywordAArgGroup = <(<{AArgumentKeyword ","}*>)>
+  AArgumentKeyword.KeywordAArg = <<VAR>: <PropertyExp>>
 
 
 /*

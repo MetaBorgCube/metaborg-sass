@@ -87,8 +87,8 @@ test include mixins with two arguments [[
 test include mixin with two keyword arguments [[
 @include hello($width: 10, $height: 25);
 ]] parse to Script([
-    IncludeMixin("hello", Some(KeywordAArgGroup([KeywordArgGroup("$width", Int("10")), 
-                                                  KeywordArgGroup("$height", Int("25"))])))
+    IncludeMixin("hello", Some(KeywordAArgGroup([KeywordAArg("$width", Int("10")), 
+                                                  KeywordAArg("$height", Int("25"))])))
   ])
 
 test include mixin with keyword and no keywords are not allowed [[
@@ -103,4 +103,10 @@ test include mixin with content block [[
     IncludeMixinContentBlock("hello", Some(AArgGroup([AArg(Int("10")), AArg(Int("25"))])), [
       PropertyDeclaration("color", ColourLabel("white"))
     ])
+  ])
+
+test include mixin with no arguments but with braces [[
+@include hello();
+]] parse to Script([
+    IncludeMixin("hello", Some(AArgGroup([])))
   ])

@@ -9,4 +9,5 @@ strategies
   desugar-all = desugar-declarations
                   ; desugar-expressions
                   ; desugar-selectors
+                  ; desugar-calls
   desugar-all-test = desugar-all; strip-annos

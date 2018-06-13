@@ -1,0 +1,28 @@
+module name-resolution-mixin-test
+
+language sass
+
+test referencing an argument [[
+@mixin hello([[$v]]) {
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test referencing a shadowed argument [[
+@mixin hello($v) {
+  [[$v]]: 2px;
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test variable not overriden in arguments is accessible [[
+[[$w]]: 10px;
+@mixin hi($v) {
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test duplicate argument declaration is not allowed [[
+@mixin hello($v, $v) {}
+]] > 0 errors
+

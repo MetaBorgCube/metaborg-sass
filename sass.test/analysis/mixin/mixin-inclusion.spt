@@ -1,0 +1,60 @@
+module name-resolution-mixin-test
+
+language sass
+
+test resolve mixin [[
+@mixin [[hello]] {}
+@include [[hello]];
+]] resolve #2 to #1
+
+test shadowing mixin [[
+@mixin hello {}
+@mixin [[hello]] {}
+@include [[hello]];
+]] resolve #2 to #1
+
+test not enough arguments is not allowed [[
+@mixin hello($v) {}
+@include hello();
+]] > 0 errors
+
+test too many arguments are not allowed [[
+@mixin hello {}
+
+@include hello(4);
+]] > 0 errors
+
+test default argument need not be given [[
+@mixin hello($v: 10px) {}
+@include hello;
+]] 0 errors
+
+test only non-default arguments need to be given [[
+@mixin hello($v, $w: 1) {}
+@include hello(5);
+]] 0 errors
+
+test default argument may be given [[
+@mixin hello($v, $w) {}
+@include hello(5, 2);
+]] 0 errors
+
+test keyword arguments are allowed [[
+@mixin hello($v) {}
+@include hello($v: 2px);
+]] 0 errors
+
+test keyword arguments may be given in any order [[
+@mixin hello($v, $w) {}
+@include hello($w: 4, $v: 3);
+]] 0 errors
+
+test only non-default keyword arguments need to be given [[
+@mixin hello($v, $w: 5px) {}
+@include hello($v: 3);
+]] 0 errors
+
+test non-default keyword arguments need to be given [[
+@mixin hello($v, $w: 5px) {}
+@include hello($w: 3);
+]] > 0 errors
