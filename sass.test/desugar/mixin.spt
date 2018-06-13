@@ -90,3 +90,16 @@ test variable declarations inside mixins are desugared [[
       VarDeclaration("$v", Int("1"))
     ])
   ])
+
+test include mixin with arguments and content block [[
+@include hello($width: 10, $height: 25) {
+  colour: white;
+}
+]] run desugar-all-test to Script([
+    IncludeMixin("hello", KeywordAArgGroup([
+      KeywordAArg("$width", Int("10")), 
+      KeywordAArg("$height", Int("25"))]), 
+      [
+        PropertyDeclaration("colour", ColourLabel("white"))
+      ])
+  ])

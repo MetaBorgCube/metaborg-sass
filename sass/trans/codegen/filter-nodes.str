@@ -15,7 +15,9 @@ strategies
    */
   should-keep = not(?BlockDeclaration(_, [])          // Empty blocks
                     <+ ?VarDeclaration(_, _)
-                    <+ ?GlobalVarDeclaration(_, _) 
+                    <+ ?GlobalVarDeclaration(_, _)
+                    <+ ?MixinDeclaration(_, _, _, _)
+                    <+ ?IncludeMixin(_, _, _)
                    )
   
 rules

@@ -28,6 +28,12 @@ strategies
     s := <create-store> ()
 
   /**
+   * Creates a store from a list of (name, value) tuples
+   */
+  create-store-with-vars: vars -> 
+    <foldl(\(dA, dS) -> <update-variable(|dS)> dA\)> (vars, <create-store> ())
+
+  /**
    * Creates a store from a KV mixin pair.
    */
   create-store-with-mixin: (name, mixin) -> <update-mixin(|s)> (name, mixin) with
