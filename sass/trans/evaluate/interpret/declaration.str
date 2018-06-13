@@ -8,30 +8,57 @@ imports
   evaluate/interpret/interpret
   evaluate/expression
 
+signature
+  constructors
+          //name    * args * default  * body * env
+    Mixin : String  * list * list     * list * list -> ScriptItem
 
+
+/**
+ * `interp-item(|store) -> (interpreted item, global store, local store)`
+ *
+ * Interprets a script item
+ *
+ * Arguments:
+ *  Terms:
+ *    - store: A store containing the relevant values, (vars, mixins, etc....)
+ *
+ * Returns:
+ *  A triplet: 
+ *    + The interpreted item
+ *    + A store representing the items to add to the global store of the next item.
+ *        Note: the global store is a subset of the local store.
+ *    + A store representing the items to add to the local store of the next item.
+ */
 rules
-  interp-item(|vars): VarDeclaration(l, exp) ->
-    (VarDeclaration(l, v), globalVars, localVars)
+  interp-item(|store): VarDeclaration(l, exp)
+    -> (VarDeclaration(l, v), globalStore, localStore)
   with
-    v := <evaluate-exp(|vars)> exp
-    ; globalVars := <create-store> ()
-    ; localVars := <create-store> (l, v)
+    v := <evaluate-exp(|store)> exp
+    ; globalStore := <create-store> ()
+    ; localStore := <create-store-with-var> (l, v)
   
-  interp-item(|vars): GlobalVarDeclaration(l, exp) ->
-    (GlobalVarDeclaration(l, v), globalVars, localVars)
+  interp-item(|store): GlobalVarDeclaration(l, exp)
+    -> (GlobalVarDeclaration(l, v), globalStore, globalStore)
   with
-    v := <evaluate-exp(|vars)> exp
-    ; globalVars := <create-store> (l, v)
-    ; localVars := <create-store> (l, v)
+    v := <evaluate-exp(|store)> exp
+    ; globalStore := <create-store-with-var> (l, v)
   
-  interp-item(|vars): BlockDeclaration(selec, decls) ->
-    (BlockDeclaration(selec, d), globalVars, globalVars)
+  interp-item(|store): BlockDeclaration(selec, decls)
+    -> (BlockDeclaration(selec, d), globalVars, globalVars)
   with
-    (d, globalVars) := <interpret-items(|vars)> decls
+    (d, globalVars) := <interpret-items(|store)> decls
   
-  interp-item(|vars): PropertyDeclaration(p, exp) ->
-    (PropertyDeclaration(p, e), globalVars, localVars)
+  interp-item(|store): PropertyDeclaration(p, exp)
+    -> (PropertyDeclaration(p, e), emptyStore, emptyStore)
   with
-    e := <evaluate-exp(|vars)> exp
-    ; globalVars := <create-store> ()
-    ; localVars  := <create-store> ()
+    e := <evaluate-exp(|store)> exp
+    ; emptyStore := <create-store> ()
+
+  interp-item(|store): MixinDeclaration(l, args, argsDefaults, body)
+    -> (MixinDeclaration(l, args, argsDef, body), emptyStore, localStore)
+  with
+    // Evaluate the default argument expressions.
+    argsDef := <map(\FArgDefault(n, e) -> FArgDefault(n, <evaluate-exp(|store)> e)\)> argsDefaults
+    ; emptyStore := <create-store> ()
+    ; localStore := <create-store-with-mixin> (l, Mixin(l, args, argsDef, body, store))

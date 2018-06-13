@@ -12,7 +12,7 @@ $v: 15px;
     BlockDeclaration(Class("m"), [
       PropertyDeclaration("width", Length(Int("15"), "px"))
     ])
-  ]) 
+  ])
 
 test var in binexp [[
 $v: true;

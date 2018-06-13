@@ -21,9 +21,9 @@ rules
     new callS
     , Map2T(CheckAArg)[[ aargs ^ (s, callS) : _ ]]
     // The non-default fargs should be a subset of the call args.
-    , D(mixinFArgS)/Arg subseteq/name D(callS)/Arg
+    , D(mixinFArgS)/Arg subseteq/name D(callS)/Arg | error $[Not all non-default arguments have values yet]
     // The call args should be a subset of all fargs.
-    , D(callS)/Arg subseteq/name (D(mixinFArgS)/Arg union D(mixinFArgS)/ArgDefault)
+    , D(callS)/Arg subseteq/name (D(mixinFArgS)/Arg union D(mixinFArgS)/ArgDefault) | error $[Too many arguments]
     .
   
   CheckAArg[[ KeywordAArg(n, exp) ^ (s, callS) : t ]] :=
@@ -36,15 +36,12 @@ rules
     new callS
     , Map2T(CheckAArg) [[ aargs ^ (s, callS) : _ ]]
     // non-default formal ivar <= actual ivar
-    , D(mixinFArgS)/IArg subseteq/name D(callS)/IArg | error $[Not all non-default arguments have values yet.]
+    , D(mixinFArgS)/IArg subseteq/name D(callS)/IArg | error $[Not all non-default arguments have values yet]
     , D(callS)/IArg subseteq/name (D(mixinFArgS)/IArg union D(mixinFArgS)/IArgDefault) | error $[Too many arguments]
     .
- 
+
   CheckAArg[[ AArg(i, AArg(exp)) ^ (s, callS) : t ]] :=
     IArg{i} <- callS
     , IArg{i} : t
     , [[ exp ^ (s, _) : t ]]
     .
-    
-    
-  

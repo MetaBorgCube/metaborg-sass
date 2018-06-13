@@ -8,37 +8,69 @@ imports
   evaluate/expression  
 
 /**
- * Variable stores
- * A list of key value tuples. The head of the list shadows the 
- * tail of the list, thus <get-value> (x, [(x, 1), (x, 2)]) = 1
+ * `store`
+ *
+ * A collection of values
+ * A tuple:
+ *  + variables: A list of (name, value) tuples for variables
+ *  + mixins: A list of (name, MixinDeclaration) tuples for tuples 
  */
 strategies
   /**
    * Creates an empty store
    */
-  create-store: () -> []
+  create-store: () -> ([], [])
   
   /**
-   * Creates a store from a KV pair.
+   * Creates a store from a KV variable pair.
    */
-  create-store: (k, v) -> <update-store> (k, v, [])
+  create-store-with-var: (k, v) -> <update-variable(|s)> (k, v) with
+    s := <create-store> ()
 
   /**
-   * Adds a new KV pair to a store.
+   * Creates a store from a KV mixin pair.
    */
-  update-store: (k, v, s) -> [ (<strip-annos> k, <strip-annos> v) |s]
-  
+  create-store-with-mixin: (name, mixin) -> <update-mixin(|s)> (name, mixin) with
+    s := <create-store> ()
+
   /**
-   * Merges two stores, where the first one precedes the second one.
+   * Updates the value of a variable in the store.
    */
-  extend-store: (e, s) -> <conc> (e, s)
+  update-variable(|s): (k, v)
+    -> ([(<strip-annos> k, <strip-annos> v) | vars], mixins)
+    with
+      vars := <get-vars> s
+      ; mixins := <get-mixins> s
+    
+  /**
+   * Updates the mixin definition in the store.
+   */
+  update-mixin(|s): (name, mixin)
+    -> (vars, [(<strip-annos> name, <strip-annos> mixin) | mixins])
+    with
+      vars := <get-vars> s
+      ; mixins := <get-mixins> s
+      
+  /**
+   * Merges two stores, where the argument succeeds the match.
+   */
+  extend-store(|s): s0 -> (<conc> (vars0, vars1), <conc> (mixins0, mixins1))
+    with
+      vars0 := <get-vars> s0
+      ; vars1 := <get-vars> s
+      ; mixins0 := <get-mixins> s0
+      ; mixins1 := <get-mixins> s
+  
+  get-vars:   (vars, _)   -> vars
+  get-mixins: (_, mixins) -> mixins
+  get-element: (k, category) -> <fetch-elem(?(key, _)); Snd> category
+    with key := <strip-annos> k
   
   /**
    * Gets a value from the store, fails if no such value exists.
    */
-  get-value: (k, s) -> v with
-    key := <strip-annos> k
-    ; v := <fetch-elem(?(key, _)); Snd> s
+  get-var(|s):    key   -> <get-element> (key, <get-vars> s)
+  get-mixin(|s):  name  -> <get-element> (name, <get-mixins> s)
 
 rules
 
@@ -62,7 +94,7 @@ rules
     ; (interpretedItems, _) := <interpret-items(|newStore)> items 
   
   /**
-   * Interprets a list of script elements.
+   * Interprets a list of script items.
    * 
    * Arguments:
    *  Terms:
@@ -76,16 +108,15 @@ rules
    *    A tuple of a list of interpreted elements and global 
    *    variables to add.
    */
-  interpret-items(|vars): [] -> ([], [])
-  interpret-items(|vars): [h | t] -> (
+  interpret-items(|store): [] -> ([], <create-store> ())
+  interpret-items(|store): [h | t] -> (
       [item | tItems]
-      , globalVars
+      , globalStore
     )
   with
-    // tailGlobalVars <= newLocalVars
-    (item, tailGlobalVars, newLocalVars) := <interp-item(|vars)> h
-    ; localVars := <extend-store> (newLocalVars, vars)
-    ; (tItems, headGlobalVars) := <interpret-items(|localVars)> t
-    // The globalVars are built in reverse order, since the later items shadow
+    (item, tailGlobalStore, newLocalStore) := <interp-item(|store)> h
+    ; nextStore := <extend-store(|store)> newLocalStore
+    ; (tItems, headGlobalStore) := <interpret-items(|nextStore)> t
+    // The globalStore is built in reverse order, since the later script items shadow
     // earlier items, and the head of a store shadows the the tail.
-    ; globalVars := <extend-store> (headGlobalVars, tailGlobalVars)
+    ; globalStore := <extend-store(|tailGlobalStore)> headGlobalStore
