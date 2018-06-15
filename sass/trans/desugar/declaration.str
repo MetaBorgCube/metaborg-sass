@@ -92,7 +92,7 @@ rules
     name := <dehyphenize> l
     ; dAargs := <desugar-aarglist> aargs
   
-  desugar-aarglist: None() -> []
+  desugar-aarglist: None() -> AArgGroup([])
   desugar-aarglist: Some(AArgGroup(args)) -> AArgGroup(<add-aarg-indices> args)
   desugar-aarglist: Some(KeywordAArgGroup(args)) -> KeywordAArgGroup(args)
   
