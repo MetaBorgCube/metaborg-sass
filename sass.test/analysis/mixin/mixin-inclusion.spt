@@ -58,3 +58,78 @@ test non-default keyword arguments need to be given [[
 @mixin hello($v, $w: 5px) {}
 @include hello($w: 3);
 ]] > 0 errors
+
+test global var declared in mixin not available until inclusion [[
+@mixin h {
+  $v: 1 !global;
+}
+$w : $v;
+]] > 0 errors
+
+test global var only resolves after inclusion of mixin [[
+[[$v]]: 98;
+@mixin h {
+  $v: 1 !global;
+}
+$w: [[$v]];
+]] resolve #2 to #1
+
+test global varref resolves to vardecl in mixin after inclusion of mixin [[
+$v: 98;
+@mixin h {
+  [[$v]]: 1 !global;
+}
+@include h;
+$w: [[$v]];
+]] resolve #2 to #1
+
+test local var is not available outside mixin [[
+@mixin hello {
+  $v: 5px;
+}
+$w: $v;
+]] > 0 errors
+
+test global varref in mixin in block resolves properly [[
+.m {
+  @mixin hello {
+    [[$t]]: 5 !global;
+  }
+  @include hello;
+  prop: [[$t]];
+}
+]] resolve #2 to #1
+
+test global varref in mixin block does not resolve before inclusion [[
+.m {
+  @mixin hello {
+    $t: 5 !global;
+  }
+  prop: $t;
+}
+]] > 0 errors
+
+test global varref in mixin in block resolves outside block if included in block [[
+.m {
+  @mixin hello {
+    [[$t]]: 5 !global;
+  } 
+  @include hello;
+}
+
+.b {
+  prop: [[$t]];
+}
+]] resolve #2 to #1
+
+test varref does not resolve to global in mixin in block if mixin is not included [[
+[[$v]]: 1;
+.m {
+  @mixin hello {
+    $v: 5 !global;
+  }
+}
+.b {
+  width: [[$v]];
+}
+]] resolve #2 to #1

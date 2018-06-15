@@ -189,8 +189,8 @@ relations
 
 rules
   
-  init ^ (s) :=
-    new s,
+  init ^ (scriptS) :=
+    new scriptS,
     FloatT()  <cssable! CSSAble(),
     IntT()    <cssable! CSSAble(),
     BoolT()   <cssable! CSSAble(),

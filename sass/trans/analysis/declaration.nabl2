@@ -22,9 +22,14 @@ rules
     , bodyS ---> argS
     
     , new finalMixinGS
-    , ScopeIterative[[ body ^ (bodyS, avS, finalMixinGS) ]]
+    , new globalMixinS
+    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS) ]]
+    , Mixin{n} =G=> finalMixinGS 
     
-    , RootScopeIterative[[ succ ^ (finalMixinGS) ]]
+    
+    , new nextS
+    , nextS -G-> avS
+    , RootScopeIterative[[ succ ^ (nextS) ]]
     .
 
   ScopeIterative[[ [MixinDeclaration(n, args, defaults, body) | succ] ^ (avS, gS, finalGS) ]] :=
@@ -43,11 +48,11 @@ rules
     
     , new finalMixinGS
     , ScopeIterative[[ body ^ (bodyS, gS, finalMixinGS) ]]
+    , Mixin{n} =G=> finalMixinGS
     
     , new nextS
-    , nextS -G-> finalMixinGS
     , nextS ---> avS
-    , ScopeIterative[[ succ ^ (nextS, finalMixinGS, finalGS) ]]
+    , ScopeIterative[[ succ ^ (nextS, gS, finalGS) ]]
     .
   
   DeclareFArg[[ FArg(i, FArg(n)) ^ (argS) ]] :=
@@ -135,10 +140,10 @@ rules
   DeclareVar[[ VarDeclaration(var, e) ^ (avS, decS) ]] :=
     [[ e ^ (avS, _) : t ]],
     Var{var} <- decS,
-    Var{var} : t,
-    Var{var}.e := e.
+    Var{var} : t
+    .
   DeclareVar[[ GlobalVarDeclaration(var, e) ^ (avS, gS) ]] :=
     [[ e ^ (avS, _) : t ]],
     Var{var} <- gS,
-    Var{var} : t,
-    Var{var}.e := e.
+    Var{var} : t
+    .

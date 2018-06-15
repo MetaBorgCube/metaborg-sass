@@ -5,15 +5,35 @@ imports
   src-gen/signatures/Declaration-sig
 
 rules
-  // CHECK WHETHER MIXIN IS CSSABLE, i.e. no property declarations at root of mixin
-  // ADD NEW EDGE TYPE FOR GLOBAL VARIABLES DECLARED IN A MIXIN
+  // TODO: CHECK WHETHER MIXIN IS CSSABLE, i.e. no property declarations at root of mixin
   RootScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS) ]] :=
     Mixin{l} -> avS
     , Mixin{l} |-> d
     , d ?=A=> fArgS
-    , d : ty
     , CheckAArgGroup[[ args ^ (avS, fArgS) ]]
-    , RootScopeIterative[[ succ ^ (avS) ]]
+    
+    , new nextS
+    , nextS -G-> avS
+    , d ?=G=> finalMixinGS
+    , nextS -G-> finalMixinGS    
+    , RootScopeIterative[[ succ ^ (nextS) ]]
+    .
+  ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS) ]] :=
+    Mixin{l} -> avS
+    , Mixin{l} |-> d
+    , d ?=A=> fArgs
+    , CheckAArgGroup[[ args ^ (avS, fArgs) ]]
+    
+    , d ?=G=> finalMixinGS
+    , new nextGS
+    , nextGS -G-> finalMixinGS
+    , nextGS -G-> gS
+
+    , new nextS
+    , nextS ---> avS
+    , nextS -G-> nextGS 
+    
+    , ScopeIterative[[ succ ^ (nextS, nextGS, finalGS) ]]
     .
   
   CheckAArgGroup[[ [] ^ (_, _) ]].
