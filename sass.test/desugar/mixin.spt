@@ -50,7 +50,7 @@ test mixin names are dehypenized [[
 test mixin inclusion [[
 @include hello;
 ]] run desugar-all-test to Script([
-    IncludeMixin("hello", [], None())
+    IncludeMixin("hello", AArgGroup([]), None())
   ])
 
 test mixin inclusion with arguments [[
@@ -76,7 +76,7 @@ test mixin inclusion with content block [[
   colour: 0;
 }
 ]] run desugar-all-test to Script([
-    IncludeMixin("hello", [], [
+    IncludeMixin("hello", AArgGroup([]), [
       PropertyDeclaration("colour", Int("0")) 
     ])
   ])
