@@ -97,7 +97,7 @@ rules
     Script(interpretedItems)
   with
     newStore := <create-store> ()
-    ; (interpretedItems, _) := <interpret-items(|newStore)> items 
+    ; (interpretedItems, _) := <interpret-items(|newStore)> items
   
   /**
    * Interprets a list of script items.
@@ -116,7 +116,7 @@ rules
    */
   interpret-items(|store): [] -> ([], <create-store> ())
   interpret-items(|store): [h | t] -> (
-      [item | tItems]
+      <conc> (item, tItems)
       , globalStore
     )
   with

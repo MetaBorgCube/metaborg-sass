@@ -32,31 +32,31 @@ signature
  */
 rules
   interp-item(|store): VarDeclaration(l, exp)
-    -> (VarDeclaration(l, v), globalStore, localStore)
+    -> ([VarDeclaration(l, v)], globalStore, localStore)
   with
     v := <evaluate-exp(|store)> exp
     ; globalStore := <create-store> ()
     ; localStore := <create-store-with-var> (l, v)
   
   interp-item(|store): GlobalVarDeclaration(l, exp)
-    -> (GlobalVarDeclaration(l, v), globalStore, globalStore)
+    -> ([GlobalVarDeclaration(l, v)], globalStore, globalStore)
   with
     v := <evaluate-exp(|store)> exp
     ; globalStore := <create-store-with-var> (l, v)
   
   interp-item(|store): BlockDeclaration(selec, decls)
-    -> (BlockDeclaration(selec, d), globalVars, globalVars)
+    -> ([BlockDeclaration(selec, d)], globalVars, globalVars)
   with
     (d, globalVars) := <interpret-items(|store)> decls
   
   interp-item(|store): PropertyDeclaration(p, exp)
-    -> (PropertyDeclaration(p, e), emptyStore, emptyStore)
+    -> ([PropertyDeclaration(p, e)], emptyStore, emptyStore)
   with
     e := <evaluate-exp(|store)> exp
     ; emptyStore := <create-store> ()
 
   interp-item(|store): MixinDeclaration(l, args, argsDefaults, body)
-    -> (MixinDeclaration(l, args, argsDef, body), emptyStore, localStore)
+    -> ([MixinDeclaration(l, args, argsDef, body)], emptyStore, localStore)
   with
     // Evaluate the default argument expressions.
     argsDef := <map(\FArg(i, FArgDefault(n, e)) -> FArg(i, FArgDefault(n, <evaluate-exp(|store)> e))\)> argsDefaults
