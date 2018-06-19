@@ -19,3 +19,10 @@ rules
   desugar-e: ExpListSpace(l, ExpList(t, Space())) -> 
               ExpList([l | t], Space())
   desugar-e: ExpListSpace(l, r) -> ExpList([l, r], Space())
+
+/**
+ * Resugaring
+ */
+rules
+  resugar-e: ExpList([h, t], Space())   -> ExpListSpace(h, t)
+  resugar-e: ExpList([h | t], Space())  -> ExpListSpace(h, ExpList(t, Space()))

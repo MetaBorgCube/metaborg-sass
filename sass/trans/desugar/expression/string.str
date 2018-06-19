@@ -18,3 +18,12 @@ rules
   desugar-e: DoubleQuoteString(s) -> String(<un-double-quote> s, DoubleQuote())
   desugar-e: SingleQuoteString(s) -> String(<un-single-quote> s, SingleQuote())
   desugar-e: UnquoteString(s)     -> String(s, None())
+
+
+/**
+ * Resugaring
+ */
+rules
+  resugar-e: String(s, DoubleQuote()) -> DoubleQuoteString(<double-quote> s)
+  resugar-e: String(s, SingleQuote()) -> SingleQuoteString(<single-quote> s)
+  resugar-e: String(s, None())        -> UnquoteString(s)

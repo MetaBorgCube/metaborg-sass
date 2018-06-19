@@ -24,7 +24,7 @@ context-free syntax
   }
   
   >
-  ScriptItem.VarDeclaration = <<VAR> : <PropertyExp> <VariableDeclarationFlag*>;>
+  ScriptItem.VarDeclaration = <<VAR>: <PropertyExp> <VariableDeclarationFlag*>;>
   
   VariableDeclarationFlag.Global  = <!global>
   VariableDeclarationFlag.Default = <!default>
@@ -73,7 +73,7 @@ context-free syntax
    * property declarations. 
    */
   Declaration = PropertyDeclaration
-  PropertyDeclaration.PropertyDeclaration = <<PROPERTY> : <PropertyExp>;> 
+  PropertyDeclaration.PropertyDeclaration = <<PROPERTY>: <PropertyExp>;> 
   PropertyDeclaration.NamespacePropertyDeclaration = <
   <PROPERTY>: {
     <PropertyDeclaration*>

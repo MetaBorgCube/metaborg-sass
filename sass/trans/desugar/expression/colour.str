@@ -1,0 +1,32 @@
+module desugar/colour
+
+imports
+  src-gen/signatures/Colour-sig
+  desugar/common
+
+signature
+  constructors
+    Hex : string * string * string -> Exp
+
+/**
+ * Hex
+ */
+rules
+  desugar-e: HexShort(hex) -> Hex(red, green, blue) with
+    components := <explode-string; map(\c -> [c, c]\; implode-string)> hex
+    ; red   := <index> (1, components)
+    ; green := <index> (2, components)
+    ; blue  := <index> (3, components)
+  desugar-e: Hex(hex) -> Hex(red, green, blue) with
+    components := <explode-string> hex
+    ; red   := <implode-string> [<index> (1, components), <index> (2, components)]
+    ; green := <implode-string> [<index> (3, components), <index> (4, components)]
+    ; blue  := <implode-string> [<index> (5, components), <index> (6, components)]
+
+
+/**
+ * Resugaring
+ */
+rules
+  resugar-e: Hex(r, g, b) -> Hex(<concat-strings> [r, g, b])
+

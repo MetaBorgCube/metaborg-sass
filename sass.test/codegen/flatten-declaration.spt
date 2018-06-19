@@ -10,8 +10,8 @@ test simple block declaration [[
   }
 }
 ]] run codegen-test to Script([
-      BlockDeclaration(Class("main"),                       [PropertyDeclaration("width", Length(Int("1"), "px"))])
-    , BlockDeclaration(AllIn([Class("main"), Id("hello")]), [PropertyDeclaration("color", ColourLabel("white"))])
+      BlockDeclaration(Class("main"),                     [PropertyDeclaration("width", Length(Int("1"), "px"))])
+    , BlockDeclaration(AllIn(Class("main"), Id("hello")), [PropertyDeclaration("color", ColourLabel("white"))])
   ])
   
 test global var inside nested block [[

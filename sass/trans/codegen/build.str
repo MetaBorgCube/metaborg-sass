@@ -4,6 +4,7 @@ imports
   evaluate/evaluate
   evaluate/interpret/interpret
   codegen/codegen
+  pp
   
 imports
 
@@ -13,18 +14,19 @@ rules
 
   /**
    * Transform Sass AST to Sass AST and show the resulting ATerm.
-   * The transformed AST has no variable references anymore.
+   * The transformed AST has no Sass specific AST nodes anymore.
    *
-   * @type Sass AST -> Sass AST
-   */
-  transpile:
-    (selected, _, ast, path, project-path) -> (filename, result)
-    with
-      filename := <guarantee-extension(|$[css.aterm])> path
-    ; result   := <evaluate-all; codegen; strip-annos> ast
- 
+   * @type Sass AST -> CSS AST
+   */ 
   transpile-interpret:
     (selected, _, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|$[css.aterm])> path
     ; result   := <interpret-script; codegen; strip-annos> ast
+
+  transpile-print:
+    (selected, _, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"css")> path
+    ; resultAST   := <transpile-sass> ast
+    ; result := <pp-sass-string> resultAST

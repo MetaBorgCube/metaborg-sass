@@ -9,10 +9,25 @@ signature
     Multiple    : List(Selector) -> Selector
     AllIn       : List(Selector) -> Selector
 
+/**
+ * Desugaring
+ */
 strategies
   desugar-selectors = bottomup(try(desugar-selec))
-    
+
 rules
   desugar-selec: Multiple(head, t)  -> Multiple([head | t]) 
   desugar-selec: AllIn(h, AllIn(t)) -> AllIn([h | t])
   desugar-selec: AllIn(h, t)        -> AllIn([h , t])
+
+
+/**
+ * Resugaring
+ */
+strategies
+  resugar-selectors = topdown(try(resugar-selec))
+
+rules
+  resugar-selec: Multiple([h | t])  -> Multiple(h, t)
+  resugar-selec: AllIn([h, t])      -> AllIn(h, t)
+  resugar-selec: AllIn([h | t])     -> AllIn(h, AllIn(t))

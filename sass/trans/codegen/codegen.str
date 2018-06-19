@@ -3,8 +3,9 @@ module codegen/codegen
 imports
   codegen/-
   evaluate/-
-  pre-evaluate/-
 
 strategies
-  codegen = filter-nodes; flatten-declarations; filter-nodes
-  codegen-test = evaluate-all; codegen; strip-annos
+  codegen = filter-nodes; flatten-declarations; filter-nodes; resugar-all
+  codegen-test = interpret-script; codegen; strip-annos
+
+  transpile-sass = interpret-script; codegen; strip-annos

@@ -2,7 +2,7 @@ module desugar/expression
 
 imports 
   src-gen/signatures/Expression-sig
-  src-gen/signatures/Colour-sig
+  desugar/expression/-
   desugar/common
 
 signature
@@ -25,32 +25,25 @@ signature
     
     BinExp  : BinOp * Exp * Exp -> Exp
     UnExp   : UnOp * Exp -> Exp
-    Hex     : string * string * string -> Exp
+    
 
 strategies
   desugar-expressions = bottomup(try(desugar-e)) 
   desugar-exp = try(desugar-e)
-  
+
+
+/*
+ * 
+ */
 rules
-  /*
-   * Literals
-   */
-  desugar-e: HexShort(hex) -> Hex(red, green, blue) with
-    components := <explode-string; map(\c -> [c, c]\; implode-string)> hex
-    ; red   := <index> (1, components)
-    ; green := <index> (2, components)
-    ; blue  := <index> (3, components)
-  desugar-e: Hex(hex) -> Hex(red, green, blue) with
-    components := <explode-string> hex
-    ; red   := <implode-string> [<index> (1, components), <index> (2, components)]
-    ; green := <implode-string> [<index> (3, components), <index> (4, components)]
-    ; blue  := <implode-string> [<index> (5, components), <index> (6, components)]
   desugar-e: VarRef(name) -> VarRef(<dehyphenize> name)
 
 
-  /*
-   * Compound
-   */
+
+/*
+ * Compound
+ */
+rules
   desugar-e: Add(lhs, rhs)  -> BinExp(Add() , lhs, rhs)
   desugar-e: Sub(lhs, rhs)  -> BinExp(Sub() , lhs, rhs)
   desugar-e: Mult(lhs, rhs) -> BinExp(Mul() , lhs, rhs)
@@ -62,7 +55,11 @@ rules
   desugar-e: Gt(lhs, rhs)   -> BinExp(Gt()  , lhs, rhs)
   desugar-e: Not(e) -> UnExp(Not(), e)
   
-  // Complex desugarings
+
+/**
+ * Complex
+ */
+rules
   desugar-e: Gte(lhs, rhs)  -> BinExp(Or(), 
                                       BinExp(Gt() , lhs, rhs), 
                                       BinExp(Eq(), lhs, rhs))
@@ -73,3 +70,10 @@ rules
                                     )
   desugar-e: Lte(lhs, rhs)  -> UnExp(Not(), BinExp(Gt(), lhs, rhs))
   desugar-e: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq(), lhs, rhs))
+
+
+/**
+ * Resugaring
+ */
+strategies
+  resugar-expressions = topdown(try(resugar-e))

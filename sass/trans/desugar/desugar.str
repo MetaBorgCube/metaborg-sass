@@ -4,6 +4,9 @@ imports
   desugar/-
   desugar/expression/-
 
+/**
+ * Desugaring
+ */
 strategies
 
   desugar-all = desugar-declarations
@@ -11,3 +14,11 @@ strategies
                   ; desugar-selectors
                   ; desugar-calls
   desugar-all-test = desugar-all; strip-annos
+
+/**
+ * Resugaring
+ */
+strategies
+  resugar-all = resugar-selectors
+                  ; resugar-expressions
+  
