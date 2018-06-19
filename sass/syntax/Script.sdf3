@@ -2,6 +2,7 @@ module Script
 
 imports 
   Common
+  ControlFlow
   Declaration
 
 context-free start-symbols

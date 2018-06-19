@@ -1,0 +1,24 @@
+module desugar/control
+
+imports
+  desugar/-
+
+imports
+  src-gen/signatures/ControlFlow-sig
+
+strategies
+  desugar-control = topdown(try(desugar-c))
+
+signature
+  constructors
+    IfElse : list -> ScriptItem
+    IfItem : Exp * list -> ScriptItem
+
+rules
+  desugar-c: If(guard, decs) -> IfElse([IfItem(guard, decs)])
+  desugar-c: IfElse(guard, decs, elseifs, elseDecls) -> IfElse(
+    <conc> ([IfItem(guard, decs)], <map(desugar-c)> elseifs, [IfItem(True(), elseDecls)]))
+  desugar-c: ChainedIfElse(guard, decs, elseifs)
+    -> IfElse([IfItem(guard, decs) | <map(desugar-c)> elseifs ])
+  desugar-c: ElseIf(guard, decs) -> IfItem(guard, decs)
+    

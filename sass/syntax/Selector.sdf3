@@ -16,6 +16,8 @@ lexical syntax
   HTML-ATTR-CHAR = ~[\ \t\r\n\#\.\,]
   HTML-ATTR = HTML-ATTR-CHAR+
   
+  HTML-ATTR = "@if"   {reject}
+  HTML-ATTR = "@else" {reject}
   
   /*
    * I wasn't able to find a source for this, but all existing HTML tags
@@ -25,11 +27,14 @@ lexical syntax
   HTML-TAG-CHAR = [a-zA-Z0-9\!\-] 
   HTML-TAG = [a-zA-Z0-9\!] HTML-TAG-CHAR*
   
+  HTML-TAG = "@if" {reject}
+  HTML-TAG = "@else" {reject}
+  
 lexical restrictions
   
   HTML-ATTR -/- ~[\ \t\r\n\#\.\,]
   HTML-TAG -/-  [a-zA-Z0-9\!\-]
-
+  
 context-free start-symbols
   
   Selector

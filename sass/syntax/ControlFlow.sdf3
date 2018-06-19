@@ -1,0 +1,43 @@
+module ControlFlow
+
+imports 
+  Common
+  Expression
+  Declaration
+  Script
+
+context-free start-symbols
+  Control
+
+/**
+ * If
+ */
+context-free syntax
+
+  ScriptItem = Control
+  
+  Control.If = <@if <PropertyExp> {
+    <Declaration*>
+  }
+  
+  >
+  
+  Control.IfElse = <@if <PropertyExp> {
+    <Declaration*>
+  } <IfTail*> @else {
+    <Declaration*>
+  }
+
+  >
+
+  Control.ChainedIfElse = <@if <PropertyExp> {
+    <Declaration*>
+  } <IfTail+>
+  
+  >
+    
+  IfTail.ElseIf = <@else if <PropertyExp> {
+    <Declaration*>
+  }
+  
+  >

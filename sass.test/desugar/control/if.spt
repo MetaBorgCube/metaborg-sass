@@ -1,0 +1,50 @@
+module desugar-if-test
+
+language sass
+
+test simple if [[
+@if true {}
+]] run desugar-all-test to Script([
+    IfElse([IfItem(True(), [])])
+  ])
+
+test if else [[
+@if false {
+
+} @else {
+
+}
+]] run desugar-all-test to Script([
+    IfElse(
+    [ IfItem(False(), [])
+    , IfItem(True(), [])
+    ])
+  ])
+
+test if else if else [[
+@if 5 == 5 {
+
+} @else if false {
+
+} @else {
+
+}
+]] run desugar-all-test to Script([
+    IfElse(
+    [ IfItem(BinExp(Eq(), Int("5"), Int("5")), [])
+    , IfItem(False(), [])
+    , IfItem(True(), [])
+    ])
+  ])
+
+test if else if else if [[
+@if 5 == 5 {}
+@else if false {}
+@else if 4 == 5 {}
+]] run desugar-all-test to Script([
+    IfElse(
+    [ IfItem(BinExp(Eq(), Int("5"), Int("5")), [])
+    , IfItem(False(), [])
+    , IfItem(BinExp(Eq(), Int("4"), Int("5")), [])
+    ])
+  ])

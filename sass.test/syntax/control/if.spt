@@ -1,0 +1,65 @@
+module syntax-if-test
+
+language sass
+
+test simple if [[
+@if true {
+  .m {
+    p: 1;
+  }
+}
+]] parse to Script([
+    If(True(), [
+      BlockDeclaration(Class("m"), [
+        PropertyDeclaration("p", Int("1"))
+      ])
+    ])
+  ])
+
+test simple if else [[
+@if true {} @else {}
+]] parse to Script([
+    IfElse(True(), [], [], [])
+  ])
+
+test if else if [[
+@if true {
+
+} @else if false {
+  prop: 5;
+}
+]] parse to Script([
+  ChainedIfElse(True(), [], [ElseIf(False(), [PropertyDeclaration("prop", Int("5"))])]) 
+  ])
+
+test if else if else [[
+@if true {
+  prop: 5;
+} @else if false {
+  prop: 6;
+} @else {
+  prop: 7;
+}
+]] parse to Script([
+    IfElse(True(), [PropertyDeclaration("prop", Int("5"))],
+    [ElseIf(False(), [PropertyDeclaration("prop", Int("6"))])],
+    [PropertyDeclaration("prop", Int("7"))])
+  ])
+
+test if else if else if else [[
+@if true {
+  prop: 5;
+} @else if false {
+  prop: 6;
+} @else if 5 + 5 == 10 {
+  prop: 7;
+} @else {
+  prop: 8;
+}
+]] parse to Script([
+    IfElse(True(), [PropertyDeclaration("prop", Int("5"))],
+    [ElseIf(False(), [PropertyDeclaration("prop", Int("6"))]),
+    ElseIf(Eq(Add(Int("5"), Int("5")), Int("10")), [PropertyDeclaration("prop", Int("7"))])],
+    [PropertyDeclaration("prop", Int("8"))])
+  ])
+
