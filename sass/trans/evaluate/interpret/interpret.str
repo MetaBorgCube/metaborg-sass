@@ -4,8 +4,8 @@ imports
   src-gen/signatures/Script-sig
 
 imports
-  evaluate/interpret/-
   evaluate/expression  
+  evaluate/interpret/-
 
 /**
  * `store`

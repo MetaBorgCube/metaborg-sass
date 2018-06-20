@@ -1,0 +1,96 @@
+module evaluate-if-test
+
+language sass
+
+test truthy simple if [[
+@if true {
+  .m {
+    h: 1;
+  }
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("1")) 
+    ])
+  ])
+
+test falsy simple if [[
+@if false {
+  .m {
+    h: 1;
+  }
+}
+]] run codegen-test to Script([])
+
+test falsy if with else [[
+.m {
+  @if false {
+    h: 1;  
+  } @else {
+    h: 2;
+  }
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("2")) 
+    ])
+  ])
+
+test falsy if with truthy else if [[
+.m {
+  @if false {
+    h: 1;  
+  } @else if 5 == 5 {
+    h: 2;
+  }
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("2")) 
+    ])
+  ])
+
+test falsy if with falsy else if [[
+.m {
+  @if false {
+    h: 1;  
+  } @else if 5 == 3{
+    h: 2;
+  }
+}
+]] run codegen-test to Script([])
+
+test falsy if with falsy else if with else [[
+.m {
+  @if false {
+    h: 1;  
+  } @else if 5 == 3 {
+    h: 2;
+  } @else {
+    h: 4;
+  }
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("4")) 
+    ])
+  ])
+
+test falsy if with falsy else if with else [[
+.m {
+  @if false {
+    h: 1;  
+  } @else if 5 == 5 {
+    h: 2;
+  } @else {
+    h: 4;
+  }
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("2")) 
+    ])
+  ])
+
+
+

@@ -16,7 +16,7 @@ imports
   evaluate/interpret/interpret
 
 strategies
-  evaluate-exp(|vars) = bottomup(try(evaluate-e(|vars)))
+  evaluate-exp(|store) = bottomup(try(evaluate-e(|store)))
 
 strategies
   extract: (l, r) -> (<extr> l, <extr> r)
@@ -58,7 +58,12 @@ strategies
   extr-math-type: BinExpT(_, t, _, _) -> t
   extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
 
-  
+
+/**
+ * 
+ */
+strategies
+  truthy = not(?False() <+ ?Null())
 
 /**
  * Variable lookup
