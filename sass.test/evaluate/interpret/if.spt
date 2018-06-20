@@ -92,5 +92,17 @@ test falsy if with falsy else if with else [[
     ])
   ])
 
+test variable defined in if available after [[
+@if true {
+  $v: 150;
+}
 
+.m {
+  h: $v;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("h", Int("150"))
+    ])
+  ])
 

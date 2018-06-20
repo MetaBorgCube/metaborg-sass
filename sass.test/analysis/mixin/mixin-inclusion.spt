@@ -64,7 +64,7 @@ test global var declared in mixin not available until inclusion [[
   $v: 1 !global;
 }
 $w : $v;
-]] > 0 errors
+]] > 0 warnings
 
 test global var only resolves after inclusion of mixin [[
 [[$v]]: 98;
@@ -88,7 +88,7 @@ test local var is not available outside mixin [[
   $v: 5px;
 }
 $w: $v;
-]] > 0 errors
+]] > 0 warnings
 
 test global varref in mixin in block resolves properly [[
 .m {

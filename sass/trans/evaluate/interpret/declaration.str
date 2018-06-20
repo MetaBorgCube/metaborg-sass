@@ -47,7 +47,7 @@ rules
   interp-item(|store): BlockDeclaration(selec, decls)
     -> ([BlockDeclaration(selec, d)], globalVars, globalVars)
   with
-    (d, globalVars) := <interpret-items(|store)> decls
+    (d, globalVars, _) := <interpret-items(|store)> decls
   
   interp-item(|store): PropertyDeclaration(p, exp)
     -> ([PropertyDeclaration(p, e)], emptyStore, emptyStore)

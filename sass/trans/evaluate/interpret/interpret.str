@@ -97,7 +97,7 @@ rules
     Script(interpretedItems)
   with
     newStore := <create-store> ()
-    ; (interpretedItems, _) := <interpret-items(|newStore)> items
+    ; (interpretedItems, _, _) := <interpret-items(|newStore)> items
   
   /**
    * Interprets a list of script items.
@@ -110,19 +110,21 @@ rules
    *  A list
    * 
    * Returns:
-   *  (items, globalsToAdd): 
+   *  (items, globalsToAdd, localsToAdd): 
    *    A tuple of a list of interpreted elements and global 
    *    variables to add.
    */
-  interpret-items(|store): [] -> ([], <create-store> ())
+  interpret-items(|store): [] -> ([], <create-store> (), <create-store> ())
   interpret-items(|store): [h | t] -> (
       <conc> (item, tItems)
       , globalStore
+      , localStore
     )
   with
     (item, tailGlobalStore, newLocalStore) := <interp-item(|store)> h
     ; nextStore := <extend-store(|store)> newLocalStore
-    ; (tItems, headGlobalStore) := <interpret-items(|nextStore)> t
+    ; (tItems, headGlobalStore, headLocalStore) := <interpret-items(|nextStore)> t
     // The globalStore is built in reverse order, since the later script items shadow
     // earlier items, and the head of a store shadows the the tail.
     ; globalStore := <extend-store(|tailGlobalStore)> headGlobalStore
+    ; localStore  := <extend-store(|nextStore)> headLocalStore

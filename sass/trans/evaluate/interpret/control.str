@@ -11,16 +11,14 @@ imports
  * @if
  */
 rules
-  interp-item(|store): IfElse(stmts) -> results
-    with
-      results := <interp-branches(|store)> stmts
+  interp-item(|store): IfElse(stmts) -> <interp-branches(|store)> stmts
   
-  interp-branches(|store): [IfItem(guard, body) | t ] -> (bodyItems, globalStore, globalStore)
+  interp-branches(|store): [IfItem(guard, body) | t ] -> (bodyItems, globalStore, localStore)
     where
-      <evaluate-exp(|store); truthy> guard 
+      <evaluate-exp(|store); truthy> guard
     with
-      (bodyItems, globalStore) := <interpret-items(|store)> body
-  
+      (bodyItems, globalStore, localStore) := <interpret-items(|store)> body
+
   interp-branches(|store): [IfItem(guard, _) | t ] -> results
     where
       <evaluate-exp(|store); not(truthy)> guard

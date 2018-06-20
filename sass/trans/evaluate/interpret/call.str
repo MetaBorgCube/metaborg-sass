@@ -23,7 +23,7 @@ rules
     
     ; callEnv := <extend-store(|env)> callStore
     ; emptyS := <create-store> ()
-    ; (evalBody, globalStoreFromBody) := <interpret-items(|callEnv)> body
+    ; (evalBody, _ ,globalStoreFromBody) := <interpret-items(|callEnv)> body
 
   build-call-args-store: (KeywordAArgGroup(aargs), _)
     -> <map(\KeywordAArg(n, e) -> (n, e)\); create-store-with-vars> aargs
