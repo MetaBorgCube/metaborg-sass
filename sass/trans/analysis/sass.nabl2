@@ -177,14 +177,14 @@ relations
   /**
    *  Whether a type is coerceable to another, e.g. number to string
    */
-  reflexive, anti-symmetric, transitive coerce : Type * Type
+  reflexive, symmetric, transitive coerce : Type * Type
 
   /**
    * Whether a type can be emited to CSS
    */
   irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
-    ListT(=),
-    [=]
+    ListT(+cssable),
+    [+cssable]
   }
 
 rules
@@ -204,7 +204,8 @@ rules
     IntT()    <coerce! FloatT(),
     
     NullT()   <coerce! BoolT(), // false
-    FloatT()  <coerce! BoolT(). // true
+    // everything else transitively through StringT, true
+    StringT() <coerce! BoolT(). 
   
   [[ Script(items) ^ (s) ]] :=
     RootScopeIterative[[ items ^ (s) ]].
