@@ -59,6 +59,9 @@ strategies
   extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
 
 
+  exp-t: Int(_) -> IntT()
+  exp-t: Float(_) -> FloatT()
+
 /**
  * 
  */
@@ -98,23 +101,37 @@ rules
  * Math
  */
 rules
-  evaluate-e(|store): e@BinExp(op, lhs, rhs) -> r with 
-    // Get the expression result types
-    a := <nabl2-get-ast-analysis>
-    ; endT  := <nabl2-get-ast-type(|a)> e 
-    ; wrapT := <try(construct-end-type)> endT
+//  evaluate-e(|store): e@BinExp(op, lhs, rhs) -> r with 
+//    // Get the expression result types
+//    a := <nabl2-get-ast-analysis>
+//    ; endT  := <nabl2-get-ast-type(|a)> e 
+//    ; wrapT := <try(construct-end-type)> endT
+//    
+//    // Extract the types for the math (sub)expressions,
+//    // e.g. LengthT(IntT(), _) -> IntT()
+//    ; compExpT  := <try(extr-math-type)> endT
+//    ; eLV := <try(extr-comp-v)> lhs
+//    ; eRV := <try(extr-comp-v)> rhs
+//    
+//    // Coerce the expressions to the needed types.
+//    ; compLV := <coerce> (eLV, compExpT)
+//    ; compRV := <coerce> (eRV, compExpT)
+//    
+//    // Perform the calculation
+//    ; f   := <op-to-f> (op, compExpT)
+//    ; f'  := <op-to-f> (op, compLV, compRV)
+//    ; v   := <apply-bin(|f)> (compLV, compRV)
+//    ; r   := <wrap-result> (wrapT, v)
+
+strategies
+  op-to-f: (Add(), IntT(), IntT())  -> "addi"
+  op-to-f: (Add(), FloatT(), _)     -> "addr"
+  op-to-f: (Add(), _, FloatT())     -> "addr"
+
+rules
+  evaluate-e(|store): BinExp(op, lhs, rhs) -> r with
+    lT := <exp-t> lhs
+    ; rT := <exp-t> rhs
     
-    // Extract the types for the math (sub)expressions,
-    // e.g. LengthT(IntT(), _) -> IntT()
-    ; compExpT  := <try(extr-math-type)> endT
-    ; eLV := <try(extr-comp-v)> lhs
-    ; eRV := <try(extr-comp-v)> rhs
-    
-    // Coerce the expressions to the needed types.
-    ; compLV := <coerce> (eLV, compExpT)
-    ; compRV := <coerce> (eRV, compExpT)
-    
-    // Perform the calculation
-    ; f   := <op-to-f> (op, compExpT)
-    ; v   := <apply-bin(|f)> (compLV, compRV)
-    ; r   := <wrap-result> (wrapT, v)
+    ; f := <op-to-f> (op, lT, rT)
+    ; r := <apply-bin(|f)> (lhs, rhs)
