@@ -100,6 +100,14 @@ test negation of true [[
 not true
 ]] run evaluate to False()
 
+test anything but false and null are equivalent to true [[
+"hello" and true
+]] run evaluate to True()
+
+test null is equivalent to false [[
+true and null
+]] run evaluate to False()
+
 test addition of lengths [[
 1px + 0.5px
 ]] run evaluate to Length(Float("1.5"), "px")
