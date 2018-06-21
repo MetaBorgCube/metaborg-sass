@@ -129,25 +129,65 @@ strategies
   
   exp-t: Int(_) -> IntT()
   exp-t: Float(_) -> FloatT()
+  exp-t: Length(n, u) -> LengthT(<exp-t> n, u)
   
   normalize-type-tuple: (op, l, FloatT()) -> (op, FloatT(), l)
-
-  op-results: (Add(), IntT(), IntT())  -> ("addi",  IntT())
-  op-results: (Add(), FloatT(), _)     -> ("addr",  FloatT())
-  op-results: (Sub(), IntT(), IntT())  -> ("subti", IntT())
-  op-results: (Sub(), FloatT(), _)     -> ("subtr", FloatT())
-  op-results: (Mul(), IntT(), IntT())  -> ("muli",  IntT())
-  op-results: (Mul(), FloatT(), _)     -> ("mulr",  FloatT())
-  op-results: (Div(), _, _)            -> ("divr",  FloatT())
-  op-results: (Mod(), IntT(), IntT())  -> ("modi",  IntT())
-  op-results: (Mod(), FloatT(), _)     -> ("modr",  FloatT())
+  normalize-type-tuple: (op, l, StringT()) -> (op, StringT(), l)
+  normalize-type-tuple: (op, l, r) -> (op, r, l) where
+    <is-subterm> (FloatT(), r)
+  op-to-f: (Add(), IntT(), IntT())  -> "addi"
+  op-to-f: (Add(), FloatT(), _)     -> "addr"
+  op-to-f: (Sub(), IntT(), IntT())  -> "subti"
+  op-to-f: (Sub(), FloatT(), _)     -> "subtr"
+  op-to-f: (Mul(), IntT(), IntT())  -> "muli"
+  op-to-f: (Mul(), FloatT(), _)     -> "mulr"
+  op-to-f: (Div(), _, _)            -> "divr"
+  op-to-f: (Mod(), IntT(), IntT())  -> "modi"
+  op-to-f: (Mod(), FloatT(), _)     -> "modr"
+  op-to-f: (Add(), StringT(), StringT()) -> "conc-strings"
+  
+  /**
+   * Addition
+   */
+  construct-end-type: (Add(), IntT(), IntT())     -> IntT()
+  construct-end-type: (Add(), FloatT(), FloatT()) -> FloatT()
+  construct-end-type: (Add(), FloatT(), IntT())   -> FloatT()
+  construct-end-type: (Add(), StringT(), _)       -> StringT()
+  construct-end-type: (Add(), LengthT(lnt, _), LengthT(rnt, u))
+    -> LengthT(<construct-end-type> (Add(), lnt, rnt), u)
   
   
+  construct-end-type: (Sub(), IntT(), IntT())     -> IntT()
+  construct-end-type: (Sub(), FloatT(), _)        -> FloatT()
+  construct-end-type: (Sub(), LengthT(lnt, _), LengthT(rnt, u))
+    -> LengthT(<construct-end-type> (Sub(), lnt, rnt), u)
+  
+  construct-end-type: (Mul(), IntT(), IntT())     -> IntT()
+  construct-end-type: (Mul(), FloatT(), _)        -> FloatT()
+  
+  construct-end-type: (Div(), IntT(), IntT())     -> FloatT()
+  construct-end-type: (Div(), FloatT(), _)        -> FloatT()
+  
+  construct-end-type: (Mod(), IntT(), IntT())     -> IntT()
+  construct-end-type: (Mod(), FloatT(), _)        -> FloatT()
+  
+  equalize-args: (Int(lhs), Float(rhs)) -> (Float(lhs), Float(rhs))
+  equalize-args: (Float(lhs), Int(rhs)) -> (Float(lhs), Float(rhs))
+     
 rules
-  evaluate-e(|store): BinExp(op, lhs, rhs) -> r with
+  evaluate-e(|store): BinExp(op, lhs, rhs) -> v with
     lT := <exp-t> lhs
     ; rT := <exp-t> rhs
     
-    ; (f, wrapT) := <try(normalize-type-tuple); op-results> (op, lT, rT)
-    ; v := <apply-bin(|f)> (lhs, rhs)
-    ; r := <wrap-result> (wrapT, v)
+    ; lCV := <try(extr-comp-v)> lhs
+    ; rCV := <try(extr-comp-v)> rhs
+    
+    ; lCT := <try(extr-math-type)> lT
+    ; rCT := <try(extr-math-type)> rT
+    ; f := <try(normalize-type-tuple); op-to-f> (op, lCT, rCT)
+     
+    ; wrapT := <try(normalize-type-tuple); construct-end-type> (op, lT, rT)
+       
+    ; (lV, rV) := <try(equalize-args)> (lCV, rCV)
+    ; numV := <apply-bin(|f)> (lV, rV)
+    ; v := <wrap-result> (wrapT, numV)
