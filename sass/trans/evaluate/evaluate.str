@@ -15,4 +15,5 @@ strategies
                   ; format 
   
   evaluate = bottomup(evaluate-exp); format
+  evaluate-test = evaluate; strip-annos
   evaluate-all-test = evaluate-all; strip-annos
