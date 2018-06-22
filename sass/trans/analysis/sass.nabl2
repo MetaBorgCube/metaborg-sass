@@ -40,6 +40,8 @@ signature
   functions
     
     typeForAddition: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
       (IntT(), IntT())          -> IntT(),
       (FloatT(), FloatT())      -> FloatT(),
       (StringT(), StringT())    -> StringT(),
@@ -58,9 +60,11 @@ signature
     }
     
     typeForSubtraction: (Type * Type) -> Type {
-      (IntT(), IntT())          -> IntT(),
-      (FloatT(), FloatT())      -> FloatT(),
-      (ColourT(), ColourT())    -> ColourT(),
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      (IntT(), IntT())       -> IntT(),
+      (FloatT(), FloatT())   -> FloatT(),
+      (ColourT(), ColourT()) -> ColourT(),
       
       (LengthT(IntT(), u), LengthT(IntT(), u))      -> LengthT(IntT(), u),
       (LengthT(FloatT(), u), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
@@ -72,13 +76,14 @@ signature
     }
     
     typeForMultiplication: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
       (IntT(), IntT())          -> IntT(),
       (FloatT(), FloatT())      -> FloatT(),
       (ColourT(), ColourT())    -> ColourT(),
       
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT(),
-      
       
       (IntT(), LengthT(IntT(), u))      -> LengthT(IntT(), u),
       (LengthT(IntT(), u), IntT())      -> LengthT(IntT(), u),
@@ -119,6 +124,9 @@ signature
     }
     
     typeForDivision: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      
       (IntT(), IntT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT(),
       (IntT(), FloatT()) -> FloatT(),
@@ -138,6 +146,9 @@ signature
     }
     
     typeForModulo: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      
       (IntT(), IntT()) -> IntT(),
       (FloatT(), IntT()) -> FloatT(),
       (IntT(), FloatT()) -> FloatT(),
@@ -207,6 +218,7 @@ rules
     BoolT()   <cssable! CSSAble(),
     ColourT() <cssable! CSSAble(),
     StringT() <cssable! CSSAble(),
+    VarT()    <cssable! CSSAble(),
     
     FloatT()  <coerce! StringT(),
     NullT()   <coerce! StringT(), // emptystring
@@ -216,7 +228,8 @@ rules
     
     NullT()   <coerce! BoolT(), // false
     // everything else transitively through StringT, true
-    StringT() <coerce! BoolT(). 
+    StringT() <coerce! BoolT(),
+    BoolT()   <coerce! VarT().
   
   [[ Script(items) ^ (s) ]] :=
     RootScopeIterative[[ items ^ (s) ]].
