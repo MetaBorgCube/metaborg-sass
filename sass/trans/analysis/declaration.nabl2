@@ -23,7 +23,7 @@ rules
     
     , new finalMixinGS
     , new globalMixinS
-    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS) ]]
+    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS, _) ]]
     , Mixin{n} =G=> finalMixinGS 
     
     
@@ -32,7 +32,7 @@ rules
     , RootScopeIterative[[ succ ^ (nextS) ]]
     .
 
-  ScopeIterative[[ [MixinDeclaration(n, args, defaults, body) | succ] ^ (avS, gS, finalGS) ]] :=
+  ScopeIterative[[ [MixinDeclaration(n, args, defaults, body) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
     Mixin{n} <- avS
     
     , new argS
@@ -47,12 +47,12 @@ rules
     , bodyS ---> argS
     
     , new finalMixinGS
-    , ScopeIterative[[ body ^ (bodyS, gS, finalMixinGS) ]]
+    , ScopeIterative[[ body ^ (bodyS, gS, finalMixinGS, _) ]]
     , Mixin{n} =G=> finalMixinGS
     
     , new nextS
     , nextS ---> avS
-    , ScopeIterative[[ succ ^ (nextS, gS, finalGS) ]]
+    , ScopeIterative[[ succ ^ (nextS, gS, finalGS, rootable) ]]
     .
   
   DeclareFArg[[ FArg(i, FArg(n)) ^ (argS) ]] :=
@@ -80,28 +80,29 @@ rules
     new blockS, 
     blockS ---> avS,
     new finalBlockGS,
-    ScopeIterative[[ decs ^ (blockS, avS, finalBlockGS) ]],
+    ScopeIterative[[ decs ^ (blockS, avS, finalBlockGS, _) ]],
     RootScopeIterative[[ succ ^ (finalBlockGS) ]]. 
-  ScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS, gS, finalGS) ]] :=
+  ScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
     new blockS,
     blockS ---> avS,
     new finalBlockGS,
-    ScopeIterative[[ decs ^ (blockS, gS, finalBlockGS) ]],
+    ScopeIterative[[ decs ^ (blockS, gS, finalBlockGS, _) ]],
     
     new nextS,
     nextS ---> avS,
     nextS -G-> finalBlockGS,
-    ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS) ]].
+    ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS, rootable) ]].
 
 
 /**
  * Property declarations
  */
 rules
-  ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS) ]] :=
-    [[ e ^ (avS, cssAbleCheck) : eT ]],
-    eT <cssable? cssAbleCheck | error $[[eT] is not a valid CSS expression type.] @e,
-    ScopeIterative[[ succ ^ (avS, gS, fGS) ]].
+  ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS, unrootable) ]] :=
+    unrootable == UnRootAble()
+    , [[ e ^ (avS, cssAbleCheck) : eT ]]
+    , eT <cssable? cssAbleCheck | error $[[eT] <cssable? [cssAbleCheck] is not a valid CSS expression type.] @e
+    , ScopeIterative[[ succ ^ (avS, gS, fGS, _) ]].
 
 
 /**
@@ -114,12 +115,12 @@ rules
     
     DeclareVar[[ vd ^ (avS, nextS) ]],
     RootScopeIterative[[ succ ^ (nextS) ]].
-  ScopeIterative[[ [vd@VarDeclaration(var, e) | succ] ^ (avS, gS, fGS) ]] :=
+  ScopeIterative[[ [vd@VarDeclaration(var, e) | succ] ^ (avS, gS, fGS, rootable) ]] :=
     new nextS, 
     nextS ---> avS,
     
     DeclareVar[[ vd ^ (avS, nextS) ]],
-    ScopeIterative[[ succ ^ (nextS, gS, fGS) ]].
+    ScopeIterative[[ succ ^ (nextS, gS, fGS, rootable) ]].
 
 
   RootScopeIterative[[ [gvd@GlobalVarDeclaration(var, e) | succ] ^ (avS) ]] :=
@@ -128,13 +129,13 @@ rules
     
     DeclareVar[[ gvd ^ (avS, s) ]],
     RootScopeIterative[[ succ ^ (s) ]].
-  ScopeIterative[[ [gvd@GlobalVarDeclaration(var, e) | succ] ^ (avS, gS, fGS) ]] :=
+  ScopeIterative[[ [gvd@GlobalVarDeclaration(var, e) | succ] ^ (avS, gS, fGS, rootable) ]] :=
     new globalS,  globalS -G-> gS,
     new s,        s ---> avS,
     s -G-> globalS,
     
     DeclareVar[[ gvd ^ (avS, globalS) ]],
-    ScopeIterative[[ succ ^ (s, globalS, fGS) ]].
+    ScopeIterative[[ succ ^ (s, globalS, fGS, rootable) ]].
 
 
   DeclareVar[[ VarDeclaration(var, e) ^ (avS, decS) ]] :=

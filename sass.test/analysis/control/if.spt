@@ -1,0 +1,25 @@
+module control-analysis-test
+
+language sass
+
+test property declaration in if at root is not allowed [[
+@if false {
+  prop: 5;
+}
+]] > 0 errors
+
+test block declaration in if at root is allowed [[
+@if false {
+  .m {
+    prop: 5;
+  }
+}
+]] 0 errors
+
+test if in block declaration may contain properties [[
+.m {
+  @if false {
+    prop: 56;
+  }
+}
+]] 0 errors

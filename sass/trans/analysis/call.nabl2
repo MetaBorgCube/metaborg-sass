@@ -18,7 +18,7 @@ rules
     , nextS -G-> finalMixinGS    
     , RootScopeIterative[[ succ ^ (nextS) ]]
     .
-  ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS) ]] :=
+  ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
     Mixin{l} -> avS
     , Mixin{l} |-> d
     , d ?=A=> fArgs
@@ -33,7 +33,7 @@ rules
     , nextS ---> avS
     , nextS -G-> nextGS 
     
-    , ScopeIterative[[ succ ^ (nextS, nextGS, finalGS) ]]
+    , ScopeIterative[[ succ ^ (nextS, nextGS, finalGS, rootable) ]]
     .
   
   CheckAArgGroup[[ [] ^ (_, _) ]].

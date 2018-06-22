@@ -21,7 +21,9 @@ signature
       
       MixinT : list(FArg) -> Type
       
-      CSSAble : -> CSSAble
+      CSSAble  : -> CSSAble
+      RootAble : -> RootAble
+      UnRootAble : -> RootAble
       
     namespaces
       Var
@@ -157,6 +159,11 @@ signature
       (BinExpT(l, FloatT(), x, y), BinExpT(_, IntT(), _, _)) -> BinExpT(l, IntT(), x, y),
       (BinExpT(l, _, x, y), BinExpT(_, FloatT(), _, _)) -> BinExpT(l, FloatT(), x, y)
     }
+    
+    rootableOr: (RootAble * RootAble) -> RootAble {
+      (RootAble(), RootAble()) -> RootAble()
+      , _ -> UnRootAble()
+    }
 
 name resolution
   labels
@@ -177,12 +184,16 @@ relations
   /**
    *  Whether a type is coerceable to another, e.g. number to string
    */
-  reflexive, symmetric, transitive coerce : Type * Type
+  reflexive, symmetric, transitive coerce : Type * Type {
+    LengthT(+coerce, +coerce)
+  }
+  
+  reflexive, anti-symmetric, anti-transitive rootable: RootAble * RootAble
 
   /**
    * Whether a type can be emited to CSS
    */
-  irreflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+  reflexive, anti-symmetric, transitive cssable: Type * CSSAble {
     ListT(+cssable),
     [+cssable]
   }
@@ -225,6 +236,7 @@ rules
    *      This allows nested blocks to define global variables that are available in later
           blocks and script elements.
    */
-  ScopeIterative[[ [] ^ (_, nGS, finalGS) ]] :=
-    finalGS -G-> nGS.
+  ScopeIterative[[ [] ^ (_, nGS, finalGS, rootableCheck) ]] :=
+    finalGS -G-> nGS,
+    rootableCheck == RootAble().
     

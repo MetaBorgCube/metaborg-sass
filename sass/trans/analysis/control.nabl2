@@ -1,0 +1,40 @@
+module analysis/control
+
+imports
+  desugar/control
+
+rules
+  RootScopeIterative[[ [IfElse(ifItems) | t] ^ (avS) ]] :=
+    RootIf[[ ifItems ^ (avS) ]]
+    , RootScopeIterative[[ t ^ (avS) ]]
+    .
+  
+  ScopeIterative[[ [IfElse(ifItems) | t] ^ (avS, gS, finalgS, rootA) ]] :=
+    If[[ ifItems ^ (avS, ifRootAble) ]]
+    , ScopeIterative[[ t ^ (avS, gS, finalgS, nextRootAble) ]]
+    , rootA is rootableOr of (ifRootAble, nextRootAble)
+    .
+  
+  RootIf[[ [] ^ (_) ]].
+  RootIf[[ [IfItem(guard, content) | t] ^ (avS) ]] :=  
+    [[ guard ^ (avS, _) : gT ]]
+    , gT <coerce? BoolT() | error $[Not a boolean type!] @guard
+    , new gS
+    , new endGS
+    , ScopeIterative[[ content ^ (avS, gS, endGS, rootable) ]]
+    , rootable <rootable? RootAble() | error 
+      $[Branch content may not be included at the root of the document! Is there a property definition in it?] @guard
+    , RootIf[[ t ^ (avS) ]]
+    .
+
+  If[[ [] ^ (_, rootable) ]] := rootable == RootAble().
+  If[[ [IfItem(guard, content) | t] ^ (avS, rootable) ]] :=
+    [[ guard ^ (avS, _) : gT ]]
+    , gT <coerce? BoolT() | error $[Not a boolean type!] @guard
+    , new gS
+    , new endGS
+    , ScopeIterative[[ content ^ (avS, gS, endGS, contentRootAble) ]]
+    , If [[ t ^ (avS, nextBranchRootAble) ]]
+    , rootable is rootableOr of (contentRootAble, nextBranchRootAble)
+    .
+  

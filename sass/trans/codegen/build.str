@@ -16,6 +16,8 @@ rules
    * Transform Sass AST to Sass AST and show the resulting ATerm.
    * The transformed AST has no Sass specific AST nodes anymore.
    *
+   * Warning: transpilation will still occur, even when type checking has failed!
+   *
    * @type Sass AST -> CSS AST
    */ 
   transpile-interpret:
@@ -24,8 +26,13 @@ rules
       filename := <guarantee-extension(|$[css.aterm])> path
     ; result   := <interpret-script; codegen; strip-annos> ast
 
+  /**
+   * Transpiles a Sass file to a CSS file.
+   */
   transpile-print:
     (selected, _, ast, path, project-path) -> (filename, result)
+    where
+      <nabl2-get-ast-analysis; not(nabl2-analysis-has-errors)> ast
     with
       filename := <guarantee-extension(|"css")> path
     ; resultAST   := <transpile-sass> ast

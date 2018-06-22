@@ -21,6 +21,7 @@ rules
     , expT <coerce? FloatT()
     , LengthT(IntT(), u) <cssable! CSSAble()
     , LengthT(FloatT(), u) <cssable! CSSAble()
+    , u <coerce! StringT()
     , css == CSSAble()
     .
   
@@ -29,7 +30,7 @@ rules
   [[ Null()  ^ (_, css) : NullT() ]] := css == CSSAble().
   [[ VarRef(id) ^ (s, css) : ty ]] := 
     Var{id} -> s,
-    Var{id} |-> d | error $[Undefined variable [id]] @id,
-    d : ty,
+    Var{id} |-> d | warning $[[id] might be undefined] @id,
+    d : ty | warning ,
     css == CSSAble().
   
