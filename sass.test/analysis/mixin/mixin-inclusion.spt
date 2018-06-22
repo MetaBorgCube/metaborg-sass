@@ -133,3 +133,10 @@ test varref does not resolve to global in mixin in block if mixin is not include
   width: [[$v]];
 }
 ]] resolve #2 to #1
+
+test including a non-rootable mixin reports errors [[
+@mixin hello {
+  prop: 5;
+}
+@include hello;
+]] > 0 errors

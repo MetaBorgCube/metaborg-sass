@@ -23,7 +23,7 @@ rules
     , new endGS
     , ScopeIterative[[ content ^ (avS, gS, endGS, rootable) ]]
     , rootable <rootable? RootAble() | error 
-      $[Branch content may not be included at the root of the document! Is there a property definition in it?] @guard
+      $[Current branch content may not be included at the root of the document!] @guard
     , RootIf[[ t ^ (avS) ]]
     .
 

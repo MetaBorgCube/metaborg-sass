@@ -23,9 +23,9 @@ rules
     
     , new finalMixinGS
     , new globalMixinS
-    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS, _) ]]
+    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS, rootable) ]]
     , Mixin{n} =G=> finalMixinGS 
-    
+    , Mixin{n} <rootable! rootable
     
     , new nextS
     , nextS -G-> avS

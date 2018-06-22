@@ -15,7 +15,9 @@ rules
     , new nextS
     , nextS -G-> avS
     , d ?=G=> finalMixinGS
-    , nextS -G-> finalMixinGS    
+    , nextS -G-> finalMixinGS 
+    , d <rootable? RootAble() | error $[Mixin content cannot be included at the root of the document] @l
+     
     , RootScopeIterative[[ succ ^ (nextS) ]]
     .
   ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
