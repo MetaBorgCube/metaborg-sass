@@ -5,7 +5,6 @@ imports
   src-gen/signatures/Declaration-sig
 
 rules
-  // TODO: CHECK WHETHER MIXIN IS CSSABLE, i.e. no property declarations at root of mixin
   RootScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS) ]] :=
     Mixin{l} -> avS
     , Mixin{l} |-> d
@@ -20,7 +19,7 @@ rules
      
     , RootScopeIterative[[ succ ^ (nextS) ]]
     .
-  ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
+  ScopeIterative[[ [IncludeMixin(l, args, content) | succ] ^ (avS, gS, finalGS, rootA) ]] :=
     Mixin{l} -> avS
     , Mixin{l} |-> d
     , d ?=A=> fArgs
@@ -35,7 +34,7 @@ rules
     , nextS ---> avS
     , nextS -G-> nextGS 
     
-    , ScopeIterative[[ succ ^ (nextS, nextGS, finalGS, rootable) ]]
+    , ScopeIterative[[ succ ^ (nextS, nextGS, finalGS, rootA) ]]
     .
   
   CheckAArgGroup[[ [] ^ (_, _) ]].

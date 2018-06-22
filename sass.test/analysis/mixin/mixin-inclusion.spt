@@ -140,3 +140,12 @@ test including a non-rootable mixin reports errors [[
 }
 @include hello;
 ]] > 0 errors
+
+test including a rootable mixin reports no errors [[
+@mixin hello {
+  .m {
+    prop: 5;
+  } 
+}
+@include hello;
+]] 0 errors
