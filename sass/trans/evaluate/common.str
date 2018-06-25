@@ -7,5 +7,5 @@ rules
     with
     byte0 := <modi> (n, 16)
     ; byte1 := <divi> (n, 16)
-    ; hex-alphabet := <explode-string> "0123456789ABCDEF"
+    ; hex-alphabet := <explode-string> "0123456789abcdef"
     ; hexstring := <map(<index> (<inc>, hex-alphabet)); implode-string> [byte1, byte0]

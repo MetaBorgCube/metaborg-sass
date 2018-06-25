@@ -18,18 +18,18 @@ rules
     ; defaultArgStore := <create-store-with-vars> defaultArgTuples    
     
     // Build the store of aarg values
-    ; aargCallStore := <build-call-args-store> (aargs, <conc> (fargs, fargsDef))
+    ; aargCallStore := <build-call-args-store(|store)> (aargs, <conc> (fargs, fargsDef))
     ; callStore := <extend-store(|defaultArgStore)> aargCallStore
     
     ; callEnv := <extend-store(|env)> callStore
     ; emptyS := <create-store> ()
     ; (evalBody, _ ,globalStoreFromBody) := <interpret-items(|callEnv)> body
 
-  build-call-args-store: (KeywordAArgGroup(aargs), _)
-    -> <map(\KeywordAArg(n, e) -> (n, e)\); create-store-with-vars> aargs
-  build-call-args-store: (AArgGroup(aargs), fargs) -> store
+  build-call-args-store(|store): (KeywordAArgGroup(aargs), _)
+    -> <map(\KeywordAArg(n, e) -> (n, <evaluate-exp(|store)> e)\); create-store-with-vars> aargs
+  build-call-args-store(|store): (AArgGroup(aargs), fargs) -> store
     with
-      nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e))) -> (<extract-farg-name> f, e) where <strip-annos; equal> (i, i')\)> (fargs, aargs)
+      nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e))) -> (<extract-farg-name> f, <evaluate-exp(|store)> e) where <strip-annos; equal> (i, i')\)> (fargs, aargs)
       ; store := <create-store-with-vars> nameValueTuples
   extract-farg-name: FArg(n) -> n
   extract-farg-name: FArgDefault(n, _) -> n

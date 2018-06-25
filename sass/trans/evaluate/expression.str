@@ -30,6 +30,7 @@ strategies
   extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
   extr-f: f@Float(_) -> <extr> f
   extr-f: Int(f) -> <string-to-real> f
+  extr-f: Length(v, _) -> <try(extr-f)> v
   
   construct-end-type: BinExpT(l, nT, _, _) -> <construct-end-type> (l, nT)
   construct-end-type: (LengthT(None(), u), nT) -> LengthT(nT, u)
@@ -71,8 +72,10 @@ rules
  * Comparison
  */
 rules
-  evaluate-e(|store): BinExp(Eq(), lhs, rhs) -> // This might not be accurate for number comparisons
-    <eq < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
+  eq-term = try(extr-f); eq
+
+  evaluate-e(|store): BinExp(Eq(), lhs, rhs) ->
+    <eq-term < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
   evaluate-e(|store): BinExp(Gt(), lhs, rhs) ->  
     <extr-f; gtr < !True() + !False()> (lhs, rhs) 
 
@@ -125,8 +128,9 @@ strategies
   op-hex(op): (l, r) -> <max> (0, <min> (255, <op> (l, r)))
   add-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(addi)>  (lr, rr), <op-hex(addi)>  (lg, rg), <op-hex(addi)>  (lb, rb))
   sub-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(subti)> (lr, rr), <op-hex(subti)> (lg, rg), <op-hex(subti)> (lb, rb))
-  mul-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(muli)>  (lr, rr), <op-hex(muli)>  (lg, rg), <op-hex(muli)>  (lb, rb))
-  mod-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(modi)>  (lr, rr), <op-hex(modi)>  (lg, rg), <op-hex(modi)>  (lb, rb))
+  mul-triple-hex: (l, (rr, rg, rb)) -> (<op-hex(muli)>  (l, rr), <op-hex(muli)>  (l, rg), <op-hex(muli)>  (l, rb))
+  mul-triple-hex: ((rr, rg, rb), l) -> (<op-hex(muli)>  (l, rr), <op-hex(muli)>  (l, rg), <op-hex(muli)>  (l, rb))
+  mod-triple-hex: ((lr, lg, lb), r) -> (<op-hex(modi)>  (lr, r), <op-hex(modi)>  (lg, r), <op-hex(modi)>  (lb, r))
   
   unit-eq = strip-annos; eq
   

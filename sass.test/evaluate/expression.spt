@@ -143,3 +143,15 @@ test mult length div [[
 test mult length [[
 25px * 2.5pt
 ]] run evaluate to Length(Length(Float("62.5"), "px"), "pt")
+
+test addition of two colours [[
+#111 + #22ab34
+]] run evaluate to Hex("33", "bc", "45")
+
+test subtraction of two colours [[
+#563 - #13b
+]] run evaluate to Hex("44", "33", "00")
+
+test multiplication of colour with int [[
+2 * #452
+]] run evaluate to Hex("88", "aa", "44")
