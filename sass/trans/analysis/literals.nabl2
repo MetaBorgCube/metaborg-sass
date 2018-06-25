@@ -13,15 +13,17 @@ rules
    */
   [[ String(_, _) ^ (_, css) : StringT() ]] := css == CSSAble().
   [[ Int(_) ^ (_, css)       : IntT()    ]] := css == CSSAble().
-  [[ Float(_) ^ (_, css)       : FloatT()  ]] := css == CSSAble().
-  [[ Hex(_) ^ (_, css)         : ColourT() ]] := css == CSSAble().
+  [[ Float(_) ^ (_, css)     : FloatT()  ]] := css == CSSAble().
+  [[ Hex(_, _, _) ^ (_, css)       : ColourT() ]] := css == CSSAble().
   [[ ColourLabel(_) ^ (s, css) : ColourT() ]] := css == CSSAble().
   [[ Length(v, u) ^ (s, css)   : LengthT(expT, u) ]] := 
     [[ v ^ (s, _) : expT ]]
     , expT <coerce? FloatT()
     , LengthT(IntT(), u) <cssable! CSSAble()
     , LengthT(FloatT(), u) <cssable! CSSAble()
-    , u <coerce! StringT()
+    
+    , LengthT(IntT(), u) <coerce! StringT()
+    , LengthT(FloatT(), u) <coerce! StringT()
     , css == CSSAble()
     .
   
@@ -31,6 +33,6 @@ rules
   [[ VarRef(id) ^ (s, css) : ty ]] := 
     Var{id} -> s,
     Var{id} |-> d | warning $[[id] might be undefined] @id,
-    d : ty | warning ,
-    css == CSSAble().
+    d : ty | warning
+    , css == CSSAble().
   

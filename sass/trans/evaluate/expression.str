@@ -12,6 +12,7 @@ imports
   desugar/expression/-
   analysis/sass
   
+  evaluate/common
   evaluate/coerce
   evaluate/interpret/interpret
 
@@ -24,6 +25,8 @@ strategies
   extract: Int(f) -> <string-to-int> f
   extract: Float(f) -> <string-to-real> f
   extract: String(s, _) -> s
+  extract: Hex(r, g, b) -> (<hex-string-to-int> r, <hex-string-to-int> g, <hex-string-to-int> b)
+  
   extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
   extr-f: f@Float(_) -> <extr> f
   extr-f: Int(f) -> <string-to-real> f
@@ -83,7 +86,8 @@ strategies
   wrap-result: (FloatT(), v) -> Float(v)
   wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
   wrap-result: (StringT(), v) -> String(v, DoubleQuote())
-
+  wrap-result: (ColourT(), (r, g, b)) -> Hex(<int-to-hex-string> r, <int-to-hex-string> g, <int-to-hex-string> b)
+  
   extr-math-type: LengthT(e, _) -> <try(extr-math-type)> e  
   extr-math-type: BinExpT(_, t, _, _) -> t
   extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
@@ -92,6 +96,7 @@ strategies
   exp-t: Float(_) -> FloatT()
   exp-t: Length(n, u) -> LengthT(<exp-t> n, u)
   exp-t: String(_, _) -> StringT()
+  exp-t: Hex(_, _, _) -> ColourT()
   
   op-to-f: (Add(), IntT(), IntT())  -> "addi"
   op-to-f: (Add(), FloatT(), _)     -> "addr"
@@ -111,6 +116,18 @@ strategies
   op-to-f: (Mod(), FloatT(), _)     -> "modr"
   op-to-f: (Mod(), _, FloatT())     -> "modr"
   
+  op-to-f: (Add(), ColourT(), ColourT()) -> "add-triple-hex"
+  op-to-f: (Sub(), ColourT(), ColourT()) -> "sub-triple-hex"
+  op-to-f: (Mul(), ColourT(), IntT()) -> "mul-triple-hex"
+  op-to-f: (Mul(), IntT(), ColourT()) -> "mul-triple-hex"
+  op-to-f: (Mod(), ColourT(), IntT()) -> "mod-triple-hex"
+  
+  op-hex(op): (l, r) -> <max> (0, <min> (255, <op> (l, r)))
+  add-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(addi)>  (lr, rr), <op-hex(addi)>  (lg, rg), <op-hex(addi)>  (lb, rb))
+  sub-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(subti)> (lr, rr), <op-hex(subti)> (lg, rg), <op-hex(subti)> (lb, rb))
+  mul-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(muli)>  (lr, rr), <op-hex(muli)>  (lg, rg), <op-hex(muli)>  (lb, rb))
+  mod-triple-hex: ((lr, lg, lb), (rr, rg, rb)) -> (<op-hex(modi)>  (lr, rr), <op-hex(modi)>  (lg, rg), <op-hex(modi)>  (lb, rb))
+  
   unit-eq = strip-annos; eq
   
   construct-end-type = construct-exp-type
@@ -120,6 +137,7 @@ strategies
   construct-exp-type: (Add(), FloatT(), IntT())   -> FloatT()
   construct-exp-type: (Add(), StringT(), _)       -> StringT()
   construct-exp-type: (Add(), _, StringT())       -> StringT()
+  construct-exp-type: (Add(), ColourT(), ColourT()) -> ColourT()
   construct-exp-type: (Add(), LengthT(lnt, lu), LengthT(rnt, ru))
     -> LengthT(<construct-end-type> (Add(), lnt, rnt), lu)
     where <unit-eq> (lu, ru)
@@ -128,6 +146,7 @@ strategies
   construct-exp-type: (Sub(), FloatT(), IntT())   -> FloatT()
   construct-exp-type: (Sub(), IntT(), FloatT())   -> FloatT()
   construct-exp-type: (Sub(), FloatT(), FloatT()) -> FloatT()
+  construct-exp-type: (Sub(), ColourT(), ColourT()) -> ColourT()
   construct-exp-type: (Sub(), LengthT(lnt, lu), LengthT(rnt, ru))
     -> LengthT(<construct-end-type> (Sub(), lnt, rnt), lu)
     where <unit-eq> (lu, ru)
@@ -136,6 +155,8 @@ strategies
   construct-exp-type: (Mul(), FloatT(), IntT()) -> FloatT()
   construct-exp-type: (Mul(), IntT(), FloatT()) -> FloatT()
   construct-exp-type: (Mul(), FloatT(), FloatT()) -> FloatT()
+  construct-exp-type: (Mul(), IntT(), ColourT()) -> ColourT()
+  construct-exp-type: (Mul(), ColourT(), IntT()) -> ColourT()
   construct-exp-type: (Mul(), l, LengthT(rnt, ru))
     -> LengthT(<construct-end-type> (Mul(), l, rnt), ru)
   construct-exp-type: (Mul(), LengthT(lnt, lu), r)
@@ -155,6 +176,7 @@ strategies
   construct-exp-type: (Mod(), FloatT(), IntT())   -> FloatT()
   construct-exp-type: (Mod(), IntT(), FloatT())   -> FloatT()
   construct-exp-type: (Mod(), FloatT(), FloatT()) -> FloatT()
+  construct-exp-type: (Mod(), ColourT(), IntT()) -> ColourT()
   construct-exp-type: (Mod(), LengthT(lnt, lu), r)
     -> LengthT(<construct-end-type> (Mod(), lnt, r), lu)
   

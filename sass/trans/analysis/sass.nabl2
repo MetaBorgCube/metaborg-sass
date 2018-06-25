@@ -195,9 +195,7 @@ relations
   /**
    *  Whether a type is coerceable to another, e.g. number to string
    */
-  reflexive, symmetric, transitive coerce : Type * Type {
-    LengthT(+coerce, +coerce)
-  }
+  reflexive, symmetric, transitive coerce : Type * Type
   
   reflexive, anti-symmetric, anti-transitive rootable: RootAble * RootAble
 

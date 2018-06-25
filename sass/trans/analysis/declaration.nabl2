@@ -101,7 +101,7 @@ rules
   ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS, unrootable) ]] :=
     unrootable == UnRootAble()
     , [[ e ^ (avS, cssAbleCheck) : eT ]]
-    , eT <cssable? cssAbleCheck | error $[[eT] <cssable? [cssAbleCheck] is not a valid CSS expression type.] @e
+    , eT <cssable? cssAbleCheck | error $[[eT] is not a valid CSS expression type.] @e
     , ScopeIterative[[ succ ^ (avS, gS, fGS, _) ]].
 
 

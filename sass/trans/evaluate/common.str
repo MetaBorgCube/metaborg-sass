@@ -1,0 +1,11 @@
+module evaluate/common
+
+rules
+ 
+  // Thanks to @Rasmus for the inspiration for this solution!
+  int-to-hex-string: n -> hexstring
+    with
+    byte0 := <modi> (n, 16)
+    ; byte1 := <divi> (n, 16)
+    ; hex-alphabet := <explode-string> "0123456789ABCDEF"
+    ; hexstring := <map(<index> (<inc>, hex-alphabet)); implode-string> [byte1, byte0]

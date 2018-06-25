@@ -75,7 +75,7 @@ strategies
   /**
    * Gets a value from the store, fails if no such value exists.
    */
-  get-var(|s):    key   -> <get-element> (key, <get-vars> s)
+  get-var(|s):    key   -> <get-element <+ !Null()> (key, <get-vars> s)
   get-mixin(|s):  name  -> <get-element> (name, <get-mixins> s)
 
 rules

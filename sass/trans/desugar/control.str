@@ -21,4 +21,4 @@ rules
   desugar-c: ChainedIfElse(guard, decs, elseifs)
     -> IfElse([IfItem(guard, decs) | <map(desugar-c)> elseifs ])
   desugar-c: ElseIf(guard, decs) -> IfItem(guard, decs)
-    
+  

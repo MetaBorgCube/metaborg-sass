@@ -14,6 +14,7 @@ strategies
                   ; desugar-expressions
                   ; desugar-declarations
                   ; desugar-calls
+                  ; topdown(try(flatten-list))
   desugar-all-test = desugar-all; strip-annos
 
 /**
