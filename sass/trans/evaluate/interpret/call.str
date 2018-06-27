@@ -27,9 +27,10 @@ rules
 
   build-call-args-store(|store): (KeywordAArgGroup(aargs), _)
     -> <map(\KeywordAArg(n, e) -> (n, <evaluate-exp(|store)> e)\); create-store-with-vars> aargs
-  build-call-args-store(|store): (AArgGroup(aargs), fargs) -> store
+  build-call-args-store(|store): (AArgGroup(aargs), fargs) -> callStore
     with
       nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e))) -> (<extract-farg-name> f, <evaluate-exp(|store)> e) where <strip-annos; equal> (i, i')\)> (fargs, aargs)
-      ; store := <create-store-with-vars> nameValueTuples
+      ; callStore := <create-store-with-vars> nameValueTuples
+      
   extract-farg-name: FArg(n) -> n
   extract-farg-name: FArgDefault(n, _) -> n
