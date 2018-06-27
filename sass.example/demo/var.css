@@ -1,0 +1,9 @@
+.main {
+  width: 80%;
+
+}
+ .main :hover {
+  border-width: 5px; border-color: #ff1111; border-style: solid;
+
+}
+

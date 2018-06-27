@@ -21,6 +21,7 @@ context-free syntax
   ScriptItem.BlockDeclaration = <
   <Selector> {
     <Declaration*>
+    
   }
   
   >
