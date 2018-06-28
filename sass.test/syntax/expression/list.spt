@@ -19,3 +19,11 @@ bold 10px 5px
                     Length(Int("10"), "px"), 
                     Length(Int("5"), "px")
                   ))
+
+test variable and unquoted string [[
+$hello px
+]] parse to ExpListSpace(VarRef("$hello"), UnquoteString("px"))
+
+test length variable unquoted string [[
+40px $style solid
+]] parse to ExpListSpace(Length(Int("40"), "px"), ExpListSpace(VarRef("$style"), UnquoteString("solid")))
