@@ -16,14 +16,11 @@ rules
   [[ Float(_) ^ (_, css)     : FloatT()  ]] := css == CSSAble().
   [[ Hex(_, _, _) ^ (_, css)       : ColourT() ]] := css == CSSAble().
   [[ ColourLabel(_) ^ (s, css) : ColourT() ]] := css == CSSAble().
-  [[ Length(v, u) ^ (s, css)   : LengthT(expT, u) ]] := 
+  [[ Length(v, u) ^ (s, css)   : LengthT(u) ]] := 
     [[ v ^ (s, _) : expT ]]
     , expT <coerce? FloatT()
-    , LengthT(IntT(), u) <cssable! CSSAble()
-    , LengthT(FloatT(), u) <cssable! CSSAble()
-    
-    , LengthT(IntT(), u) <coerce! StringT()
-    , LengthT(FloatT(), u) <coerce! StringT()
+    , LengthT(u) <cssable! CSSAble()
+    , LengthT(u) <coerce! StringT()
     , css == CSSAble()
     .
   

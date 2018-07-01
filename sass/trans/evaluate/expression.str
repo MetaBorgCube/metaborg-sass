@@ -16,27 +16,13 @@ imports
   evaluate/coerce
   evaluate/interpret/interpret
 
+signature
+  constructors
+    LengthT : Type * string -> Type
+
 strategies
   evaluate-exp(|store) = bottomup(try(evaluate-e(|store)))
 
-strategies
-  extract: (l, r) -> (<extr> l, <extr> r)
-  extract: Length(n, _) -> <extr> n
-  extract: Int(f) -> <string-to-int> f
-  extract: Float(f) -> <string-to-real> f
-  extract: String(s, _) -> s
-  extract: Hex(r, g, b) -> (<hex-string-to-int> r, <hex-string-to-int> g, <hex-string-to-int> b)
-  
-  extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
-  extr-f: f@Float(_) -> <extr> f
-  extr-f: Int(f) -> <string-to-real> f
-  extr-f: Length(v, _) -> <try(extr-f)> v
-  
-  construct-end-type: BinExpT(l, nT, _, _) -> <construct-end-type> (l, nT)
-  construct-end-type: (LengthT(None(), u), nT) -> LengthT(nT, u)
-  construct-end-type: (LengthT(l, u), nT) -> LengthT(<construct-end-type> (l, nT), u)
-  
-  extr = try(extract)
 
 
 /**
@@ -84,23 +70,24 @@ rules
  */
 strategies
   apply-bin(|f) = extr; call(f||); try(intl-float)
+  extr = try(extract)
 
-  wrap-result: (IntT(),   v) -> Int(v)
-  wrap-result: (FloatT(), v) -> Float(v)
-  wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
-  wrap-result: (StringT(), v) -> String(v, DoubleQuote())
-  wrap-result: (ColourT(), (r, g, b)) -> Hex(<int-to-hex-string> r, <int-to-hex-string> g, <int-to-hex-string> b)
+  extract: (l, r) -> (<extr> l, <extr> r)
+  extract: Length(n, _) -> <extr> n
+  extract: Int(f) -> <string-to-int> f
+  extract: Float(f) -> <string-to-real> f
+  extract: String(s, _) -> s
+  extract: Hex(r, g, b) -> (<hex-string-to-int> r, <hex-string-to-int> g, <hex-string-to-int> b)
   
-  extr-math-type: LengthT(e, _) -> <try(extr-math-type)> e  
-  extr-math-type: BinExpT(_, t, _, _) -> t
-  extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
-  
-  exp-t: Int(_) -> IntT()
-  exp-t: Float(_) -> FloatT()
-  exp-t: Length(n, u) -> LengthT(<exp-t> n, u)
-  exp-t: String(_, _) -> StringT()
-  exp-t: Hex(_, _, _) -> ColourT()
-  
+  extr-f: (l, r) -> (<extr-f> l, <extr-f> r)
+  extr-f: f@Float(_) -> <extr> f
+  extr-f: Int(f) -> <string-to-real> f
+  extr-f: Length(v, _) -> <try(extr-f)> v
+
+/**
+ * AST node op to Stratego function.
+ */
+strategies
   op-to-f: (Add(), IntT(), IntT())  -> "addi"
   op-to-f: (Add(), FloatT(), _)     -> "addr"
   op-to-f: (Add(), _, FloatT())     -> "addr"
@@ -131,6 +118,29 @@ strategies
   mul-triple-hex: (l, (rr, rg, rb)) -> (<op-hex(muli)>  (l, rr), <op-hex(muli)>  (l, rg), <op-hex(muli)>  (l, rb))
   mul-triple-hex: ((rr, rg, rb), l) -> (<op-hex(muli)>  (l, rr), <op-hex(muli)>  (l, rg), <op-hex(muli)>  (l, rb))
   mod-triple-hex: ((lr, lg, lb), r) -> (<op-hex(modi)>  (lr, r), <op-hex(modi)>  (lg, r), <op-hex(modi)>  (lb, r))
+  
+/**
+ * Strategies to wrap values depending on the given types.
+ */
+strategies
+  wrap-result: (IntT(),   v) -> Int(v)
+  wrap-result: (FloatT(), v) -> Float(v)
+  wrap-result: (LengthT(eT, u), v) -> Length(<wrap-result> (eT, v), u)
+  wrap-result: (StringT(), v) -> String(v, DoubleQuote())
+  wrap-result: (ColourT(), (r, g, b)) -> Hex(<int-to-hex-string> r, <int-to-hex-string> g, <int-to-hex-string> b)
+  
+  extr-math-type: LengthT(e, _) -> <try(extr-math-type)> e  
+  extr-comp-v:    Length(e, _)  -> <try(extr-comp-v)> e
+
+/**
+ * Constructing the expression types.
+ */
+strategies
+  exp-t: Int(_) -> IntT()
+  exp-t: Float(_) -> FloatT()
+  exp-t: Length(n, u) -> LengthT(<exp-t> n, u)
+  exp-t: String(_, _) -> StringT()
+  exp-t: Hex(_, _, _) -> ColourT()
   
   unit-eq = strip-annos; eq
   

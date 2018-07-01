@@ -88,3 +88,22 @@ test local does not shadow global in nested [[
   width: [[$w]];
 }
 ]] resolve #2 to #1
+
+test many global vars in block [[
+.m {
+  $v: 1 !global;
+}
+
+.v {
+  [[$v]]: 2 !global;
+  $w: 3 !global;
+  $r: 4 !global;
+  $t: 5 !global;
+  $y: 6 !global;
+  $u: 7 !global;
+}
+
+.q {
+  v: [[$v]];
+}
+]] resolve #2 to #1

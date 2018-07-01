@@ -14,10 +14,9 @@ signature
       ColourT : -> Type
       VarT    : -> Type
       ListT   : list(Type) -> Type
-      LengthT : Type * string -> Type // The exp type and the unit
-      // Result type * numT * lhsT * rhsT 
-      // The result and num type is only used for evaluation, not type checking
-      BinExpT : Type * Type * Type * Type -> Type
+      LengthT : string -> Type // The exp type and the unit
+      // lhsT * rhsT
+      BinExpT : Type * Type -> Type
       
       MixinT : list(FArg) -> Type
       
@@ -42,18 +41,15 @@ signature
     typeForAddition: (Type * Type) -> Type {
       (VarT(), _) -> VarT(),
       (_, VarT()) -> VarT(),
-      (IntT(), IntT())          -> IntT(),
-      (FloatT(), FloatT())      -> FloatT(),
+      (IntT(), IntT())     -> IntT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+
       (StringT(), StringT())    -> StringT(),
       (ColourT(), ColourT())    -> ColourT(),
       
-      (LengthT(IntT(), u), LengthT(IntT(), u))      -> LengthT(IntT(), u),
-      (LengthT(FloatT(), u), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
-      (LengthT(IntT(), u), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
-      (LengthT(FloatT(), u), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
-      
-      (IntT(), FloatT()) -> FloatT(),
-      (FloatT(), IntT()) -> FloatT(),
+      (LengthT(u), LengthT(u)) -> LengthT(u),
       
       (_, StringT()) -> StringT(),
       (StringT(), _) -> StringT()
@@ -66,11 +62,7 @@ signature
       (FloatT(), FloatT())   -> FloatT(),
       (ColourT(), ColourT()) -> ColourT(),
       
-      (LengthT(IntT(), u), LengthT(IntT(), u))      -> LengthT(IntT(), u),
-      (LengthT(FloatT(), u), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
-      (LengthT(IntT(), u), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
-      (LengthT(FloatT(), u), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
-
+      (LengthT(u), LengthT(u)) -> LengthT(u),
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT()
     }
@@ -78,22 +70,17 @@ signature
     typeForMultiplication: (Type * Type) -> Type {
       (VarT(), _) -> VarT(),
       (_, VarT()) -> VarT(),
-      (IntT(), IntT())          -> IntT(),
-      (FloatT(), FloatT())      -> FloatT(),
-      (ColourT(), ColourT())    -> ColourT(),
+      (IntT(), IntT())        -> IntT(),
+      (FloatT(), FloatT())    -> FloatT(),
+      (ColourT(), ColourT())  -> ColourT(),
       
       (IntT(), FloatT()) -> FloatT(),
       (FloatT(), IntT()) -> FloatT(),
       
-      (IntT(), LengthT(IntT(), u))      -> LengthT(IntT(), u),
-      (LengthT(IntT(), u), IntT())      -> LengthT(IntT(), u),
-      (IntT(), LengthT(FloatT(), u))    -> LengthT(FloatT(), u),
-      (LengthT(FloatT(), u), IntT())    -> LengthT(FloatT(), u),
-      
-      (FloatT(), LengthT(FloatT(), u))  -> LengthT(FloatT(), u),
-      (LengthT(FloatT(), u), FloatT())  -> LengthT(FloatT(), u),
-      (FloatT(), LengthT(IntT(), u))    -> LengthT(FloatT(), u),
-      (LengthT(IntT(), u), FloatT())    -> LengthT(FloatT(), u),
+      (IntT(), LengthT(u))   -> LengthT(u),
+      (LengthT(u), IntT())   -> LengthT(u),
+      (FloatT(), LengthT(u)) -> LengthT(u),
+      (LengthT(u), FloatT()) -> LengthT(u),
       
       
       (IntT(), ColourT())     -> ColourT(),
@@ -103,24 +90,15 @@ signature
       
       // Length expressions
       
-      (LengthT(IntT(), l), LengthT(IntT(), r)) ->
-        BinExpT(LengthT(LengthT(None(), l), r), IntT(), LengthT(IntT(), l), LengthT(IntT(), r)),
-      (LengthT(FloatT(), l), LengthT(IntT(), r)) ->
-        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(FloatT(), l), LengthT(IntT(), r)),
-      (LengthT(IntT(), l), LengthT(FloatT(), r)) ->
-        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(IntT(), l), LengthT(FloatT(), r)),
-      (LengthT(FloatT(), l), LengthT(FloatT(), r)) ->
-        BinExpT(LengthT(LengthT(None(), l), r), FloatT(), LengthT(FloatT(), l), LengthT(FloatT(), r)),
+      (LengthT(l), LengthT(r)) -> BinExpT(LengthT(l), LengthT(r)),
       
-      (BinExpT(l, n, x, y), IntT())   -> BinExpT(l, n,        x, y),
-      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
-      (IntT(), BinExpT(l, n, x, y))   -> BinExpT(l, n,        x, y),
-      (FloatT(), BinExpT(l, _, x, y)) -> BinExpT(l, FloatT(), x, y),
+      (BinExpT(x, y), IntT())   -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
+      (IntT(), BinExpT(x, y))   -> BinExpT(x, y),
+      (FloatT(), BinExpT(x, y)) -> BinExpT(x, y),
       
-      (BinExpT(l, n, x, y), LengthT(IntT(), u)) ->
-        BinExpT(LengthT(l, u), n,        BinExpT(l, n, x, y), LengthT(IntT(), u)),
-      (BinExpT(l, n, x, y), LengthT(FloatT(), u)) ->
-        BinExpT(LengthT(l, u), FloatT(), BinExpT(l, n, x, y), LengthT(FloatT(), u))
+      (BinExpT(x, y), LengthT(u)) -> BinExpT(BinExpT(x, y), LengthT(u)),
+      (LengthT(u), BinExpT(x, y)) -> BinExpT(LengthT(u), BinExpT(x, y))
     }
     
     typeForDivision: (Type * Type) -> Type {
@@ -136,13 +114,12 @@ signature
       (ColourT(), FloatT()) -> ColourT(),
       (ColourT(), ColourT()) -> ColourT(),
     
-      (LengthT(_, u), IntT())   -> LengthT(FloatT(), u),
-      (LengthT(_, u), FloatT()) -> LengthT(FloatT(), u),
-      (BinExpT(l, _, x, y), IntT())   -> BinExpT(l, FloatT(), x, y),
-      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
+      (LengthT(u), IntT())   -> LengthT(u),
+      (BinExpT(x, y), IntT())   -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
       
-      (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, lU)) -> LengthT(FloatT(), rU),
-      (BinExpT(_, _, LengthT(_, lU), LengthT(_, rU)), LengthT(_, rU)) -> LengthT(FloatT(), lU)
+      (BinExpT(LengthT(lU), LengthT(rU)), LengthT(lU)) -> LengthT(rU),
+      (BinExpT(LengthT(lU), LengthT(rU)), LengthT(rU)) -> LengthT(lU)
     }
     
     typeForModulo: (Type * Type) -> Type {
@@ -158,17 +135,16 @@ signature
       (ColourT(), IntT())     -> ColourT(),
       (ColourT(), FloatT())   -> ColourT(),
       
-      (LengthT(IntT(), u), IntT())    -> LengthT(IntT(), u),
-      (LengthT(FloatT(), u), IntT())  -> LengthT(FloatT(), u),
-      (LengthT(_, u), FloatT())  -> LengthT(FloatT(), u),
+      (LengthT(u), IntT()) -> LengthT(u),
+      (LengthT(u), IntT()) -> LengthT(u),
+      (LengthT(u), FloatT()) -> LengthT(u),
       
-      (BinExpT(l, IntT(), x, y), IntT()) -> BinExpT(l, IntT(), x, y),
-      (BinExpT(l, FloatT(), x, y), IntT()) -> BinExpT(l, FloatT(), x, y),
-      (BinExpT(l, _, x, y), FloatT()) -> BinExpT(l, FloatT(), x, y),
+      (BinExpT(x, y), IntT()) -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
       
-      (BinExpT(l, IntT(), x, y), BinExpT(_, IntT(), _, _)) -> BinExpT(l, IntT(), x, y),
-      (BinExpT(l, FloatT(), x, y), BinExpT(_, IntT(), _, _)) -> BinExpT(l, IntT(), x, y),
-      (BinExpT(l, _, x, y), BinExpT(_, FloatT(), _, _)) -> BinExpT(l, FloatT(), x, y)
+      // This is not entirely accurate
+      // TODO: fix
+      (BinExpT(x, y), BinExpT(_, _)) -> BinExpT(x, y)
     }
     
     rootableOr: (RootAble * RootAble) -> RootAble {
