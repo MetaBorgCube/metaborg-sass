@@ -5,9 +5,6 @@ imports
   nabl2/Menus
   nabl2/References
 
-language
-
-  observer : editor-analyze (constraint)
 
 menus
   menu: "Transpile" (openeditor)

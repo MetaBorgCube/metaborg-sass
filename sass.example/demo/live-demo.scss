@@ -9,10 +9,14 @@
 $highlight: #f00;
 .main {
   width: 80%;
+  
   :hover {
     @include construct(15678px, $highlight + #045);
+   
     h1 {
-      font: Arial;
+      font: Arial {
+        size: 2em;
+      }
     }
   }
 }
