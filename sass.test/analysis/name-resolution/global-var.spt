@@ -75,6 +75,19 @@ test global declared in nested nested block [[
 }
 ]] resolve #2 to #1
 
+test no globals declared in nested nested block [[
+.main {
+  [[$w]]: 500px;
+  li {
+    $w: 50px;
+    a {
+      $w: 105px;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
 test local does not shadow global in nested [[
 .main {
   $w: 500px;

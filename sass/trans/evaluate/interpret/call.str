@@ -21,8 +21,8 @@ rules
     ; aargCallStore := <build-call-args-store(|store)> (aargs, <conc> (fargs, fargsDef))
     ; callStore := <extend-store(|defaultArgStore)> aargCallStore
     
-    ; callEnv := <extend-store(|env)> callStore
-    ; emptyS := <create-store> ()
+    ; envDecl := <update-mixin(|env)> (defName, mixinDef) 
+    ; callEnv := <extend-store(|envDecl)> callStore
     ; (evalBody, _ ,globalStoreFromBody) := <interpret-items(|callEnv)> body
 
   build-call-args-store(|store): (KeywordAArgGroup(aargs), _)

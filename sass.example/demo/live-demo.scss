@@ -1,15 +1,14 @@
 @mixin construct($width, $color, $style: solid) {
+  $u: yellow;
   border: {
     style: $style;
     width: $width;
     color: $color;
   }
 }
-
 $highlight: #f00;
-.main {
-  width: 80%;
-  
+
+@mixin hover {
   :hover {
     @include construct(15678px, $highlight + #045);
    
@@ -20,3 +19,12 @@ $highlight: #f00;
     }
   }
 }
+
+.main {
+  width: 80%;
+  
+  @include hover;
+}
+
+
+

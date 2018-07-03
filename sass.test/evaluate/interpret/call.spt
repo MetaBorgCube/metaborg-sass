@@ -124,4 +124,22 @@ test inclusion in block with default argument mixin in block [[
       PropertyDeclaration("width", Int("15"))
     ])
   ])
+
+test recursive mixin call [[
+@mixin count($count) {
+  @if $count >= 0 {
+    count: $count;
+    @include count($count - 1);
+  }
+}
+.count {
+  @include count(2);
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("count"), [
+      PropertyDeclaration("count", Int("2")),
+      PropertyDeclaration("count", Int("1")),
+      PropertyDeclaration("count", Int("0"))
+    ])
+  ])
   
