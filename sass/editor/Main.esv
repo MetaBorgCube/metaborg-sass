@@ -3,10 +3,11 @@ module Main
 imports
 
   Syntax
-  Evaluate
   Transpile
 
 language
+
+  observer: editor-analyze (constraint)
 
   extensions : scss, css
 

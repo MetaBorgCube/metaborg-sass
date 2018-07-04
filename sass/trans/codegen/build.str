@@ -31,9 +31,13 @@ rules
    */
   transpile-print:
     (selected, _, ast, path, project-path) -> (filename, result)
-    where
-      <nabl2-get-ast-analysis; not(nabl2-analysis-has-errors)> ast
     with
       filename := <guarantee-extension(|"css")> path
     ; resultAST   := <transpile-sass> ast
     ; result := <pp-sass-string> resultAST
+
+  transpile-print-strict:
+    (selected, f, ast, path, project-path)
+      -> <transpile-print> (selected, f, ast, path, project-path)
+    where
+      <nabl2-get-ast-analysis; not(nabl2-analysis-has-errors)> ast

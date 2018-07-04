@@ -9,4 +9,6 @@ imports
 menus
   menu: "Transpile" (openeditor)
     action: "Transpile  (.css.aterm)"  = transpile-interpret
-    action: "Transpile  (.css)"        = transpile-print
+    action: "Transpile  (.css) (permissive)" = transpile-print
+    // This will only succeed if there are no analysis errors
+    action: "Transpile  (.css)"        = transpile-print-strict
