@@ -13,7 +13,6 @@ imports
   analysis/sass
   
   evaluate/common
-  evaluate/coerce
   evaluate/interpret/interpret
 
 signature
@@ -22,7 +21,6 @@ signature
 
 strategies
   evaluate-exp(|store) = bottomup(try(evaluate-e(|store)))
-
 
 
 /**
@@ -43,15 +41,14 @@ rules
  * Logic
  */
 rules
-  evaluate-e(|store): BinExp(And(), lhs, rhs) -> True() where
-    <truthy> lhs
-    ; <truthy> rhs
-  evaluate-e(|store): BinExp(And(), lhs, rhs) -> False()
-  evaluate-e(|store): BinExp(Or(), lhs, rhs) -> False() where
-    <not(truthy)> lhs
-    ; <not(truthy)> rhs
-  evaluate-e(|store): BinExp(Or(), lhs, rhs) -> True()
   evaluate-e(|store): UnExp(Not(), e) -> <truthy < !False() + !True()> e
+
+  evaluate-e(|store): BinExp(And(), lhs, rhs) -> True() where <truthy> lhs; <truthy> rhs
+  evaluate-e(|store): BinExp(And(), lhs, rhs) -> False()
+  
+  evaluate-e(|store): BinExp(Or(), lhs, rhs) -> False() where
+    <not(truthy)> lhs; <not(truthy)> rhs
+  evaluate-e(|store): BinExp(Or(), lhs, rhs) -> True()
 
 
 /**
@@ -61,7 +58,7 @@ rules
   eq-term = try(extr-f); eq
 
   evaluate-e(|store): BinExp(Eq(), lhs, rhs) ->
-    <eq-term < !True() + !False()> (<strip-annos> lhs, <strip-annos> rhs)
+    <eq-term < !True() + !False()> <strip-annos> (lhs, rhs)
   evaluate-e(|store): BinExp(Gt(), lhs, rhs) ->  
     <extr-f; gtr < !True() + !False()> (lhs, rhs) 
 

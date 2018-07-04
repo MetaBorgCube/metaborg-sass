@@ -59,6 +59,7 @@ rules
     -> ([MixinDeclaration(l, args, argsDef, body)], emptyStore, localStore)
   with
     // Evaluate the default argument expressions.
-    argsDef := <map(\FArg(i, FArgDefault(n, e)) -> FArg(i, FArgDefault(n, <evaluate-exp(|store)> e))\)> argsDefaults
+    argsDef := <map(\FArg(i, FArgDefault(n, e))
+                  -> FArg(i, FArgDefault(n, <evaluate-exp(|store)> e))\)> argsDefaults
     ; emptyStore := <create-store> ()
     ; localStore := <create-store-with-mixin> (l, Mixin(l, args, argsDef, body, store))

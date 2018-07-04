@@ -12,7 +12,7 @@ imports
  */
 rules
   interp-item(|store): IfElse(stmts) -> <interp-branches(|store)> stmts
-  
+
   interp-branches(|store): [IfItem(guard, body) | t ] -> (bodyItems, globalStore, localStore)
     where
       <evaluate-exp(|store); truthy> guard

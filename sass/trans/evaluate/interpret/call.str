@@ -9,7 +9,9 @@ imports
   desugar/declaration
 
 rules
-  interp-item(|store): IncludeMixin(l, aargs, content) -> (evalBody, globalStoreFromBody, globalStoreFromBody) with
+  interp-item(|store): IncludeMixin(l, aargs, content) 
+    -> (evalBody, globalStoreFromBody, globalStoreFromBody)
+    with 
     mixinDef := <get-mixin(|store)> l
     ; <Mixin(?defName, ?fargs, ?fargsDef, ?body, ?env)> mixinDef
     
@@ -26,10 +28,14 @@ rules
     ; (evalBody, _ ,globalStoreFromBody) := <interpret-items(|callEnv)> body
 
   build-call-args-store(|store): (KeywordAArgGroup(aargs), _)
-    -> <map(\KeywordAArg(n, e) -> (n, <evaluate-exp(|store)> e)\); create-store-with-vars> aargs
+    -> <map(\KeywordAArg(n, e) -> (n, <evaluate-exp(|store)> e)\)
+        ; create-store-with-vars> aargs
   build-call-args-store(|store): (AArgGroup(aargs), fargs) -> callStore
     with
-      nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e))) -> (<extract-farg-name> f, <evaluate-exp(|store)> e) where <strip-annos; equal> (i, i')\)> (fargs, aargs)
+      nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e)))
+          -> (<extract-farg-name> f, <evaluate-exp(|store)> e) 
+          where <strip-annos; equal> (i, i')\)> 
+      (fargs, aargs)
       ; callStore := <create-store-with-vars> nameValueTuples
       
   extract-farg-name: FArg(n) -> n
