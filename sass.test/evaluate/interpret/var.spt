@@ -58,3 +58,40 @@ test global var inside nested block [[
       PropertyDeclaration("count", Int("1"))
     ])
   ])
+
+test default var not yet defined. [[
+$v: 34 !default;
+.m {
+  v: $v;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("v", Int("34"))
+    ])
+  ])
+
+test default var defined. [[
+$v: 34;
+$v: 35 !default;
+.m {
+  v: $v;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("v", Int("34"))
+    ])
+  ])
+
+test global default var [[
+.m {
+  $v: 34 !global !default;
+}
+
+.c {
+  v: $v;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("c"), [
+      PropertyDeclaration("v", Int("34"))
+    ])
+  ])

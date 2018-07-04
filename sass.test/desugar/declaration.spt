@@ -71,3 +71,27 @@ test namespace property declaration with two property declarations [[
       PropertyDeclaration("font-colour", ColourLabel("black"))
     ])
   ])
+
+test default var declaration [[
+$v: 13 !default;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      VarDeclaration("$v", Int("13"))])
+    ])
+  ])
+
+test default global var declaration [[
+$v: 13 !default !global;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      GlobalVarDeclaration("$v", Int("13"))])
+    ])
+  ])
+
+test global default var declaration [[
+$v: 13 !global !default;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      GlobalVarDeclaration("$v", Int("13"))])
+    ])
+  ])

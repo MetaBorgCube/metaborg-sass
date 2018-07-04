@@ -26,10 +26,7 @@ lexical syntax
    */
   HTML-TAG-CHAR = [a-zA-Z0-9\!\-] 
   HTML-TAG = [a-zA-Z0-9\!] HTML-TAG-CHAR*
-  
-  HTML-TAG = "@if" {reject}
-  HTML-TAG = "@else" {reject}
-  
+
 lexical restrictions
   
   HTML-ATTR -/- ~[\ \t\r\n\#\.\,]

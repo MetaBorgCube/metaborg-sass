@@ -3,6 +3,8 @@ module desugar/declaration
 imports 
   src-gen/signatures/Declaration-sig
   desugar/common
+  desugar/expression/expression
+  desugar/control
 
 signature
   constructors
@@ -27,6 +29,12 @@ strategies
  */
 rules
 
+  desugar-dec: VarDeclaration(name, e, flags)
+    -> IfElse([
+      IfItem(BinExp(Eq(), VarRef(name), Null()), [
+        VarDeclaration(name, e, <filter(not(?Default()))> flags)
+      ])
+    ]) where <member> (Default(), flags)
   desugar-dec: VarDeclaration(name, e, flags) -> 
     GlobalVarDeclaration(<dehyphenize> name, e) 
       where <member> (Global(), flags)
