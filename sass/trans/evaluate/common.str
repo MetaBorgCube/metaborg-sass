@@ -7,7 +7,7 @@ rules
  
   // Thanks to @Rasmus for the inspiration for this solution!
   int-to-radix-string(|alphabet, minChars): n -> result
-    where <geq> (n, 0); <geq> (minChars, 0); <gt> (<length> alphabet, 0)
+    where <geq> (n, 0); <geq> (minChars, 0); <gt> (<string-length> alphabet, 0)
     with
     alphabetChars := <explode-string> alphabet
     ; res := <int-to-radix(|alphabetChars) <+ ![]> n

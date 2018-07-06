@@ -16,9 +16,6 @@ lexical syntax
   HTML-ATTR-CHAR = ~[\ \t\r\n\#\.\,]
   HTML-ATTR = HTML-ATTR-CHAR+
   
-  HTML-ATTR = "@if"   {reject}
-  HTML-ATTR = "@else" {reject}
-  
   /*
    * I wasn't able to find a source for this, but all existing HTML tags
    * only use these tokens.
