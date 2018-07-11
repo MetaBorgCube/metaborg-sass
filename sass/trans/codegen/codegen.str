@@ -1,0 +1,11 @@
+module codegen/codegen
+
+imports
+  codegen/-
+  evaluate/-
+
+strategies
+  codegen = filter-nodes; flatten-declarations; filter-nodes; resugar-all
+  codegen-test = interpret-script; codegen; strip-annos
+
+  transpile-sass = interpret-script; codegen; strip-annos

@@ -1,0 +1,13 @@
+---
+id: nl.tudelft.in4333:sass.example:0.1.0-SNAPSHOT
+name: sass
+dependencies:
+  compile:
+  - nl.tudelft.in4333:sass:0.1.0-SNAPSHOT
+debug:
+  typesmart: false
+runtime:
+  nabl2:
+    debug: analysis files
+build:
+  useBuildSystemSpec: true

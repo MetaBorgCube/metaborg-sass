@@ -1,0 +1,111 @@
+module desugar/declaration
+
+imports 
+  src-gen/signatures/Declaration-sig
+  desugar/common
+  desugar/expression/expression
+  desugar/control
+
+signature
+  constructors
+    VarDeclaration        : String * Exp -> VariableDeclaration
+    GlobalVarDeclaration  : String * Exp -> VariableDeclaration
+    MixinDeclaration      : String * list * list * Option -> ScriptItem
+    IncludeMixin          : String * list * Option -> ScriptItem
+    FArg                  : int * FArgument -> FArgument
+    AArg                  : int * AArgument -> AArgument
+    
+strategies
+  desugar-declarations = topdown(try(desugar-dec))
+                          ; topdown(try(desugar-arg))
+                          ; topdown(try(desugar-namespace-prop))
+                          ; topdown(try(flatten-namespace-prop))
+                          ; topdown(try(flatten-list))
+
+  desugar-calls = bottomup(try(desugar-call))
+ 
+/**
+ * Variable declarations
+ */
+rules
+
+  desugar-dec: VarDeclaration(name, e, flags)
+    -> IfElse([
+      IfItem(BinExp(Eq(), VarRef(name), Null()), [
+        VarDeclaration(name, e, <filter(not(?Default()))> flags)
+      ])
+    ]) where <member> (Default(), flags)
+  desugar-dec: VarDeclaration(name, e, flags) -> 
+    GlobalVarDeclaration(<dehyphenize> name, e) 
+      where <member> (Global(), flags)
+  desugar-dec: VarDeclaration(name, e, flags) -> 
+    VarDeclaration(<dehyphenize> name, e)
+
+
+/** 
+ * Namespace properties
+ */
+rules
+  flatten-namespace-prop: BlockDeclaration(s, decls) -> BlockDeclaration(s, <flatten-list> decls)
+  desugar-namespace-prop: NamespacePropertyDeclaration(prop, decs) -> 
+    <cart(id); map(merge-namespace-prop); flatten-list> ([prop], decs) 
+  desugar-namespace-prop: NamespacePropertyDeclarationExp(prop, e, decs) ->
+    [PropertyDeclaration(prop, e) | propertyDeclarations] with
+    propertyDeclarations := 
+      <cart(id); map(merge-namespace-prop); flatten-list> ([prop], decs)
+    
+     
+  merge-namespace-prop: (propName, PropertyDeclaration(prop, e)) -> 
+    PropertyDeclaration(<concat-strings> [propName, "-", prop], e)
+  merge-namespace-prop: (propName, NamespacePropertyDeclaration(prop, decs)) ->
+    NamespacePropertyDeclaration(<concat-strings> [propName, "-", prop], decs)
+  merge-namespace-prop: (propName, NamespacePropertyDeclarationExp(prop, e, decs)) ->
+    NamespacePropertyDeclarationExp(<concat-strings> [propName, "-", prop], e, decs)
+
+
+/**
+ * Mixins declaration
+ */
+rules
+  desugar-dec: MixinDeclaration(l, fargs, decs) 
+                        -> MixinDeclaration(name, indexedFargs, indexedFArgsDefaults, decs)
+    with 
+      name := <dehyphenize> l
+      ; (dFargs, dFargsWithDefaults) := <desugar-fargslist> fargs
+      ; indexedFargs := <add-farg-indices(|0)> dFargs
+      ; numFArgs := <length> dFargs
+      ; indexedFArgsDefaults := <add-farg-indices(|numFArgs)> dFargsWithDefaults 
+
+  desugar-fargslist: None() -> ([], [])
+  desugar-fargslist: Some(FArguments(args)) -> (args, [])
+  desugar-fargslist: Some(FArgumentsStandardAndDefaults(reg, defl)) -> (reg, defl)
+  desugar-fargslist: Some(FArgumentsDefaults(defl)) -> ([], defl)
+
+  add-farg-indices(|offset) = add-indices; map(\(i, arg) -> FArg(<addi> (i, offset), arg)\)
+  
+  desugar-arg: FArg(l) -> FArg(<dehyphenize> l)
+  desugar-arg: FArgDefault(l, e) -> FArgDefault(<dehyphenize> l, e)
+
+
+/**
+ * Mixin including
+ */
+rules
+  desugar-call: IncludeMixin(l, aargs) -> IncludeMixin(name, dAargs, None())
+    with 
+    name := <dehyphenize> l
+    ; dAargs := <desugar-aarglist> aargs
+  desugar-call: IncludeMixinContentBlock(l, aargs, content) 
+      -> IncludeMixin(name, dAargs, content)
+    with 
+    name := <dehyphenize> l
+    ; dAargs := <desugar-aarglist> aargs
+  
+  desugar-aarglist: None() -> AArgGroup([])
+  desugar-aarglist: Some(AArgGroup(args)) -> AArgGroup(<add-aarg-indices> args)
+  desugar-aarglist: Some(KeywordAArgGroup(args)) -> KeywordAArgGroup(args)
+  
+  add-aarg-indices = add-indices; map(\(i, arg) -> AArg(i, arg)\)
+
+  desugar-arg: KeywordAArg(l, e) -> KeywordAArg(<dehyphenize> l, e)
+  

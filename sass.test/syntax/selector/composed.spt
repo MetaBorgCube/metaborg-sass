@@ -1,0 +1,80 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test all "a" in ".main-list" [[
+.main-list a
+]] parse to AllIn(Class("main-list"), Element("a"))
+
+test all "a" and all "li" [[
+li, a
+]] parse to Multiple(Element("li"), [Element("a")])
+
+test all direct "li" of "ul" [[
+ul > li
+]] parse to AllDirectChildren(Element("ul"), Element("li"))
+
+test all "p" directly after "h1" [[
+h1+p
+]] parse to AllDirectlyAfter(Element("h1"), Element("p"))
+
+test all "p" after a "h2" [[
+h2 ~ p
+]] parse to AllPrecededBy(Element("h2"), Element("p"))
+
+test div p a [[
+#main p a
+]] parse to AllIn(Id("main"), AllIn(Element("p"), Element("a")))
+
+test h1, h2, h3, h4 [[
+h1, h2, h3, h4
+]] parse to Multiple(Element("h1"), [Element("h2"), Element("h3"), Element("h4")])
+
+test div > h1, p > h1 [[
+div > h1, 
+p > h1
+]] parse to Multiple(AllDirectChildren(Element("div"), Element("h1")), 
+                    [AllDirectChildren(Element("p"), Element("h1"))])
+
+test all links to pdfs [[
+a[href$=.pdf]
+]] parse to AndS(Element("a"), Attribute("href$=.pdf"))
+
+test all disabled elements [[
+[disabled]
+]] parse to Attribute("disabled")
+
+test all elements in divs that are disabled [[
+div [disabled]
+]] parse to AllIn(Element("div"), Attribute("disabled"))
+
+test link with class hello [[
+a.hello
+]] parse to AndS(Element("a"), Class("hello"))
+
+test link with class hello and id bye [[
+a.hello#bye
+]] parse to AndS(AndS(Element("a"), Class("hello")), Id("bye"))
+
+test all in multiple [[
+a #link, .main
+]] parse to Multiple(AllIn(Element("a"), Id("link")), [Class("main")])
+
+test complex multiple [[
+a > #id, .main, p, hr
+]] parse to Multiple(AllDirectChildren(Element("a"), Id("id")), [
+              Class("main"),
+              Element("p"),
+              Element("hr")
+            ])
+
+test link with class external [[
+a.external
+]] parse to AndS(Element("a"), Class("external"))
+
+test link to main page [[
+a#main
+]] parse to AndS(Element("a"), Id("main")) 
+        

@@ -1,0 +1,29 @@
+module interpret/control
+
+imports
+  src-gen/signatures/ControlFlow-sig
+  desugar/control
+  evaluate/expression
+  evaluate/interpret/interpret
+
+
+/**
+ * @if
+ */
+rules
+  interp-item(|store): IfElse(stmts) -> <interp-branches(|store)> stmts
+
+  interp-branches(|store): [IfItem(guard, body) | t ] -> (bodyItems, globalStore, localStore)
+    where
+      <evaluate-exp(|store); truthy> guard
+    with
+      (bodyItems, globalStore, localStore) := <interpret-items(|store)> body
+
+  interp-branches(|store): [IfItem(guard, _) | t ] -> results
+    where
+      <evaluate-exp(|store); not(truthy)> guard
+    with
+      results := <interp-branches(|store)> t
+
+  interp-branches(|store): [] -> ([], emp, emp)
+    with emp := <create-store> ()

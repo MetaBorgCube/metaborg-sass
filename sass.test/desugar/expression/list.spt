@@ -1,0 +1,14 @@
+module desugar-list-test
+
+language sass
+
+fixture [[
+.x {
+  y: [[...]];
+}
+]]
+
+test space separated list [[
+1 2 3
+]] run desugar-exp to ExpList([Int("1"), Int("2"), Int("3")], Space())
+

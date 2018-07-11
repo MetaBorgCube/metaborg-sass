@@ -1,0 +1,157 @@
+module evaluate-expression-test
+
+language sass
+
+fixture [[
+x {
+  y: [[...]];
+}
+]]
+
+test addition of two numbers [[
+2.3 + 1
+]] run evaluate to Float("3.3")
+
+test multiplication of two numbers [[
+2 * 3.3
+]] run evaluate to Float("6.6")
+
+test division of two numbers [[
+4 / 2
+]] run evaluate to Float("2")
+
+test modulo two numbers [[
+5 % 2
+]] run evaluate to Int("1")
+
+test and false false [[
+false and false
+]] run evaluate to False()
+
+test and false true [[
+false and true
+]] run evaluate to False()
+
+test and true false [[
+true and false
+]] run evaluate to False()
+
+test and true true [[
+true and true
+]] run evaluate to True()
+
+test or false false [[
+false or false
+]] run evaluate to False()
+
+test or false true [[
+false or true
+]] run evaluate to True()
+
+test or true true [[
+true or false
+]] run evaluate to True()
+
+test or true true [[
+true or true
+]] run evaluate to True()
+
+test equal false true [[
+false == true
+]] run evaluate to False()
+
+test equal true true [[
+true == true
+]] run evaluate to True()
+
+test equal false false [[
+false == false
+]] run evaluate to True()
+
+test equal 1 1 [[
+1 == 1
+]] run evaluate to True()
+
+test not equal 2 1.5 [[
+2 == 1.5
+]] run evaluate to False()
+
+test inequal 2 1.5 [[
+2 != 1.5
+]] run evaluate to True()
+
+test equal hex [[
+#000 == #000
+]] run evaluate to True()
+
+test equal hex shorthand with hex [[
+#000 == #000000
+]] run evaluate to True()
+
+test gt true [[
+4.0001 > 4
+]] run evaluate to True()
+
+test gt false [[
+4 > 5
+]] run evaluate to False()
+
+test negation of true [[
+not true
+]] run evaluate to False()
+
+test anything but false and null are equivalent to true [[
+"hello" and true
+]] run evaluate to True()
+
+test null is equivalent to false [[
+true and null
+]] run evaluate to False()
+
+test addition of lengths [[
+1px + 0.5px
+]] run evaluate to Length(Float("1.5"), "px")
+
+test subtraction of lengths [[
+60px - 20px
+]] run evaluate to Length(Int("40"), "px")
+
+test addition of strings [[
+"Hello," + " world"
+]] run evaluate to String("Hello, world", DoubleQuote())
+
+test division of numbers where result 0..<1 [[
+1/5
+]] run evaluate to Float("0.2")
+
+test modulo float of length [[
+5px % 1.5
+]] run evaluate to Length(Float("0.5"), "px")
+
+test modulo two floats [[
+3.5 % 0.5
+]] run evaluate to Float("0")
+
+test modulo an int and float [[
+3.5 % 1
+]] run evaluate to Float("0.5")
+
+test mult length div [[
+40px * 6pt / 3pt 
+]] run evaluate-test to Length(Float("80"), "px")
+
+test mult length [[
+25px * 2.5pt
+]] run evaluate to Length(Length(Float("62.5"), "px"), "pt")
+
+test addition of two colours [[
+#111 + #22ab34
+]] run evaluate to Hex("33", "bc", "45")
+
+test subtraction of two colours [[
+#563 - #13b
+]] run evaluate to Hex("44", "33", "00")
+
+test multiplication of colour with int [[
+2 * #452
+]] run evaluate to Hex("88", "aa", "44")

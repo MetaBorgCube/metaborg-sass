@@ -1,0 +1,145 @@
+module evaluate-call-test
+
+language sass
+
+test simple inclusion at root [[
+@mixin hello {
+  .m {
+    width: 15;
+  }
+}
+
+@include hello;
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block declaration [[
+@mixin hello {
+  width: 15;
+}
+
+.m {
+  @include hello;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block declaration mixin defined in block [[
+.m {
+  @mixin hello {
+    width: 15;
+  }
+  @include hello;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion at root with arguments [[
+@mixin hello($v) {
+  .m {
+    width: $v;
+  }
+}
+
+@include hello(15);
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block declaration with argument [[
+@mixin hello($v) {
+  width: $v;
+}
+
+.m {
+  @include hello(15);
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block declaration mixin defined in block [[
+.m {
+  @mixin hello($v) {
+    width: $v;
+  }
+  @include hello(15);
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion at root with default argument [[
+@mixin hello($v: 15) {
+  .m {
+    width: $v;
+  }
+}
+
+@include hello;
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block with default argument [[
+@mixin hello($v: 15) {
+  width: $v;
+}
+
+.m {  
+  @include hello;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test inclusion in block with default argument mixin in block [[
+.m {
+  @mixin hello($v: 15) {
+    width: $v;
+  }  
+  @include hello;
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("width", Int("15"))
+    ])
+  ])
+
+test recursive mixin call [[
+@mixin count($count) {
+  @if $count >= 0 {
+    count: $count;
+    @include count($count - 1);
+  }
+}
+.count {
+  @include count(2);
+}
+]] run codegen-test to Script([
+    BlockDeclaration(Class("count"), [
+      PropertyDeclaration("count", Int("2")),
+      PropertyDeclaration("count", Int("1")),
+      PropertyDeclaration("count", Int("0"))
+    ])
+  ])
+  

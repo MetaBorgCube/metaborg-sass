@@ -1,0 +1,79 @@
+module desugar/expression
+
+imports 
+  src-gen/signatures/Expression-sig
+  desugar/expression/-
+  desugar/common
+
+signature
+  sorts
+    BinOp
+    UnOp
+  
+  constructors
+    Add   : BinOp
+    Sub   : BinOp
+    Mul   : BinOp
+    Div   : BinOp
+    Mod   : BinOp
+    And   : BinOp
+    Or    : BinOp
+    Eq    : BinOp
+    Gt    : BinOp
+
+    Not   : UnOp
+    
+    BinExp  : BinOp * Exp * Exp -> Exp
+    UnExp   : UnOp * Exp -> Exp
+    
+
+strategies
+  desugar-expressions = bottomup(try(desugar-e)) 
+  desugar-exp = try(desugar-e)
+
+
+/*
+ * 
+ */
+rules
+  desugar-e: VarRef(name) -> VarRef(<dehyphenize> name)
+
+
+
+/*
+ * Compound
+ */
+rules
+  desugar-e: Add(lhs, rhs)  -> BinExp(Add() , lhs, rhs)
+  desugar-e: Sub(lhs, rhs)  -> BinExp(Sub() , lhs, rhs)
+  desugar-e: Mult(lhs, rhs) -> BinExp(Mul() , lhs, rhs)
+  desugar-e: Div(lhs, rhs)  -> BinExp(Div() , lhs, rhs)
+  desugar-e: Mod(lhs, rhs)  -> BinExp(Mod() , lhs, rhs)
+  desugar-e: And(lhs, rhs)  -> BinExp(And() , lhs, rhs)
+  desugar-e: Or(lhs, rhs)   -> BinExp(Or()  , lhs, rhs)
+  desugar-e: Eq(lhs, rhs)   -> BinExp(Eq()  , lhs, rhs)
+  desugar-e: Gt(lhs, rhs)   -> BinExp(Gt()  , lhs, rhs)
+  desugar-e: Not(e) -> UnExp(Not(), e)
+  
+
+/**
+ * Complex
+ */
+rules
+  desugar-e: Gte(lhs, rhs)  -> BinExp(Or(), 
+                                      BinExp(Gt() , lhs, rhs), 
+                                      BinExp(Eq(), lhs, rhs))
+  desugar-e: Lt(lhs, rhs)   -> UnExp(Not(),
+                                      BinExp(Or(),
+                                        BinExp(Gt(), lhs, rhs),
+                                        BinExp(Eq(), lhs, rhs))
+                                    )
+  desugar-e: Lte(lhs, rhs)  -> UnExp(Not(), BinExp(Gt(), lhs, rhs))
+  desugar-e: InEq(lhs, rhs) -> UnExp(Not(), BinExp(Eq(), lhs, rhs))
+
+
+/**
+ * Resugaring
+ */
+strategies
+  resugar-expressions = topdown(try(resugar-e))

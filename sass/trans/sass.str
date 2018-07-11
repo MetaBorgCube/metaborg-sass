@@ -1,0 +1,25 @@
+module sass
+
+imports
+  
+  completion/completion
+  pp
+  outline
+  analysis
+  desugar/desugar
+  evaluate/evaluate
+  codegen/codegen
+
+rules // Debugging
+  
+  debug-show-aterm:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path
+    ; result   := node
+
+  editor-desugar:
+    (selected, position, ast, path, project-path) -> (filename, text)
+    where
+      filename := <guarantee-extension(|"desugared.aterm")> path ;
+      text     := <desugar-all> selected

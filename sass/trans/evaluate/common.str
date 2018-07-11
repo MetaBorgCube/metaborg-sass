@@ -1,0 +1,22 @@
+module evaluate/common
+
+rules
+ 
+  int-to-hex-string: n -> <int-to-hex-string(|2)> n
+  int-to-hex-string(|minChars): n -> <int-to-radix-string(|"0123456789abcdef", minChars)> n
+ 
+  // Thanks to @Rasmus for the inspiration for this solution!
+  int-to-radix-string(|alphabet, minChars): n -> result
+    where <geq> (n, 0); <geq> (minChars, 0); <gt> (<string-length> alphabet, 0)
+    with
+    alphabetChars := <explode-string> alphabet
+    ; res := <int-to-radix(|alphabetChars) <+ ![]> n
+    ; string := <reverse; implode-string> res
+    ; result := <align-left> (<Hd> alphabetChars, string, minChars)
+
+  int-to-radix(|alphabet): n -> [char | <int-to-radix(|alphabet) <+ ![]> remainder]
+    where <gt> (n, 0)
+    with
+    lsb := <modi> (n, <length> alphabet)
+    ; char := <index> (<inc> lsb, alphabet)
+    ; remainder := <divi> (n, <length> alphabet)

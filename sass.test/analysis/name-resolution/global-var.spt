@@ -1,0 +1,122 @@
+module name-resolution-global-test
+
+language sass
+
+test resolve to global var defined in other block [[
+.main {
+  [[$v]]: 5px !global;
+  width: $v;
+}
+
+.sub {
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test non global var should not be accessible [[
+.main {
+  $w: 50px;
+  width: $w;
+}
+
+.other {
+  width: $w; // This cannot be accessed!
+}
+]] >= 1 errors
+
+test forward global reference is not allowed [[
+.main {
+  width: $w;
+}
+
+.other {
+  $w : 50px !global;
+}
+]] >= 1 errors
+
+test local shadows global var [[
+.maai {
+  $w: 10px !global;
+}
+.m {
+  [[$w]]: 20px;
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test shadow script var with global var [[
+$v: 10;
+.m {
+  [[$v]]: 20 !global;
+  width: [[$v]];
+}
+]] resolve #2 to #1
+
+test global declared in nested block [[
+.main {
+  $w: 500px;
+  li {
+    [[$w]]: 50px !global;
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test global declared in nested nested block [[
+.main {
+  $w: 500px;
+  li {
+    $w: 50px !global;
+    a {
+      [[$w]]: 105px !global;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test no globals declared in nested nested block [[
+.main {
+  [[$w]]: 500px;
+  li {
+    $w: 50px;
+    a {
+      $w: 105px;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test local does not shadow global in nested [[
+.main {
+  $w: 500px;
+  li {
+    [[$w]]: 50px !global;
+    a {
+      $w: 105px;
+      width: $w;
+    }
+  }
+  width: [[$w]];
+}
+]] resolve #2 to #1
+
+test many global vars in block [[
+.m {
+  $v: 1 !global;
+}
+
+.v {
+  [[$v]]: 2 !global;
+  $w: 3 !global;
+  $r: 4 !global;
+  $t: 5 !global;
+  $y: 6 !global;
+  $u: 7 !global;
+}
+
+.q {
+  v: [[$v]];
+}
+]] resolve #2 to #1

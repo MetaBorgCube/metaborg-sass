@@ -1,0 +1,86 @@
+module syntax-declaration-test
+
+language sass
+
+test font namespace [[
+.m {
+  font: {
+    size: 10em;
+  }
+}
+]] parse to Script([BlockDeclaration(Class("m"), [NamespacePropertyDeclaration("font", [
+    PropertyDeclaration("size", Length(Int("10"), "em"))
+  ])])])
+
+test something [[
+.main-text {
+  font: {
+    size: 30em;
+    weight: green;
+  }
+}
+]] parse to Script([BlockDeclaration(Class("main-text"), [
+    NamespacePropertyDeclaration("font", [
+      PropertyDeclaration("size", Length(Int("30"), "em")),
+      PropertyDeclaration("weight", ColourLabel("green"))
+    ])
+  ])])
+
+test nested namespace [[
+.main {
+  font: {
+    size: {
+      kind: blue;
+    }
+    weight: 10;
+  }
+}
+]] parse to Script([
+    BlockDeclaration(Class("main"), [
+      NamespacePropertyDeclaration("font", [
+        NamespacePropertyDeclaration("size", [
+          PropertyDeclaration("kind", ColourLabel("blue"))
+        ]),
+        PropertyDeclaration("weight", Int("10"))
+      ])
+    ])
+  ])
+  
+test variable declarations are not allowed in namespaces [[
+.main {
+  font: {
+    $v: 5px;
+    size: $v;
+  }
+}
+]] parse fails
+
+test namespace with exp [[
+.m {
+  font: 24px {
+    color: green;
+  }
+}
+]] parse to Script([
+    BlockDeclaration(Class("m"), [
+      NamespacePropertyDeclarationExp("font", Length(Int("24"), "px"), [
+        PropertyDeclaration("color", ColourLabel("green"))
+      ])
+    ])
+  ])
+
+test namespace with exp [[
+.m {
+  font: 24px {
+    color: green;
+    width: 2px;
+  }
+}
+]] parse to Script([
+    BlockDeclaration(Class("m"), [
+      NamespacePropertyDeclarationExp("font", Length(Int("24"), "px"), [
+        PropertyDeclaration("color", ColourLabel("green")),
+        PropertyDeclaration("width", Length(Int("2"), "px"))
+      ])
+    ])
+  ])

@@ -1,0 +1,150 @@
+module analysis/declaration
+
+imports
+  analysis/sass
+
+/**
+ * Mixins
+ */
+rules
+  RootScopeIterative[[ [MixinDeclaration(n, args, argsDefault, body) | succ] ^ (avS) ]] :=
+    Mixin{n} <- avS
+    
+    , new argS
+    , argS ---> avS
+    , Mixin{n} =A=> argS
+    
+    , Map1(DeclareFArg)[[ args ^ (argS) ]]
+    , Map1(DeclareFArg)[[ argsDefault ^ (argS) ]]
+    , distinct/name D(argS)/Var | error $[Duplicate argument definition [NAME]] @NAMES
+    
+    , new bodyS
+    , bodyS ---> argS
+    
+    , new finalMixinGS
+    , new globalMixinS
+    , ScopeIterative[[ body ^ (bodyS, globalMixinS, finalMixinGS, rootable) ]]
+    , Mixin{n} =G=> finalMixinGS 
+    , Mixin{n} <rootable! rootable
+    
+    , new nextS
+    , nextS -G-> avS
+    , RootScopeIterative[[ succ ^ (nextS) ]]
+    .
+
+  ScopeIterative[[ [MixinDeclaration(n, args, defaults, body) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
+    Mixin{n} <- avS
+    
+    , new argS
+    , argS ---> avS
+    , Mixin{n} =A=> argS
+    
+    , Map1(DeclareFArg)[[ args ^ (argS) ]]
+    , Map1(DeclareFArg)[[ defaults ^ (argS) ]]
+    , distinct/name D(argS)/Var | error $[Duplicate argument definition [NAME]] @NAMES
+    
+    , new bodyS
+    , bodyS ---> argS
+    
+    , new finalMixinGS
+    , ScopeIterative[[ body ^ (bodyS, gS, finalMixinGS, _) ]]
+    , Mixin{n} =G=> finalMixinGS
+    
+    , new nextS
+    , nextS ---> avS
+    , ScopeIterative[[ succ ^ (nextS, gS, finalGS, rootable) ]]
+    .
+  
+  DeclareFArg[[ FArg(i, FArg(n)) ^ (argS) ]] :=
+    Var{n} <- argS
+    , Var{n}: VarT()
+    , Arg{n} <- argS
+    , IArg{i} <- argS
+    .
+  DeclareFArg[[ FArg(i, FArgDefault(n, exp)) ^ (argS) ]] :=
+    Var{n} <- argS
+    , [[ exp ^ (s, _) : t ]]
+    , Var{n} : t
+
+    , ArgDefault{n} <- argS
+    , IArgDefault{i} <- argS
+    .
+
+
+/**
+ * Block declarations
+ */
+rules
+
+  RootScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS) ]] :=
+    new blockS, 
+    blockS ---> avS,
+    new finalBlockGS,
+    ScopeIterative[[ decs ^ (blockS, avS, finalBlockGS, _) ]],
+    RootScopeIterative[[ succ ^ (finalBlockGS) ]]. 
+  ScopeIterative[[ [BlockDeclaration(selec, decs) | succ] ^ (avS, gS, finalGS, rootable) ]] :=
+    new blockS,
+    blockS ---> avS,
+    new finalBlockGS,
+    ScopeIterative[[ decs ^ (blockS, gS, finalBlockGS, _) ]],
+    
+    new nextS,
+    nextS ---> avS,
+    nextS -G-> finalBlockGS,
+    ScopeIterative[[ succ ^ (nextS, finalBlockGS, finalGS, rootable) ]].
+
+
+/**
+ * Property declarations
+ */
+rules
+  ScopeIterative[[ [PropertyDeclaration(prop, e) | succ] ^ (avS, gS, fGS, unrootable) ]] :=
+    unrootable == UnRootAble()
+    , [[ e ^ (avS, cssAbleCheck) : eT ]]
+    , eT <cssable? cssAbleCheck | error $[[eT] is not a valid CSS expression type.] @e
+    , ScopeIterative[[ succ ^ (avS, gS, fGS, _) ]].
+
+
+/**
+ * Variable declarations
+ */
+rules
+  RootScopeIterative[[ [vd@VarDeclaration(var, e) | succ] ^ (avS) ]] :=
+    new nextS, 
+    nextS -G-> avS,
+    
+    DeclareVar[[ vd ^ (avS, nextS) ]],
+    RootScopeIterative[[ succ ^ (nextS) ]].
+  ScopeIterative[[ [vd@VarDeclaration(var, e) | succ] ^ (avS, gS, fGS, rootable) ]] :=
+    new nextS, 
+    nextS ---> avS,
+    
+    DeclareVar[[ vd ^ (avS, nextS) ]],
+    ScopeIterative[[ succ ^ (nextS, gS, fGS, rootable) ]].
+
+
+  RootScopeIterative[[ [gvd@GlobalVarDeclaration(var, e) | succ] ^ (avS) ]] :=
+    new s,
+    s -G-> avS,
+    
+    DeclareVar[[ gvd ^ (avS, s) ]],
+    RootScopeIterative[[ succ ^ (s) ]].
+  ScopeIterative[[ [gvd@GlobalVarDeclaration(var, e) | succ] ^ (avS, gS, fGS, rootable) ]] :=
+    new globalS,  globalS -G-> gS,
+    new s,        s ---> avS,
+    s -G-> globalS,
+    
+    DeclareVar[[ gvd ^ (avS, globalS) ]],
+    ScopeIterative[[ succ ^ (s, globalS, fGS, rootable) ]].
+
+
+  DeclareVar[[ VarDeclaration(var, e) ^ (avS, decS) ]] :=
+    [[ e ^ (avS, _) : t ]],
+    Var{var} <- decS,
+    Var{var} : t
+    .
+  DeclareVar[[ GlobalVarDeclaration(var, e) ^ (avS, gS) ]] :=
+    [[ e ^ (avS, _) : t ]],
+    Var{var} <- gS,
+    Var{var} : t
+    .

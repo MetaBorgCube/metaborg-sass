@@ -1,0 +1,35 @@
+module analysis
+
+imports
+  
+  nabl2shared
+  nabl2runtime
+
+  pp
+
+  desugar/desugar
+  evaluate/evaluate
+  analysis/-
+
+rules // Analysis
+  editor-analyze = nabl2-analyze(desugar-all)
+
+  /**
+   * Use this rule to get the type of an ast node.
+   */
+  get-type: astNode -> <strip-annos> t with
+    a := <nabl2-get-ast-analysis>
+    ; t := <nabl2-get-ast-type(|a)> astNode
+  
+
+rules // Debugging
+  
+  // Prints the abstract syntax ATerm of a selection.
+  debug-show-aterm: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"aterm")> path
+       ; result   := selected
+
+  // Prints the analyzed annotated abstract syntax ATerm of a selection.
+  debug-show-analyzed: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"analyzed.aterm")> path
+       ; result   := selected

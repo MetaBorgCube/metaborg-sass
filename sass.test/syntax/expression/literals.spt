@@ -1,0 +1,69 @@
+module syntax-expression-test
+
+language sass
+
+fixture [[
+x {
+  y: [[...]];  
+}
+]]
+
+test parse int [[
+4
+]] parse to Int("4")
+
+test parse negative int [[
+-4
+]] parse to Int("-4") 
+
+test parse 0 float [[
+0.5
+]] parse to Float("0.5")
+
+test parse negative float [[
+-10004.50
+]] parse to Float("-10004.50")
+
+test parse float [[
+10404.958
+]] parse to Float("10404.958")
+
+test parse hex colour single [[
+#04f
+]] parse to HexShort("04f")
+
+test parse hex colour double [[
+#0a6D3f
+]] parse to Hex("0a6D3f")
+
+test parse length with arbitrary unit [[
+5em
+]] parse to Length(Int("5"), "em")
+
+test parse length percentage [[
+95%
+]] parse to Length(Int("95"), "%")
+
+test parse float length [[
+56.34px
+]] parse to Length(Float("56.34"), "px")
+
+test negative length [[
+-4.5x
+]] parse to Length(Float("-4.5"), "x")
+
+test parse true [[
+true
+]] parse to True()
+
+test parse false [[
+false
+]] parse to False()
+
+test parse null [[
+null
+]] parse to Null()
+
+test parse var [[
+$hello
+]] parse to VarRef("$hello")

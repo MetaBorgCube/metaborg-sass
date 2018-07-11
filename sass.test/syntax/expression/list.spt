@@ -1,0 +1,29 @@
+module syntax-list-test
+
+language sass
+
+fixture [[
+.m {
+  font: [[...]];
+}
+]] 
+
+test hello [[
+1 2 3
+]] parse to ExpListSpace(Int("1"), ExpListSpace(Int("2"), Int("3")))
+
+test font [[
+bold 10px 5px
+]] parse to ExpListSpace(UnquoteString("bold"), 
+                  ExpListSpace(
+                    Length(Int("10"), "px"), 
+                    Length(Int("5"), "px")
+                  ))
+
+test variable and unquoted string [[
+$hello px
+]] parse to ExpListSpace(VarRef("$hello"), UnquoteString("px"))
+
+test length variable unquoted string [[
+40px $style solid
+]] parse to ExpListSpace(Length(Int("40"), "px"), ExpListSpace(VarRef("$style"), UnquoteString("solid")))

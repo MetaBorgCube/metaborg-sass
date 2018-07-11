@@ -1,0 +1,25 @@
+module syntax-declaration-test
+
+language sass
+
+start symbol Declaration
+
+test id selector without style declarations [[
+#main {
+
+}
+]] parse to BlockDeclaration(Id("main"), [])
+
+test class selector without style declarations [[
+.main {
+
+}
+]] parse to BlockDeclaration(Class("main"), [])
+
+test class selector with one style declaration [[
+.big {
+  width: 1000px;
+}
+]] parse to BlockDeclaration(Class("big"), [
+    PropertyDeclaration("width", Length(Int("1000"), "px"))
+  ])

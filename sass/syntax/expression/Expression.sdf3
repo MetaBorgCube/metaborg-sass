@@ -1,0 +1,102 @@
+module Expression
+
+imports
+  Common
+  Colour
+  ExpressionList
+  String
+  
+context-free start-symbols
+  Exp
+  PropertyExp
+
+
+context-free syntax
+  PropertyExp = Exp
+  PropertyExp = ExpList {avoid}
+
+  Exp = String
+  Exp = Number
+  Exp = Colour {prefer}
+  
+  Exp = <(<Exp>)> {bracket}
+
+
+/**
+ * Literals
+ */
+context-free syntax
+  Exp.Length    = <<Number><LengthUnit>> {prefer}
+  Exp.True      = <true>
+  Exp.False     = <false>
+  Exp.Null      = <null>
+  
+  Exp.VarRef    = <<VAR>>
+
+  Number.Int    = INT
+  Number.Float  = FLOAT
+
+
+/**
+ * Arithmetic Operators
+ */
+context-free syntax
+  Exp.Add   = <<Exp> + <Exp>> {left}
+  Exp.Sub   = <<Exp> - <Exp>> {left}
+  Exp.Mult  = <<Exp> * <Exp>> {left}
+  Exp.Div   = <<Exp> / <Exp>> {left}
+  Exp.Mod   = <<Exp> % <Exp>> {left}
+
+
+/**
+ * Logical Operators
+ */
+context-free syntax
+  Exp.And = <<Exp> and <Exp>> {left}
+  Exp.Or  = <<Exp> or <Exp>> {left}
+  Exp.Not = <not <Exp>> {right}
+
+
+/**
+ * Comparison
+ */
+context-free syntax
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  Exp.InEq  = <<Exp> != <Exp>> {non-assoc}
+  Exp.Gt    = [[Exp] > [Exp]]  {non-assoc}
+  Exp.Gte   = [[Exp] >= [Exp]] {non-assoc}
+  Exp.Lt    = [[Exp] < [Exp]]  {non-assoc}
+  Exp.Lte   = [[Exp] <= [Exp]] {non-assoc}
+
+
+context-free priorities
+  {non-assoc:
+    Exp.Length
+  } >
+  {left:
+      Exp.Not
+  } >
+  {left:
+    Exp.Mult
+    Exp.Div
+    Exp.Mod
+  } >
+  {left:
+      Exp.Add
+      Exp.Sub
+  } > {non-assoc:
+      Exp.Gt
+      Exp.Gte
+      Exp.Lt
+      Exp.Lte
+  } >
+  {left:
+      Exp.And
+  } > 
+  {left:
+    Exp.Or
+  } >
+  {non-assoc: 
+      Exp.Eq
+      Exp.InEq
+  }

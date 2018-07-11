@@ -1,0 +1,119 @@
+module Selector
+
+imports
+  Common
+
+template options
+  tokenize: "[]():"
+
+// From: https://www.w3schools.com/cssref/css_selectors.asp
+
+lexical syntax
+  /*
+   * In HTML5 attributes can use any char as long as there is no whitespace
+   * https://www.w3.org/TR/2014/REC-html5-20141028/dom.html
+   */
+  HTML-ATTR-CHAR = ~[\ \t\r\n\#\.\,]
+  HTML-ATTR = HTML-ATTR-CHAR+
+  
+  /*
+   * I wasn't able to find a source for this, but all existing HTML tags
+   * only use these tokens.
+   * https://www.w3schools.com/tags/default.asp
+   */
+  HTML-TAG-CHAR = [a-zA-Z0-9\!\-] 
+  HTML-TAG = [a-zA-Z0-9\!] HTML-TAG-CHAR*
+
+lexical restrictions
+  
+  HTML-ATTR -/- ~[\ \t\r\n\#\.\,]
+  HTML-TAG -/-  [a-zA-Z0-9\!\-]
+  
+context-free start-symbols
+  
+  Selector
+
+
+/**
+ * Attribute selector
+ */
+syntax
+  CIDSelector-CF.Id     = "#" HTML-ATTR-LEX
+  CIDSelector-CF.Class  = "." HTML-ATTR-LEX
+
+
+/**
+ * Singular selectors
+ */
+context-free syntax
+  SelectorTerm.All     = "*"
+  SelectorTerm.Element = HTML-TAG
+  
+  SelectorTerm = CIDSelector
+  SubSelector = SelectorTerm
+
+context-free priorities
+  CIDSelector.Id > SelectorTerm.Element
+
+/**
+ * Attributes
+ */
+lexical syntax
+  ATTR-VAL = ~[]+
+
+context-free syntax
+  AttributeSelector.Attribute = <[<ATTR-VAL>]>
+   
+  SubSelector  = AttributeSelector
+  
+/**
+ * Composed selectors
+ */
+syntax
+  CSelector-CF.AndS      = SubSelector-CF CIDSelector-CF           {left}
+  CSelector-CF.AndS      = SubSelector-CF AttributeSelector-CF     {left}
+  TopSelector-CF.AllIn   = SubSelector-CF LAYOUT-CF TopSelector-CF {right}
+
+context-free syntax
+  CSelector.AllDirectChildren = [[SubSelector] > [SubSelector]] {right}
+  CSelector.AllDirectlyAfter  = <<SubSelector> + <SubSelector>> {right}
+  CSelector.AllPrecededBy     = <<SubSelector> ~ <SubSelector>> {right}
+  
+  SubSelector = CSelector
+  TopSelector = SubSelector {avoid}
+
+
+/**
+ * Pseudo selectors
+ */
+lexical syntax
+  PSEUDO-ID = [a-zA-Z0-9\(\)]+
+
+lexical restrictions
+  PSEUDO-ID -/- [a-zA-Z0-9\)]
+
+syntax
+  // Using kernel syntax because the only difference between
+  // pseudoclass selector and namespace properties is whitespace
+  // between the ":"  
+  PseudoSelector-CF.PseudoClass         = ":" PSEUDO-ID-LEX
+  PseudoSelector-CF.AppliedPseudoClass  = SelectorTerm-CF ":" PSEUDO-ID-LEX  {right}
+  PseudoSelector-CF.PseudoElement       = SelectorTerm-CF "::" PSEUDO-ID-LEX {right}
+
+context-free syntax   
+  SubSelector = PseudoSelector
+
+/**
+ * The top level selectors
+ */
+context-free syntax
+  Selector = SubSelector
+  Selector = AttributeSelector {prefer}
+  Selector = PseudoSelector {prefer}
+  Selector = TopSelector {avoid}
+  Selector.Multiple = <<TopSelector>, <{TopSelector ","}+>>
+
+context-free priorities
+  Selector.Multiple > { CIDSelector.Id CIDSelector.Class }
+
+  

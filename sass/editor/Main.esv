@@ -1,0 +1,15 @@
+module Main
+
+imports
+
+  Syntax
+  Transpile
+
+language
+
+  observer: editor-analyze (constraint)
+
+  extensions : scss, css
+
+  provider : target/metaborg/stratego.ctree
+  provider : target/metaborg/stratego-javastrat.jar

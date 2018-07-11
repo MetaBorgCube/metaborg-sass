@@ -1,0 +1,18 @@
+module desugar-colour-test
+
+language sass
+
+fixture [[
+.x {
+  y: [[...]];
+}
+]]
+
+test desugar hex shorthand to full hex [[
+#1af
+]] run desugar-exp to Hex("11", "aa", "ff")
+
+test desugar hex to hex components [[
+#131af0
+]] run desugar-exp to Hex("13", "1a", "f0")
+

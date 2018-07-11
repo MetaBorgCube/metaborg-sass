@@ -1,0 +1,229 @@
+module analysis/sass
+
+imports
+  analysis/-
+
+signature 
+  name resolution
+    constructors
+      IntT    : -> Type
+      FloatT  : -> Type
+      BoolT   : -> Type
+      StringT : -> Type
+      NullT   : -> Type
+      ColourT : -> Type
+      VarT    : -> Type
+      ListT   : list(Type) -> Type
+      LengthT : string -> Type // The exp type and the unit
+      // lhsT * rhsT
+      BinExpT : Type * Type -> Type
+      
+      MixinT : list(FArg) -> Type
+      
+      CSSAble  : -> CSSAble
+      RootAble : -> RootAble
+      UnRootAble : -> RootAble
+      
+    namespaces
+      Var
+      
+      Function
+      Mixin
+
+      // Used to check whether mixin/function calls have the right number/named arguments
+      Arg
+      IArg
+      ArgDefault
+      IArgDefault
+   
+  functions
+    
+    typeForAddition: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      (IntT(), IntT())     -> IntT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+
+      (StringT(), StringT())    -> StringT(),
+      (ColourT(), ColourT())    -> ColourT(),
+      
+      (LengthT(u), LengthT(u)) -> LengthT(u),
+      
+      (_, StringT()) -> StringT(),
+      (StringT(), _) -> StringT()
+    }
+    
+    typeForSubtraction: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      (IntT(), IntT())       -> IntT(),
+      (FloatT(), FloatT())   -> FloatT(),
+      (ColourT(), ColourT()) -> ColourT(),
+      
+      (LengthT(u), LengthT(u)) -> LengthT(u),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT()
+    }
+    
+    typeForMultiplication: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      (IntT(), IntT())        -> IntT(),
+      (FloatT(), FloatT())    -> FloatT(),
+      (ColourT(), ColourT())  -> ColourT(),
+      
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+      
+      (IntT(), LengthT(u))   -> LengthT(u),
+      (LengthT(u), IntT())   -> LengthT(u),
+      (FloatT(), LengthT(u)) -> LengthT(u),
+      (LengthT(u), FloatT()) -> LengthT(u),
+      
+      
+      (IntT(), ColourT())     -> ColourT(),
+      (FloatT(), ColourT())   -> ColourT(),
+      (ColourT(), IntT())     -> ColourT(),
+      (ColourT(), FloatT())   -> ColourT(),
+      
+      // Length expressions
+      
+      (LengthT(l), LengthT(r)) -> BinExpT(LengthT(l), LengthT(r)),
+      
+      (BinExpT(x, y), IntT())   -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
+      (IntT(), BinExpT(x, y))   -> BinExpT(x, y),
+      (FloatT(), BinExpT(x, y)) -> BinExpT(x, y),
+      
+      (BinExpT(x, y), LengthT(u)) -> BinExpT(BinExpT(x, y), LengthT(u)),
+      (LengthT(u), BinExpT(x, y)) -> BinExpT(LengthT(u), BinExpT(x, y))
+    }
+    
+    typeForDivision: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      
+      (IntT(), IntT()) -> FloatT(),
+      (FloatT(), IntT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      
+      (ColourT(), IntT()) -> ColourT(),
+      (ColourT(), FloatT()) -> ColourT(),
+      (ColourT(), ColourT()) -> ColourT(),
+    
+      (LengthT(u), IntT())   -> LengthT(u),
+      (BinExpT(x, y), IntT())   -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
+      
+      (BinExpT(LengthT(lU), LengthT(rU)), LengthT(lU)) -> LengthT(rU),
+      (BinExpT(LengthT(lU), LengthT(rU)), LengthT(rU)) -> LengthT(lU)
+    }
+    
+    typeForModulo: (Type * Type) -> Type {
+      (VarT(), _) -> VarT(),
+      (_, VarT()) -> VarT(),
+      
+      (IntT(), IntT()) -> IntT(),
+      (FloatT(), IntT()) -> FloatT(),
+      (IntT(), FloatT()) -> FloatT(),
+      (FloatT(), FloatT()) -> FloatT(),
+      
+      (ColourT(), ColourT())  -> ColourT(),
+      (ColourT(), IntT())     -> ColourT(),
+      (ColourT(), FloatT())   -> ColourT(),
+      
+      (LengthT(u), IntT()) -> LengthT(u),
+      (LengthT(u), IntT()) -> LengthT(u),
+      (LengthT(u), FloatT()) -> LengthT(u),
+      
+      (BinExpT(x, y), IntT()) -> BinExpT(x, y),
+      (BinExpT(x, y), FloatT()) -> BinExpT(x, y),
+      
+      // This is not entirely accurate
+      // TODO: fix
+      (BinExpT(x, y), BinExpT(_, _)) -> BinExpT(x, y)
+    }
+    
+    rootableOr: (RootAble * RootAble) -> RootAble {
+      (RootAble(), RootAble()) -> RootAble()
+      , _ -> UnRootAble()
+    }
+
+name resolution
+  labels
+    A // Associated scope label for arguments of mixins
+    G // Global scope
+    P
+
+  order 
+    D < G,
+    D < P,
+    G < P   
+
+  well-formedness
+    P* G*
+
+relations 
+  
+  /**
+   *  Whether a type is coerceable to another, e.g. number to string
+   */
+  reflexive, symmetric, transitive coerce : Type * Type
+  
+  reflexive, anti-symmetric, anti-transitive rootable: RootAble * RootAble
+
+  /**
+   * Whether a type can be emited to CSS
+   */
+  reflexive, anti-symmetric, transitive cssable: Type * CSSAble {
+    ListT(+cssable),
+    [+cssable]
+  }
+
+rules
+  
+  init ^ (scriptS) :=
+    new scriptS,
+    FloatT()  <cssable! CSSAble(),
+    IntT()    <cssable! CSSAble(),
+    BoolT()   <cssable! CSSAble(),
+    ColourT() <cssable! CSSAble(),
+    StringT() <cssable! CSSAble(),
+    VarT()    <cssable! CSSAble(),
+    
+    FloatT()  <coerce! StringT(),
+    NullT()   <coerce! StringT(), // emptystring
+    BoolT()   <coerce! StringT(),
+    ColourT() <coerce! StringT(),
+    IntT()    <coerce! FloatT(),
+    
+    NullT()   <coerce! BoolT(), // false
+    // everything else transitively through StringT, true
+    StringT() <coerce! BoolT(),
+    BoolT()   <coerce! VarT().
+  
+  [[ Script(items) ^ (s) ]] :=
+    RootScopeIterative[[ items ^ (s) ]].
+ 
+  /**
+   * RootScopeIterative iteratively builds a scope chain at the root of a script. The 
+   * scope variable contains the scope node available at the evaluation of the 
+   * current AST node.
+   */
+  RootScopeIterative[[ [] ^ (_) ]].
+  
+  /**
+   * ScopeIterative iteratively builds a scope graph. The scope variable contains:
+   *  - The available scope
+   *  - The last global scope node
+   *  - The global scope that should be linked to the last global scope defined in the block.
+   *      This allows nested blocks to define global variables that are available in later
+          blocks and script elements.
+   */
+  ScopeIterative[[ [] ^ (_, nGS, finalGS, rootableCheck) ]] :=
+    finalGS -G-> nGS,
+    rootableCheck == RootAble().
+    

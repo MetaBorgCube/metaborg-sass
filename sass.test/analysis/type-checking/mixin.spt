@@ -1,0 +1,15 @@
+module type-check-mixin-test
+
+language sass
+
+test mixin argument with vart results in vart expressions [[
+@mixin hello($v) {
+  prop: [[$v + 5]];
+}
+]] run get-type on #1 to VarT()
+
+test mixin argument with default farg type results in actual expression type [[
+@mixin hello($v: 4) {
+  prop: [[$v + 5]];
+}
+]] run get-type on #1 to IntT() 

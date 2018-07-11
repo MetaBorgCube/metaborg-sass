@@ -1,0 +1,31 @@
+module name-resolution-e2e-test
+
+language sass
+
+test e2e: complex scope graph without functions or mixins [[
+$w: 150px;
+
+.main {
+  [[$w]]: 100px !global; // 1
+  width: [[$w]]; // 2
+}
+
+.other {
+  width: [[$w]]; // 3
+  [[$w]]: 200px; // 4
+  [[$v]]: 4px; // 5
+  li {
+    color: [[$w]]; // 6
+    [[$w]]: [[$w]] + 100px !global; //7 8
+    [[$v]]: 5px; //9
+    height: [[$v]]; // 10
+  }
+  height: [[$w]] + [[$v]]; //11 12
+}
+]]  resolve #2  to #1 
+    resolve #3  to #1 
+    resolve #6  to #4 
+    resolve #8  to #4
+    resolve #10 to #9
+    resolve #11 to #7
+    resolve #12 to #5

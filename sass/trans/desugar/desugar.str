@@ -1,0 +1,26 @@
+module desugar/desugar
+
+imports 
+  desugar/-
+  desugar/expression/-
+
+/**
+ * Desugaring
+ */
+strategies
+
+  desugar-all = desugar-control
+                  ; desugar-selectors
+                  ; desugar-expressions
+                  ; desugar-declarations
+                  ; desugar-calls
+                  ; topdown(try(flatten-list))
+  desugar-all-test = desugar-all; strip-annos
+
+/**
+ * Resugaring
+ */
+strategies
+  resugar-all = resugar-selectors
+                  ; resugar-expressions
+  

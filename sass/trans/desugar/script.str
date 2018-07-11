@@ -1,0 +1,15 @@
+module desugar/script
+
+imports
+  src-gen/signatures/Script-sig
+  src-gen/signatures/Expression-sig
+
+signature
+  constructors
+    Script : List(Exp) * List(ScriptItem) -> Script
+
+
+rules
+  collect-refs: Script(items) -> Script(refs, items) with
+    refs := <collect-all(?VarRef(_))> items
+  

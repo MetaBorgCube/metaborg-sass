@@ -1,0 +1,16 @@
+module Script
+
+imports 
+  Common
+  ControlFlow
+  Declaration
+
+context-free start-symbols
+  Script
+
+context-free syntax
+  Script.Script = <
+  <ScriptItem*>
+  
+  >
+  

@@ -1,0 +1,97 @@
+module desugar-declaration-test
+
+language sass
+
+test one deep namespace property [[
+.main {
+  font: {
+    size: 15px;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("main"), [
+      PropertyDeclaration("font-size", Length(Int("15"), "px"))
+    ])
+  ])
+
+test two deep namespace property [[
+.m {
+  font: {
+    size: 15px;
+    weight: {
+      kind: blue;
+    }
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("font-size", Length(Int("15"), "px")),
+      PropertyDeclaration("font-weight-kind", ColourLabel("blue"))
+    ])
+  ])
+
+test namespace property declaration with exp [[
+.m {
+  font: 24px {
+    color: green;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("font", Length(Int("24"), "px")),
+      PropertyDeclaration("font-color", ColourLabel("green"))
+    ])
+  ])
+
+test namespace property declaration with exp multiple decls [[
+.m {
+  font: 24px {
+    color: green;
+    size: 50px;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("m"), [
+      PropertyDeclaration("font", Length(Int("24"), "px")),
+      PropertyDeclaration("font-color", ColourLabel("green")),
+      PropertyDeclaration("font-size", Length(Int("50"), "px"))
+    ])
+  ])
+
+test namespace property declaration with two property declarations [[
+.main {
+  font: {
+    size: 10px;
+    colour: black;
+  }
+}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Class("main"), [
+      PropertyDeclaration("font-size", Length(Int("10"), "px")),
+      PropertyDeclaration("font-colour", ColourLabel("black"))
+    ])
+  ])
+
+test default var declaration [[
+$v: 13 !default;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      VarDeclaration("$v", Int("13"))])
+    ])
+  ])
+
+test default global var declaration [[
+$v: 13 !default !global;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      GlobalVarDeclaration("$v", Int("13"))])
+    ])
+  ])
+
+test global default var declaration [[
+$v: 13 !global !default;
+]] run desugar-all-test to Script([
+    IfElse([IfItem(BinExp(Eq(), VarRef("$v"), Null()), [
+      GlobalVarDeclaration("$v", Int("13"))])
+    ])
+  ])

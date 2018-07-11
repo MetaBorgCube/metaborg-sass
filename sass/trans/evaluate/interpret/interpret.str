@@ -1,0 +1,130 @@
+module interpret/interpret
+
+imports
+  src-gen/signatures/Script-sig
+
+imports
+  evaluate/expression  
+  evaluate/interpret/-
+
+/**
+ * `store`
+ *
+ * A collection of values
+ * A tuple:
+ *  + variables: A list of (name, value) tuples for variables
+ *  + mixins: A list of (name, MixinDeclaration) tuples for tuples 
+ */
+strategies
+  /**
+   * Creates an empty store
+   */
+  create-store: () -> ([], [])
+  
+  /**
+   * Creates a store from a KV variable pair.
+   */
+  create-store-with-var: (k, v) -> <update-variable(|s)> (k, v) with
+    s := <create-store> ()
+
+  /**
+   * Creates a store from a list of (name, value) tuples
+   */
+  create-store-with-vars: vars -> 
+    <foldl(\(dA, dS) -> <update-variable(|dS)> dA\)> (vars, <create-store> ())
+
+  /**
+   * Creates a store from a KV mixin pair.
+   */
+  create-store-with-mixin: (name, mixin) -> <update-mixin(|s)> (name, mixin) with
+    s := <create-store> ()
+
+  /**
+   * Updates the value of a variable in the store.
+   */
+  update-variable(|s): (k, v)
+    -> ([(<strip-annos> k, v) | vars], mixins)
+    with
+      vars := <get-vars> s
+      ; mixins := <get-mixins> s
+    
+  /**
+   * Updates the mixin definition in the store.
+   */
+  update-mixin(|s): (name, mixin)
+    -> (vars, [(<strip-annos> name, mixin) | mixins])
+    with
+      vars := <get-vars> s
+      ; mixins := <get-mixins> s
+      
+  /**
+   * Merges two stores, where the argument succeeds the match.
+   */
+  extend-store(|s): s0 -> (<conc> (vars0, vars1), <conc> (mixins0, mixins1))
+    with
+      vars0 := <get-vars> s0
+      ; vars1 := <get-vars> s
+      ; mixins0 := <get-mixins> s0
+      ; mixins1 := <get-mixins> s
+  
+  get-vars:   (vars, _)   -> vars
+  get-mixins: (_, mixins) -> mixins
+  get-element: (k, category) -> <fetch-elem(?(key, _)); Snd> category
+    with key := <strip-annos> k
+  
+  /**
+   * Gets a value from the store, fails if no such value exists.
+   */
+  get-var(|s):    key   -> <get-element <+ !Null()> (key, <get-vars> s)
+  get-mixin(|s):  name  -> <get-element> (name, <get-mixins> s)
+
+rules
+
+  /**
+   * Interprets a Sass scripts AST
+   *
+   * Arguments:
+   *  Terms:
+   *    - vars: A variable store
+   *
+   * Matches:
+   *  A `Script` AST node
+   *  
+   * Returns:
+   *  A `Script` AST node with interpreted subnodes.
+   */
+  interpret-script: Script(items) ->
+    Script(interpretedItems)
+  with
+    newStore := <create-store> ()
+    ; (interpretedItems, _, _) := <interpret-items(|newStore)> items
+  
+  /**
+   * Interprets a list of script items.
+   * 
+   * Arguments:
+   *  Terms:
+   *    - vars: A variable store
+   *
+   * Matches: 
+   *  A list
+   * 
+   * Returns:
+   *  (items, globalsToAdd, localsToAdd): 
+   *    A tuple of a list of interpreted elements and global 
+   *    variables to add.
+   */
+  interpret-items(|store): [] -> ([], <create-store> (), <create-store> ())
+  interpret-items(|store): [h | t] -> (
+      <conc> (item, tItems)
+      , globalStore
+      , localStore
+    )
+  with
+    (item, tailGlobalStore, newLocalStore) := <interp-item(|store)> h
+    ; nextStore := <extend-store(|store)> newLocalStore
+    ; (tItems, headGlobalStore, headLocalStore) := <interpret-items(|nextStore)> t
+    // The globalStore is built in reverse order, since the later script items shadow
+    // earlier items, and the head of a store shadows the the tail.
+    ; globalStore := <extend-store(|tailGlobalStore)> headGlobalStore
+    ; localStore  := <extend-store(|nextStore)> headLocalStore

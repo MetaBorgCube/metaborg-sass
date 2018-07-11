@@ -1,0 +1,10 @@
+@mixin countdown($count) {
+  @if $count > 0 {
+    count: $count;
+    @include countdown($count - 1);
+  }
+}
+
+.c {
+  @include countdown(10);
+}

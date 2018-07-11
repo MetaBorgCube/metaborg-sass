@@ -1,0 +1,25 @@
+module test-desugar-selector
+
+language sass
+
+
+test all in [[
+.hello #world a {}
+]] run desugar-all-test to Script([
+    BlockDeclaration(AllIn([Class("hello"), Id("world"), Element("a")]),
+    [])
+  ])
+
+test multiple [[
+a, .main {}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Multiple([Element("a"), Class("main")]), [])
+  ])
+
+test all in in multiple [[
+a #link, .main {}
+]] run desugar-all-test to Script([
+    BlockDeclaration(Multiple([AllIn([Element("a"), Id("link")]), Class("main")]), [])
+  ])
+
+  

@@ -1,0 +1,21 @@
+module syntax-selector-test
+
+language sass
+
+start symbol Selector
+
+test after a link [[
+a::after
+]] parse to PseudoElement(Element("a"), "after")
+
+test hover [[
+a:hover
+]] parse to AppliedPseudoClass(Element("a"), "hover")
+
+test hover over a in li [[
+li a:hover
+]] parse to AllIn(Element("li"), AppliedPseudoClass(Element("a"), "hover"))
+
+test stand alone pseudo class [[
+:not(a)
+]] parse to PseudoClass("not(a)")

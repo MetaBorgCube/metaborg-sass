@@ -1,0 +1,42 @@
+module evaluate/call
+
+imports
+  src-gen/signatures/Declaration-sig
+
+imports
+  evaluate/interpret/-
+  evaluate/expression
+  desugar/declaration
+
+rules
+  interp-item(|store): IncludeMixin(l, aargs, content) 
+    -> (evalBody, globalStoreFromBody, globalStoreFromBody)
+    with 
+    mixinDef := <get-mixin(|store)> l
+    ; <Mixin(?defName, ?fargs, ?fargsDef, ?body, ?env)> mixinDef
+    
+    // Build the store of default argument expressions
+    ; defaultArgTuples := <map(\FArg(i, FArgDefault(n, e)) -> (n, e)\)> fargsDef
+    ; defaultArgStore := <create-store-with-vars> defaultArgTuples    
+    
+    // Build the store of aarg values
+    ; aargCallStore := <build-call-args-store(|store)> (aargs, <conc> (fargs, fargsDef))
+    ; callStore := <extend-store(|defaultArgStore)> aargCallStore
+    
+    ; envDecl := <update-mixin(|env)> (defName, mixinDef) 
+    ; callEnv := <extend-store(|envDecl)> callStore
+    ; (evalBody, _ ,globalStoreFromBody) := <interpret-items(|callEnv)> body
+
+  build-call-args-store(|store): (KeywordAArgGroup(aargs), _)
+    -> <map(\KeywordAArg(n, e) -> (n, <evaluate-exp(|store)> e)\)
+        ; create-store-with-vars> aargs
+  build-call-args-store(|store): (AArgGroup(aargs), fargs) -> callStore
+    with
+      nameValueTuples := <join(\(FArg(i, f), AArg(i', AArg(e)))
+          -> (<extract-farg-name> f, <evaluate-exp(|store)> e) 
+          where <strip-annos; equal> (i, i')\)> 
+      (fargs, aargs)
+      ; callStore := <create-store-with-vars> nameValueTuples
+      
+  extract-farg-name: FArg(n) -> n
+  extract-farg-name: FArgDefault(n, _) -> n

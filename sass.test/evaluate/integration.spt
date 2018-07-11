@@ -1,0 +1,22 @@
+module test-evaluate-integration
+
+language sass
+
+test eval [[
+.main {
+  prop: 54px;
+  $v: 15px;
+  #id {
+    kind: blue;
+    width: $v + 56px;
+    $t: 15px;
+    $w: 15px + $t !global;
+  }
+  
+  a  {
+    $t: 50px;
+    $z: 60px !global;
+  }
+  t: $w + $z;
+}
+]] run evaluate-all 

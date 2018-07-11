@@ -1,0 +1,13 @@
+module ExpressionList
+
+imports
+  Expression
+
+context-free start-symbols
+  ExpList
+
+syntax
+//  List-CF.Empty = "(" LAYOUT?-CF ")"
+  ExpList-CF.ExpListSpace = Exp-CF LAYOUT-CF PropertyExp-CF
+//  List-CF.Comma = Exp-CF LAYOUT?-CF "," LAYOUT?-CF {Exp-CF ","}* {longest-match}
+//  List-CF.Comma = Exp-CF LAYOUT?-CF "," LAYOUT?-CF {Exp-CF ","}+ {longest-match}

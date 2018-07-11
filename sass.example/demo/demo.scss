@@ -1,0 +1,21 @@
+@mixin border($width, $color, $style: solid) {
+  @if $width > 0 {
+    border: {
+      width: $width;
+      color: $color;
+      style: $style;
+    }
+  }
+}
+
+$error-colour: #f00;
+$error-highlight: $error-colour + #006666;
+
+.important, .error {
+  background-color: $error-colour;
+  @include border($color: $error-colour, $width: 24 * 2px);
+  
+  :hover {
+    background-color: $error-highlight;
+  }
+}

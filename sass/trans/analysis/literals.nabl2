@@ -1,0 +1,35 @@
+module analysis/literals
+
+imports
+  src-gen/signatures/Expression-sig
+  desugar/expression/-
+  analysis/sass
+  
+  nabl2/api
+  
+rules
+  /*
+   * Literals
+   */
+  [[ String(_, _) ^ (_, css) : StringT() ]] := css == CSSAble().
+  [[ Int(_) ^ (_, css)       : IntT()    ]] := css == CSSAble().
+  [[ Float(_) ^ (_, css)     : FloatT()  ]] := css == CSSAble().
+  [[ Hex(_, _, _) ^ (_, css)       : ColourT() ]] := css == CSSAble().
+  [[ ColourLabel(_) ^ (s, css) : ColourT() ]] := css == CSSAble().
+  [[ Length(v, u) ^ (s, css)   : LengthT(u) ]] := 
+    [[ v ^ (s, _) : expT ]]
+    , expT <coerce? FloatT()
+    , LengthT(u) <cssable! CSSAble()
+    , LengthT(u) <coerce! StringT()
+    , css == CSSAble()
+    .
+  
+  [[ True()  ^ (_, css) : BoolT() ]] := css == CSSAble().
+  [[ False() ^ (_, css) : BoolT() ]] := css == CSSAble().
+  [[ Null()  ^ (_, css) : NullT() ]] := css == CSSAble().
+  [[ VarRef(id) ^ (s, css) : ty ]] := 
+    Var{id} -> s,
+    Var{id} |-> d | warning $[[id] might be undefined] @id,
+    d : ty | warning
+    , css == CSSAble().
+  

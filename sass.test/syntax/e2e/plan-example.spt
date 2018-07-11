@@ -1,0 +1,27 @@
+module syntax-e2e-test
+
+language sass
+
+test plan example [[
+#my-thingy {
+    color: black;
+    visibility: false;
+}
+
+.my-thingies {
+    width: 50px + 50px;
+}
+  
+li {
+    height: 1em;
+}
+
+li a {
+  font-size: 4px;
+}
+  
+li a, div a {
+    text-color: purple;
+}
+]]
+

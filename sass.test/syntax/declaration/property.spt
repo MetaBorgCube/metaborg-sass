@@ -1,0 +1,17 @@
+module syntax-declaration-test
+
+language sass
+
+start symbol Declaration
+
+test @ allowed as first char in prop [[
+@prop: 10px;
+]] 
+
+test - allowed as first char in property [[
+-webkit-box-shadow: 10px;
+]] 
+
+test @ only allowed as first char [[
+h@llo: 10px;
+]] parse fails
