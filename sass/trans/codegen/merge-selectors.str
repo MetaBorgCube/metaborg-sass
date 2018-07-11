@@ -13,7 +13,7 @@ rules
   merge-selectors: (Multiple(parentSelecs),childSelec) -> Multiple(selecs) with
     selecs := <cart(merge-selectors)> (parentSelecs, [childSelec])
   merge-selectors: (parentSelec, Multiple(childSelecs)) -> Multiple(selecs) with
-  selecs := <cart(merge-selectors)> ([parentSelec], childSelecs)
+    selecs := <cart(merge-selectors)> ([parentSelec], childSelecs)
 
 
 /**

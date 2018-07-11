@@ -13,7 +13,7 @@ $error-highlight: $error-colour + #006666;
 
 .important, .error {
   background-color: $error-colour;
-  @include border($width: 24 * 2px, $color: $error-colour);
+  @include border($color: $error-colour, $width: 24 * 2px);
   
   :hover {
     background-color: $error-highlight;
